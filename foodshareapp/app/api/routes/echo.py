@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from foodshareapp_api.app.api.models.echo import Message
+from foodshareapp.app.api.models.echo import Message
 
 router = APIRouter()
 

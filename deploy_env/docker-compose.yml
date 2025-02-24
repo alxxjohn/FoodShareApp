@@ -7,8 +7,8 @@ services:
   api:
     build:
       context: .
-      dockerfile: ./deploy_environments/Dockerfile
-    image: foodshareapp_api:${FOODSHAREAPP_API_VERSION:-latest}
+      dockerfile: ./deploy_env/Dockerfile
+    image: foodshareapp:${FOODSHAREAPP_API_VERSION:-latest}
     restart: always
     env_file:
     - .env

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from foodshareapp_api.db.utils import redis_db
+from foodshareapp.db.utils import redis_db
 router = APIRouter()
 
 

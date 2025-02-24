@@ -82,8 +82,8 @@ foodshareapp_api
 If you want to run it in docker, simply run:
 
 ```bash
-docker-compose -f deploy_environments/docker-compose.yml --project-directory . run --rm api pytest -vv .
-docker-compose -f deploy_environments/docker-compose.yml --project-directory . down
+docker-compose -f deploy_env/docker-compose.yml --project-directory . run --rm api pytest -vv .
+docker-compose -f deploy_env/docker-compose.yml --project-directory . down
 ```
 
 For running tests on your local machine.

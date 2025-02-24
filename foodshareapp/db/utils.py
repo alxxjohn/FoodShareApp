@@ -7,7 +7,7 @@ from databases import Database
 from databases.core import Transaction as Transaction
 
 
-from foodshareapp_api.settings import settings
+from foodshareapp.settings import settings
 
 logger = logging.getLogger(__name__)
 

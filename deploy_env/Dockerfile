@@ -21,4 +21,4 @@ RUN poetry install
 COPY . /app/src/
 RUN poetry install
 
-CMD ["/usr/local/bin/python", "-m", "foodshareapp_api"]
+CMD ["/usr/local/bin/python", "-m", "foodshareapp"]

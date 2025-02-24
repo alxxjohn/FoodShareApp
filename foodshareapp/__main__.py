@@ -1,6 +1,6 @@
 import uvicorn
 
-from foodshareapp_api.settings import settings
+from foodshareapp.settings import settings
 
 
 def main() -> None:

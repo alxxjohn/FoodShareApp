@@ -1,7 +1,7 @@
 .PHONY: docker
 docker:
 	touch .env
-	docker-compose -f deploy_env/docker-compose.yml -f deploy_environments/docker-compose.dev.yml --project-directory . up
+	docker-compose -f deploy_env/docker-compose.yml -f deploy_env/docker-compose.dev.yml --project-directory . up
 
 .PHONY: docker-builder
 dockerbuild:
@@ -10,7 +10,7 @@ dockerbuild:
 .PHONY: poetry
 poetry:
 	poetry install
-	poetry run python -m foodshareapp_api
+	poetry run python -m foodshareapp
 
 .PHONY: pre-commit
 pre-commit:
@@ -24,5 +24,5 @@ docker-tests:
 
 .PHONY: test
 test:
-	poetry run pytest ./prspcts_api/tests/
+	poetry run pytest ./foodshareapp_api/tests/
 

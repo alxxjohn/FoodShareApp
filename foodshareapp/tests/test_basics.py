@@ -6,7 +6,7 @@ import uuid
 from starlette.testclient import TestClient
 from starlette import status
 
-from foodshareapp_api.app.application import app
+from foodshareapp.app.application import app
 
 
 client = TestClient(app)

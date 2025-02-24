@@ -2,7 +2,7 @@ from typing import Awaitable, Callable
 from httpx import AsyncClient as http_client
 from fastapi import FastAPI
 
-# from foodshareapp_api.settings import settings
+# from foodshareapp.settings import settings
 
 
 def register_startup_event(
@@ -20,7 +20,7 @@ def register_startup_event(
 
     @app.on_event("startup")
     async def _startup() -> None:  # noqa: WPS430
-        from foodshareapp_api.db.utils import db
+        from foodshareapp.db.utils import db
         await db.connect()
         pass  # noqa: WPS420
 
@@ -39,7 +39,7 @@ def register_shutdown_event(
 
     @app.on_event("shutdown")
     async def _shutdown() -> None:  # noqa: WPS430
-        from foodshareapp_api.db.utils import db, redis_db
+        from foodshareapp.db.utils import db, redis_db
 
         await db.disconnect()
         await redis_db.connection_pool.disconnect()

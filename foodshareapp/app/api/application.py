@@ -11,9 +11,9 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette_exporter import PrometheusMiddleware, handle_metrics
 
 
-from foodshareapp_api.app.api.router import api_router
-from foodshareapp_api.app.lifetime import (register_shutdown_event,
-                                           register_startup_event)
+from foodshareapp.app.api.router import api_router
+from foodshareapp.app.lifetime import (register_shutdown_event,
+                                        register_startup_event)
 
 APP_ROOT = Path(__file__).parent.parent
 
@@ -69,7 +69,7 @@ def get_app() -> FastAPI:
         middleware=middleware,
         title="Foodshare App API",
         description="Foodshare backend api end points",
-        version=metadata.version("foodshareapp_api"),
+        version=metadata.version("foodshareapp"),
         docs_url=None,
         redoc_url=None,
         openapi_url="/api/openapi.json",
