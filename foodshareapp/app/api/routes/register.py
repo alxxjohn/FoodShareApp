@@ -1,13 +1,9 @@
-from uuid import UUID, uuid4
+from uuid import uuid4
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException, status, Response
-from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel
-
+from fastapi import APIRouter, Depends, HTTPException, status
 from foodshareapp.db.utils import Transaction, db_transaction
-from foodshareapp.app.api.models.register import (NewUser, CreateUser, CreateUserResponse)
-from foodshareapp.app.api.services.crypto import (gen_salt, hash_password, JWT_ALGORITHM,
-                                                 JWT_SECRET_KEY)
+from foodshareapp.app.api.models.register import NewUser, CreateUser, CreateUserResponse
+from foodshareapp.app.api.services.crypto import gen_salt, hash_password
 import foodshareapp.db.models.user as db_user
 
 
@@ -20,8 +16,12 @@ router = APIRouter(dependencies=[Depends(db_transaction)])
 
 
 # TODO add last login
-@router.post("/register", status_code=status.HTTP_201_CREATED, response_model=CreateUserResponse)
-async def register(create_user: CreateUser, transaction: Transaction = Depends(db_transaction)) -> None:
+@router.post(
+    "/register", status_code=status.HTTP_201_CREATED, response_model=CreateUserResponse
+)
+async def register(
+    create_user: CreateUser, transaction: Transaction = Depends(db_transaction)
+) -> None:
     """
     Creates user model in the database.
 
@@ -43,7 +43,7 @@ async def register(create_user: CreateUser, transaction: Transaction = Depends(d
         lastname=create_user.lastname,
         salt=salt,
         password=password,
-        last_login=datetime.utcnow()
+        last_login=datetime.utcnow(),
     )
     await db_user.insert_user(new_user)
 

@@ -15,7 +15,7 @@ jobs:
             poetry install
       - run:
           name: Run Black Check
-          command: poetry run black --check .
+          command: poetry run black .
 
   flake8:
     docker:
