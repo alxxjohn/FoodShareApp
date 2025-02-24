@@ -114,15 +114,13 @@ docker-compose -f deploy_env/docker-compose.yml --project-directory . down
 
 For running tests on your local machine.
 
-1. you need to start a database.
-
-I prefer doing it with docker:
+1. you need to start a database. (I prefer docker)
 
 ```bash
 docker run -p "5432:5432" -e "POSTGRES_PASSWORD=foodshareapp_api" -e "POSTGRES_USER=foodshareapp_api" -e "POSTGRES_DB=foodshareapp_api" postgres:13.6-bullseye
 ```
 
-2.Run the pytest.
+  2.Run the pytest.
 
 ```bash
 pytest -vv .
