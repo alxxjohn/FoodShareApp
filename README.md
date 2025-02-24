@@ -1,5 +1,7 @@
 # FoodShareApp
 
+[![CircleCI](https://dl.circleci.com/status-badge/img/circleci/59GahiQ3nJgSMTPjnGijAL/6GteubzC7gi6ZBBpMDEVUE/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/59GahiQ3nJgSMTPjnGijAL/6GteubzC7gi6ZBBpMDEVUE/tree/main)
+
 ## Table of Contents
 
 - [Installation](#installation)
