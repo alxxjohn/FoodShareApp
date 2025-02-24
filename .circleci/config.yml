@@ -46,7 +46,6 @@ jobs:
             curl -sSL https://install.python-poetry.org | python -
             echo 'export PATH="$HOME/.local/bin:$PATH"' >> $BASH_ENV
             source $BASH_ENV
-            poetry config virtualenvs.create false
             poetry install
       - run:
           name: Run Mypy Check
