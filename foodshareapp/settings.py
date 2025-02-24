@@ -29,10 +29,10 @@ class Settings(BaseSettings):
     with environment variables.
     """
 
-    redis_host: str = 'cache'
+    redis_host: str = "cache"
     redis_port: int = 6379
-    redis_username: str = ' '
-    redis_password: str = 'eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81'
+    redis_username: str = " "
+    redis_password: str = "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81"
     rd_db: int = 1
 
     host: str = "127.0.0.1"

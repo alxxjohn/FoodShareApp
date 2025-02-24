@@ -12,8 +12,7 @@ from starlette_exporter import PrometheusMiddleware, handle_metrics
 
 
 from foodshareapp.app.api.router import api_router
-from foodshareapp.app.lifetime import (register_shutdown_event,
-                                       register_startup_event)
+from foodshareapp.app.lifetime import register_shutdown_event, register_startup_event
 
 APP_ROOT = Path(__file__).parent.parent
 
@@ -41,7 +40,7 @@ class APIKeyFilterMiddleware(BaseHTTPMiddleware):
         "/openapi.json",
         "/webhooks/stripe/payment-intent",
         "/webhooks/stripe/checkout-session",
-        "/health_check"
+        "/health_check",
     }
 
 
@@ -56,9 +55,7 @@ def get_app() -> FastAPI:
     middleware = [
         Middleware(
             CORSMiddleware,
-            allow_origins=[
-                "*"
-            ],
+            allow_origins=["*"],
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"],
@@ -82,7 +79,7 @@ def get_app() -> FastAPI:
     register_shutdown_event(app)
 
     # Main router for the API.
-    app.include_router(router=api_router, prefix='/api')
+    app.include_router(router=api_router, prefix="/api")
     # Adds static directory.
     # This directory is used to access swagger files.
     app.mount(

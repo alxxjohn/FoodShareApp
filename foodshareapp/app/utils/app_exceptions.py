@@ -15,8 +15,7 @@ class AppExceptionCase(Exception):
 
 
 async def app_exception_handler(request: Request, exc: AppExceptionCase):
-    return JSONResponse(status_code=exc.status_code,
-                        content={
-                            "app_exception": exc.exception_case,
-                            "context": exc.context},
-                        )
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"app_exception": exc.exception_case, "context": exc.context},
+    )

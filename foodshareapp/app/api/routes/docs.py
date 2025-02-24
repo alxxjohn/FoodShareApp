@@ -24,7 +24,7 @@ async def swagger_ui_html(request: Request) -> HTMLResponse:
         oauth2_redirect_url=request.url_for("swagger_ui_redirect"),
         swagger_js_url="/static/docs/swagger-ui-bundle.js",
         swagger_css_url="/static/docs/swagger-ui.css",
-        swagger_favicon_url="/static/img/favicon.svg"
+        swagger_favicon_url="/static/img/favicon.svg",
     )
 
 

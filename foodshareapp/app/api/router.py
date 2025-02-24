@@ -1,6 +1,6 @@
 from fastapi.routing import APIRouter
 
-from foodshareapp.app.api.routes import (docs, echo, health)
+from foodshareapp.app.api.routes import docs, echo, health
 
 
 api_router = APIRouter()

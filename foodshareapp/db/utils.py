@@ -20,8 +20,12 @@ db = Database(
     ssl=settings.db_ssl_enable,
 )
 
-redis_db = redis.Redis(host=settings.redis_host, port=settings.redis_port,
-                       db=settings.rd_db, password=settings.redis_password)
+redis_db = redis.Redis(
+    host=settings.redis_host,
+    port=settings.redis_port,
+    db=settings.rd_db,
+    password=settings.redis_password,
+)
 
 
 async def db_transaction() -> AsyncIterator[Transaction]:
