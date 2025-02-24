@@ -70,10 +70,10 @@ docker-compose -f deploy_environments/docker-compose.yml --project-directory . b
 
 ```bash
 $ tree "foodshareapp"
-foodshareapp_api
+foodshareapp
 ├── db  # module contains db configurations
     ├── migrations  # database migrations.
-    └── models  # Package contains different models for ORMs.
+    └── models  # Package contains db models.
 ├── __main__.py  # Startup script. Starts uvicorn.
 ├── services  # Package for different external services (redis etc).
 ├── settings.py  # Main configuration settings for project.
