@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+    api:
+      ports:
+      - "8000:8000"
+      volumes:
+      - .:/app/src/
+      environment:
+        # Enables autoreload.
+        FOODSHAREAPP_API_RELOAD: "True"
+    db:
+      ports:
+      # Exposes application port.
+      - "5432:5432"
