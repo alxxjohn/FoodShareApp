@@ -9,6 +9,7 @@
   - [Poetry](#makefile)
   - [Docker](#docker)
 - [Project structure](#project-structure)
+- [Development Testing](#development-testing)
 - [Running tests](#running-tests)
 - [Services](#services)
 - [Contributors](#contributors)
