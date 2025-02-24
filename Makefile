@@ -1,11 +1,11 @@
 .PHONY: docker
 docker:
 	touch .env
-	docker-compose -f deploy_environments/docker-compose.yml -f deploy_environments/docker-compose.dev.yml --project-directory . up
+	docker-compose -f deploy_env/docker-compose.yml -f deploy_environments/docker-compose.dev.yml --project-directory . up
 
 .PHONY: docker-builder
 dockerbuild:
-	docker-compose -f deploy_environments/docker-compose.yml --project-directory . up --build
+	docker-compose -f deploy_env/docker-compose.yml --project-directory . up --build
 
 .PHONY: poetry
 poetry:
@@ -18,8 +18,8 @@ pre-commit:
 
 .PHONY: tests
 docker-tests:
-	docker-compose -f deploy_environments/docker-compose.yml --project-directory . run --rm api pytest -vv .
-	docker-compose -f deploy_environments/docker-compose.yml --project-directory . down
+	docker-compose -f deploy_env/docker-compose.yml --project-directory . run --rm api pytest -vv .
+	docker-compose -f deploy_env/docker-compose.yml --project-directory . down
 
 
 .PHONY: test
