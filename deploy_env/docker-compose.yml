@@ -23,27 +23,27 @@ services:
 
     environment:
       FOODSHAREAPP_API_HOST: 0.0.0.0
-      FOODSHAREAPP_API_DB_HOST: foodshareapp_api-db
+      FOODSHAREAPP_API_DB_HOST: foodshareapp-db
       FOODSHAREAPP_API_DB_PORT: 5432
-      FOODSHAREAPP_API_DB_USER: foodshareapp_api
-      FOODSHAREAPP_API_DB_PASS: foodshareapp_api
-      FOODSHAREAPP_API_DB_BASE: foodshareapp_api
+      FOODSHAREAPP_API_DB_USER: foodshareapp
+      FOODSHAREAPP_API_DB_PASS: foodshareapp
+      FOODSHAREAPP_API_DB_BASE: foodshareapp
       REDIS_HOST: cache
       REDIS_PORT: 6379
       REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
 
   db:
     image: postgres:13.6-bullseye
-    hostname: foodshareapp_api-db
+    hostname: foodshareapp-db
     environment:
-      POSTGRES_PASSWORD: "foodshareapp_api"
-      POSTGRES_USER: "foodshareapp_api"
-      POSTGRES_DB: "foodshareapp_api"
+      POSTGRES_PASSWORD: "foodshareapp"
+      POSTGRES_USER: "foodshareapp"
+      POSTGRES_DB: "foodshareapp"
     volumes:
-    - foodshareapp_api-db-data:/var/lib/postgresql/data
+    - foodshareapp-db-data:/var/lib/postgresql/data
     restart: always
     healthcheck:
-      test: pg_isready -U foodshareapp_api
+      test: pg_isready -U foodshareapp
       interval: 2s
       timeout: 3s
       retries: 40
@@ -63,7 +63,7 @@ services:
 
 
 volumes:
-  foodshareapp_api-db-data:
+  foodshareapp-db-data:
     name: foodshareapp-db-data
   cache:
     driver: local

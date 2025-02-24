@@ -6,7 +6,7 @@ from foodshareapp.settings import settings
 def main() -> None:
     """Entrypoint of the application."""
     uvicorn.run(
-        "foodshareapp_api.app.application:get_app",
+        "foodshareapp.app.application:get_app",
         workers=settings.workers_count,
         host=settings.host,
         port=settings.port,
