@@ -1,5 +1,7 @@
 # FoodShareApp
 
+[![CircleCI](https://dl.circleci.com/status-badge/img/circleci/59GahiQ3nJgSMTPjnGijAL/6GteubzC7gi6ZBBpMDEVUE/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/59GahiQ3nJgSMTPjnGijAL/6GteubzC7gi6ZBBpMDEVUE/tree/main)
+
 ## Table of Contents
 
 - [Installation](#installation)
@@ -101,6 +103,14 @@ docker-compose -f deploy_environments/docker-compose.yml --project-directory . b
 ├── poetry.lock
 ├── pyproject.toml
 └── README.md (THIS FILE)
+```
+
+## Development Testing
+
+If you want to test code formatting, linting, static type and run tests locally:
+
+```bash
+make check
 ```
 
 ## Running tests

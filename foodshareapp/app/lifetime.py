@@ -21,6 +21,7 @@ def register_startup_event(
     @app.on_event("startup")
     async def _startup() -> None:  # noqa: WPS430
         from foodshareapp.db.utils import db
+
         await db.connect()
         pass  # noqa: WPS420
 
