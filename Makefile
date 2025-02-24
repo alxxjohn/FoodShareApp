@@ -24,5 +24,5 @@ docker-tests:
 
 .PHONY: test
 test:
-	poetry run pytest ./foodshareapp_api/tests/
+	poetry run pytest ./foodshareapp/tests/
 

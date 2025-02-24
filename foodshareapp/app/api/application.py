@@ -13,7 +13,7 @@ from starlette_exporter import PrometheusMiddleware, handle_metrics
 
 from foodshareapp.app.api.router import api_router
 from foodshareapp.app.lifetime import (register_shutdown_event,
-                                        register_startup_event)
+                                       register_startup_event)
 
 APP_ROOT = Path(__file__).parent.parent
 
