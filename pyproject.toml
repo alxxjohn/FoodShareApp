@@ -3,7 +3,7 @@ name = "foodshareapp"
 version = "0.1.0"
 description = ""
 authors = ["alex john, dillion kilgallon, ine park, kyle cortez"]
-readme = "README.md"
+readme = "../README.md"
 
 
 [tool.poetry.dependencies]
