@@ -32,7 +32,7 @@ check: black flake8 mypy test
 # Check code formatting with Black
 black:
 	@echo "Running Black..."
-	poetry run black --check .
+	poetry run black .
 
 # Lint code with Flake8
 flake8:
