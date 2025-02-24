@@ -86,7 +86,7 @@ class Settings(BaseSettings):
             + "@"
             + self.redis_host
             + ":"
-            + self.redis_port # type: ignore[operator]
+            + self.redis_port  # type: ignore[operator]
             + "/"
             "0",
             decode_responses=True,
