@@ -1,6 +1,19 @@
 # FoodShareApp
 
-## Makefile
+## Table of Contents
+
+- [Installation](#installation)
+  - [Makefile](#makefile)
+  - [Poetry](#makefile)
+  - [Docker](#docker)
+- [Project structure](#project-structure)
+- [Running tests](#running-tests)
+- [Services](#services)
+- [Contributors](#contributors)
+
+## Installation
+
+### Makefile
 
 start services using makefile
 
@@ -12,7 +25,7 @@ make ['docker' or 'poetry']
 
 below are the commands called via poetry or docker.
 
-## Poetry
+### Poetry
 
 This project uses poetry. It's a modern dependency management
 tool.
@@ -30,7 +43,7 @@ You can find swagger documentation at `/api/docs`.
 
 You can read more about poetry here: <https://python-poetry.org/>
 
-## Docker
+### Docker
 
 You can start the project with docker using this command:
 
@@ -108,3 +121,10 @@ pytest -vv .
 api /8000
 
 ```
+
+## Contributors
+
+- Alex John
+- Dillon Kilgallon
+- Ine Park
+- Kyle Cortez
