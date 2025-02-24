@@ -69,12 +69,11 @@ foodshareapp_api
 └── app  # Package contains web server. Handlers, startup config.
     ├── api  # Package with all handlers.
         ├── router.py  # Main router.
-        ├── application.py  # FastAPI application configuration.
-        └── lifetime.py  # Contains actions to perform on startup and shutdown.
     ├── utils  # Package with all handlers.
         └── app_exceptions.py  # exception handling.
         └── service_result.py 
-
+    ├── application.py  # FastAPI application configuration.
+    └── lifetime.py  # Contains actions to perform on startup and shutdown.
 ```
 
 ## Running tests
