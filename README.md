@@ -69,24 +69,38 @@ docker-compose -f deploy_environments/docker-compose.yml --project-directory . b
 ## Project structure
 
 ```bash
-$ tree "foodshareapp"
-foodshareapp
-├── db  # module contains db configurations
-    ├── migrations  # database migrations.
-    └── models  # Package contains db models.
-├── __main__.py  # Startup script. Starts uvicorn.
-├── services  # Package for different external services (redis etc).
-├── settings.py  # Main configuration settings for project.
-├── static  # Static content.
-├── tests  # Tests for project.
-└── app  # Package contains web server. Handlers, startup config.
-    ├── api  # Package with all handlers.
-        ├── router.py  # Main router.
-    ├── utils  # Package with all handlers.
-        └── app_exceptions.py  # exception handling.
-        └── service_result.py 
-    ├── application.py  # FastAPI application configuration.
-    └── lifetime.py  # Contains actions to perform on startup and shutdown.
+.
+├── deploy_env/
+│   ├── docker-coompose.dev.yml
+│   ├── docker-compose.yml
+│   └── Dockerfile
+├── foodshareapp/
+│   ├── db  # module contains db configurations/
+│   │   ├── migrations  # database migrations.
+│   │   ├── models  # Package contains db models.
+│   │   └── utils.py
+│   ├── services  # Package for different external services (redis etc).
+│   ├── settings.py  # Main configuration settings for project.
+│   ├── static  # Static content./
+│   │   ├── docs
+│   │   └── img
+│   ├── tests  # Tests for project.
+│   ├── app  # Package contains web server. Handlers, startup config./
+│   │   ├── api  # Package with all handlers./
+│   │   │   ├── models
+│   │   │   ├── routes
+│   │   │   └── router.py  # Main router.
+│   │   ├── utils  # Package with all handlers./
+│   │   │   ├── app_exceptions.py  # exception handling.
+│   │   │   └── service_result.py 
+│   │   ├── application.py  # FastAPI application configuration.
+│   │   └── lifetime.py  # Contains actions to perform on startup and shutdown.
+│   ├── __main__.py  # Startup script. Starts uvicorn.
+│   └── settings.py
+├── makefile
+├── poetry.lock
+├── pyproject.toml
+└── README.md (THIS FILE)
 ```
 
 ## Running tests
