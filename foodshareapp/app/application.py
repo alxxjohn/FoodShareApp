@@ -1,5 +1,4 @@
 from importlib import metadata
-from functools import lru_cache
 from pathlib import Path
 
 from fastapi import FastAPI, Request

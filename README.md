@@ -103,6 +103,14 @@ docker-compose -f deploy_environments/docker-compose.yml --project-directory . b
 └── README.md (THIS FILE)
 ```
 
+## Development Testing
+
+If you want to test code formatting, linting, static type and run tests locally:
+
+```bash
+make check
+```
+
 ## Running tests
 
 If you want to run it in docker, simply run:
