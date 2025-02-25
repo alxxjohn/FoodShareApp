@@ -4,7 +4,7 @@ import sqlite3
 
 @pytest.fixture(scope="session")
 def test_database():
-    """Creates an in-memory SQLite database for testing."""
+    """Creates an db for testing."""
     conn = sqlite3.connect(":memory:")
     cursor = conn.cursor()
 
