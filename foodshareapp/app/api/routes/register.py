@@ -1,8 +1,10 @@
 from uuid import uuid4
 from datetime import datetime
+from pydantic import EmailStr
 from fastapi import APIRouter, Depends, HTTPException, status
 from foodshareapp.db.utils import Transaction, db_transaction
-from foodshareapp.app.api.models.register import NewUser, CreateUser, CreateUserResponse
+from foodshareapp.db.models.user import NewUser
+from foodshareapp.app.api.models.register import CreateUser, CreateUserResponse
 from foodshareapp.app.api.services.crypto import gen_salt, hash_password
 import foodshareapp.db.models.user as db_user
 
@@ -21,7 +23,7 @@ router = APIRouter(dependencies=[Depends(db_transaction)])
 )
 async def register(
     create_user: CreateUser, transaction: Transaction = Depends(db_transaction)
-) -> None:
+) -> CreateUserResponse:
     """
     Creates user model in the database.
 
@@ -37,7 +39,7 @@ async def register(
     password = hash_password(create_user.password, salt)
     new_user = NewUser(
         uuid=uuid4(),
-        email=create_user.email,
+        email=EmailStr(create_user.email),
         username=create_user.username,
         firstname=create_user.firstname,
         lastname=create_user.lastname,
@@ -49,7 +51,7 @@ async def register(
 
     response = CreateUserResponse(
         uuid=new_user.uuid,
-        email=new_user.email,
+        email=EmailStr(new_user.email),
         username=new_user.username,
         firstname=new_user.firstname,
         lastname=new_user.lastname,

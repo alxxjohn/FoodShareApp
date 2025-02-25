@@ -1,9 +1,8 @@
 from secrets import token_hex
-from typing import Optional
 import bcrypt
 from passlib.context import CryptContext
-from datetime import datetime, timedelta
-from typing import Union, Any
+from datetime import datetime, timedelta, timezone
+from typing import Union, Any, Optional
 from jose import jwt
 
 
@@ -43,33 +42,26 @@ def random_secret_hex(nbytes: int = TOKEN_NBYTES):
     return token_hex(nbytes)
 
 
-# TODO fix datetime remove optional
+def create_access_token(
+    subject: Union[str, Any], expires_delta: Optional[timedelta]
+) -> str:
+    if not expires_delta:
+        expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
-
-def create_access_token(subject: Union[str, Any], expires_delta: int = None) -> str:
-    if expires_delta is not None:
-        expires_delta = Optional[datetime] = None + expires_delta
-    else:
-        expires_delta = Optional[datetime] = None + timedelta(
-            minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-        )
-
-    to_encode = {"exp": expires_delta, "sub": str(subject)}
-    encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, JWT_ALGORITHM)
+    expire = datetime.now(timezone.utc) + expires_delta
+    to_encode = {"exp": expire.timestamp(), "sub": str(subject)}
+    encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
     return encoded_jwt
 
 
-# TODO fix datetime remove optional
+def create_refresh_token(
+    subject: Union[str, Any], expires_delta: Optional[timedelta]
+) -> str:
+    if not expires_delta:  # Ensure it's a timedelta
+        expires_delta = timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
 
+    expire = datetime.now(timezone.utc) + expires_delta
+    to_encode = {"exp": expire.timestamp(), "sub": str(subject)}
+    encoded_jwt = jwt.encode(to_encode, JWT_REFRESH_SECRET_KEY, algorithm=JWT_ALGORITHM)
 
-def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) -> str:
-    if expires_delta is not None:
-        expires_delta = Optional[datetime] = None + expires_delta
-    else:
-        expires_delta = Optional[datetime] = None + timedelta(
-            minutes=REFRESH_TOKEN_EXPIRE_MINUTES
-        )
-
-    to_encode = {"exp": expires_delta, "sub": str(subject)}
-    encoded_jwt = jwt.encode(to_encode, JWT_REFRESH_SECRET_KEY, JWT_ALGORITHM)
     return encoded_jwt

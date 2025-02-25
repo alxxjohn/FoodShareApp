@@ -1,4 +1,5 @@
 from pydantic import BaseModel, validator, EmailStr
+from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID
 
@@ -11,6 +12,7 @@ class NewUser(BaseModel):
     lastname: str
     password: str
     salt: str
+    last_login = datetime.now(timezone.utc)
 
 
 class CreateUser(BaseModel):

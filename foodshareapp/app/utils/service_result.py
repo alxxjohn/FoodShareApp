@@ -2,7 +2,6 @@ from utils.app_exceptions import AppExceptionCase
 
 
 class ServiceResult:
-
     def __init__(self, arg):
         if isinstance(arg, AppExceptionCase):
             self.success = False

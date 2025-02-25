@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from dataclasses import asdict
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
@@ -66,4 +67,4 @@ async def insert_user(newuser: NewUser) -> UUID:
         "VALUES (:uuid, :email, :username, :firstname, :lastname, :salt, :password, :last_login)"
         "RETURNING uuid"
     )
-    return await db.execute(stmnt, values=dict(newuser))
+    return await db.execute(stmnt, values=asdict(newuser))
