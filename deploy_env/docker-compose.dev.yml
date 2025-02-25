@@ -6,7 +6,6 @@ services:
       - "8000:8000"
       volumes:
       - .:/app/src/
-      entrypoint: ["/bin/sh", "/app/src/deploy_env/dev_entrypoint.sh"]
       environment:
         # Enables autoreload.
         FOODSHAREAPP_API_RELOAD: "True"
