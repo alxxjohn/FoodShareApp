@@ -41,8 +41,10 @@ aiosqlite = "^0.21.0"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+testpaths = ["tests"]
 
 [tool.poetry.group.dev.dependencies]
+pytest = "^8.3"
 pytest-cov = "^6.0.0"
 black = "^25.1.0"
 mypy = "^1.15.0"

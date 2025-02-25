@@ -19,7 +19,7 @@ router = APIRouter(dependencies=[Depends(db_transaction)])
 
 # TODO add last login
 @router.post(
-    "/register", status_code=status.HTTP_201_CREATED, response_model=CreateUserResponse
+    "/", status_code=status.HTTP_201_CREATED, response_model=CreateUserResponse
 )
 async def register(
     create_user: CreateUser, transaction: Transaction = Depends(db_transaction)
