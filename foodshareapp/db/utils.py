@@ -13,11 +13,13 @@ logger = logging.getLogger(__name__)
 
 Record = Mapping[Any, Any]
 
+
 db = Database(
     f"postgresql+asyncpg://{settings.db_user}:{settings.db_pass}@"
-    f":{settings.db_port}/{settings.db_base}?host={settings.db_host}",
+    f"{settings.db_host}:{settings.db_port}/{settings.db_base}",
     ssl=settings.db_ssl_enable,
 )
+
 
 redis_db = redis.Redis(
     host=settings.redis_host,
@@ -27,25 +29,26 @@ redis_db = redis.Redis(
 )
 
 
-async def db_transaction() -> AsyncIterator[Transaction]:
-    """Dependency which starts and yields a new DB `transaction`.
-    In order to persist any queries executed with the transaction,
-    the route handler must call `transaction.commit()` before returning a response.
-    Any unhandled exceptions raised before calling `db.commit()` will cause the
-    transaction to roll back.
-    """
+async def commit_transaction(transaction: Transaction):
+    if transaction._connection and getattr(
+        transaction._connection, "_transaction_stack", None
+    ):
+        await transaction.commit()
 
+
+async def rollback_transaction(transaction: Transaction):
+    if transaction._connection and getattr(
+        transaction._connection, "_transaction_stack", None
+    ):
+        await transaction.rollback()
+
+
+async def db_transaction() -> AsyncIterator[Transaction]:
     transaction = db.transaction()
     await transaction.start()
     try:
         yield transaction
-    finally:
-        try:
-            await transaction.rollback()
-        except IndexError as e:
-            logger.warn("--- DB Transaction ERROR ---")
-            logger.warn(e)
-            logger.warn("--- DB Transaction ERROR ---")
-            # Unfortunately, Databases.core.Transaction fails in a very messy way
-            # if the transaction was already committed/rolled back.
-            pass
+        await commit_transaction(transaction)
+    except Exception as e:
+        logger.error(f"Transaction error: {e}", exc_info=True)
+        await rollback_transaction(transaction)

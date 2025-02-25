@@ -20,7 +20,11 @@ tags_metadata = [
     {
         "name": "register",
         "description": "Operations for registering a user.",
-    }
+    },
+    {
+        "name": "user",
+        "description": "Endpoints for a user.",
+    },
 ]
 
 
