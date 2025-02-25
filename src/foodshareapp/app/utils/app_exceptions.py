@@ -1,4 +1,4 @@
-from fastapi import JSONResponse, Request
+from fastapi import Response, Request
 
 
 class AppExceptionCase(Exception):
@@ -15,7 +15,7 @@ class AppExceptionCase(Exception):
 
 
 async def app_exception_handler(request: Request, exc: AppExceptionCase):
-    return JSONResponse(
+    return Response(
         status_code=exc.status_code,
         content={"app_exception": exc.exception_case, "context": exc.context},
     )
