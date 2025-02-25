@@ -28,7 +28,7 @@ async def generate_sample_users():
             "lastname": f"Last{i}",
             "salt": gen_salt(),
             "password": hash_password(f"password{i}", gen_salt()),
-            "last_login": datetime.utcnow()
+            "last_login": datetime.utcnow(),
         }
         for i in range(1, 6)
     ]
@@ -44,6 +44,7 @@ async def main():
     await db.connect()
     await generate_sample_users()
     await db.disconnect()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

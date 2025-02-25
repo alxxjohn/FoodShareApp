@@ -1,11 +1,9 @@
-from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import create_engine
 from foodshareapp.settings import settings
 
 DATABASE_URL = f"postgresql+psycopg2://{settings.db_user}:{settings.db_pass}@{settings.db_host}:{settings.db_port}/{settings.db_base}"
-
-engine = create_engine(DATABASE_URL)  # Use synchronous SQLAlchemy engine
+engine = create_engine(DATABASE_URL)
 
 
 config = context.config
