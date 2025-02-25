@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from dataclasses import asdict
 from datetime import datetime
-from typing import Optional, Mapping
+from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel
 
@@ -81,9 +81,7 @@ async def get_user_by_id(uuid: UUID) -> Optional[UserModel]:
     if db_user is None:
         return None
 
-    if isinstance(db_user, Mapping):
-        return UserModel(**dict(db_user))
-    raise TypeError(f"Unexpected db_user type: {type(db_user)}")
+    return UserModel(**dict(db_user))
 
 
 async def get_user_by_username(username: str) -> Optional[UserModel]:
@@ -97,10 +95,7 @@ async def get_user_by_username(username: str) -> Optional[UserModel]:
     if db_user is None:
         return None
 
-    if isinstance(db_user, Mapping):
-        return UserModel(**dict(db_user))
-
-    raise TypeError(f"Unexpected db_user type: {type(db_user)}")
+    return UserModel(**dict(db_user))
 
 
 async def delete_user_by_email(email: str) -> None:
