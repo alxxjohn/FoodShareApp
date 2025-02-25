@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from dataclasses import asdict
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Mapping
 from uuid import UUID
 from pydantic import BaseModel
 
@@ -56,7 +56,7 @@ async def get_user_by_email(email: str) -> Optional[UserModel]:
     if db_user is None:
         return None
 
-    return UserModel(**db_user)
+    return UserModel(**dict(db_user))
 
 
 async def insert_user(newuser: NewUser) -> UUID:
@@ -68,3 +68,43 @@ async def insert_user(newuser: NewUser) -> UUID:
         "RETURNING uuid"
     )
     return await db.execute(stmnt, values=asdict(newuser))
+
+
+async def get_user_by_id(uuid: UUID) -> Optional[UserModel]:
+    """Returns the user with the given id.
+    Returns `None` if no such user exists.
+    """
+
+    stmnt = "SELECT * FROM foodshare_users WHERE uuid = :uuid"
+    db_user = await db.fetch_one(query=stmnt, values={"uuid": uuid})
+
+    if db_user is None:
+        return None
+
+    if isinstance(db_user, Mapping):
+        return UserModel(**dict(db_user))
+    raise TypeError(f"Unexpected db_user type: {type(db_user)}")
+
+
+async def get_user_by_username(username: str) -> Optional[UserModel]:
+    """Returns a single user row for the user matching the given email.
+    Returns `None` if no such user exists.
+    """
+
+    stmnt = "SELECT * FROM foodshare_users WHERE username = :username"
+    db_user = await db.fetch_one(query=stmnt, values={"username": username})
+
+    if db_user is None:
+        return None
+
+    if isinstance(db_user, Mapping):
+        return UserModel(**dict(db_user))
+
+    raise TypeError(f"Unexpected db_user type: {type(db_user)}")
+
+
+async def delete_user_by_email(email: str) -> None:
+    """Deletes the user with the given email"""
+
+    stmnt = "DELETE FROM foodshare_users WHERE email = :email"
+    await db.execute(query=stmnt, values={"email": email})
