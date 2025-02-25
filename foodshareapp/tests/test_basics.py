@@ -1,7 +1,7 @@
 from starlette.testclient import TestClient
 from starlette import status
 
-from foodshareapp.app.api.application import app
+from foodshareapp.app.application import app
 
 
 client = TestClient(app)

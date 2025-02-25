@@ -18,13 +18,34 @@ APP_ROOT = Path(__file__).parent.parent
 
 tags_metadata = [
     {
-        "name": "register",
+        "name": "Register",
         "description": "Operations for registering a user.",
     },
     {
-        "name": "user",
-        "description": "Endpoints for a user.",
+        "name": "Auth",
+        "description": "Authentication endpoints.",
     },
+    {
+        "name": "Food Insecure Person",
+        "description": "Food Insecure Person endpoints.",
+    },
+    {
+        "name": "Food Banks",
+        "description": "Food Banks and Business endpoints.",
+    },
+    {
+        "name": "Food Donations",
+        "description": "Food Donations endpoints.",
+    },
+    {
+        "name": "Health",
+        "description": "Health check endpoint.",
+    },
+    {
+        "name": "Echo",
+        "description": "Echo endpoint.",
+    },
+
 ]
 
 

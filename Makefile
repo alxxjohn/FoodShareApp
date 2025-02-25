@@ -45,4 +45,4 @@ mypy:
 
 # Run tests 
 test:
-	poetry run pytest ./src/foodshareapp/tests/
+	poetry run pytest ./foodshareapp/tests/
