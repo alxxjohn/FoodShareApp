@@ -32,6 +32,17 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
 
+  client:
+    build:
+      context: ./clientapp
+      dockerfile: ../clientapp/Dockerfile
+    volumes:
+      - ./clientapp:/app
+    ports:
+      - '8080:80'
+    depends_on:
+      - api
+
   db:
     image: postgres:13.6-bullseye
     hostname: foodshareapp-db
