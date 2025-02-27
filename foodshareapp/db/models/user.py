@@ -29,6 +29,7 @@ class UserModel:
 
 @dataclass
 class NewUser:
+    __tablename__ = "foodshare_users"
     uuid: UUID
     email: str
     username: str

@@ -18,10 +18,9 @@ pre-commit:
 
 .PHONY: tests
 docker-tests:
+	touch .env
 	docker-compose -f deploy_env/docker-compose.yml --project-directory . run --rm api pytest -vv .
 	docker-compose -f deploy_env/docker-compose.yml --project-directory . down
-
-
 
 
 .PHONY: check black flake8 mypy

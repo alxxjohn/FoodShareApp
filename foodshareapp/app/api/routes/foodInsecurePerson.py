@@ -67,7 +67,7 @@ async def get_user_email(
 async def delete_user(
     delete_user: DeleteUser, transaction: Transaction = Depends(db_transaction)
 ):
-    """Deletes the user given by `user_email`"""
+    """Deletes user given by `user_email`"""
 
     await db_user.delete_user_by_email(delete_user.email)
     await transaction.commit()
