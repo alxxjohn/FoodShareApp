@@ -100,6 +100,18 @@ docker-compose -f deploy_env/docker-compose.yml --project-directory . build
 │   │   └── lifetime.py  # Contains actions to perform on startup and shutdown.
 │   ├── __main__.py  # Startup script. Starts uvicorn.
 │   └── settings.py
+├── clientapp/
+│   ├── public/
+│   │   └── index.html
+│   ├── src/
+│   │   ├── assets/  # images/videos/fonts/svgs files.
+│   │   ├── components/ 
+│   │   └── pages/
+│   ├── Dockerfile
+│   ├── babel.config.js
+│   ├── nginx.conf # configuration for nginx
+│   ├── package.json
+│   └── vue.config.js
 ├── makefile
 ├── poetry.lock
 ├── pyproject.toml
