@@ -1,4 +1,5 @@
 <template>
+    <h1>Food Share App</h1>
     <div class="container">
       <button @click="health">healthy?</button>
       <p v-if="status ">status : {{ status  }}</p>

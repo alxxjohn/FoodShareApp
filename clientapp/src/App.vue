@@ -1,17 +1,21 @@
 <template>
-  <HomePage msg="Welcome to FoodShareApp"/>
+    <router-view /> <!-- This will display the current page -->
 </template>
 
-<script>
-import HomePage from './pages/HomePage.vue'
+<!-- <script>
+import HomePage from './views/HomePage.vue'
+import Login from './views/LoginView.vue'
+import Main from './views/MainView.vue'
 
 export default {
   name: 'App',
   components: {
-    HomePage
+    HomePage,
+    Login,
+    Main
   }
 }
-</script>
+</script> -->
 
 <style>
 #app {
