@@ -36,12 +36,14 @@ services:
     build:
       context: ./clientapp
       dockerfile: ../clientapp/Dockerfile
-    volumes:
-      - ./clientapp:/app
+      target: prod
+    restart: always
     ports:
-      - '8080:80'
+    - '${CLIENT_PROD_PORT}:${NGINX_PORT}'
+    env_file:
+    - .env
     depends_on:
-      - api
+    - api
 
   db:
     image: postgres:13.6-bullseye
