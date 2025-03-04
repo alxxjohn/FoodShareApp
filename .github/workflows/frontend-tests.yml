@@ -10,14 +10,19 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  
+
+      - name: Verify package-lock.json location
+        run: ls -la clientapp  # Debugging step
+
+      - name: Find package-lock.json (if needed)
+        run: find . -name "package-lock.json"
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4 
         with:
           node-version: 18
-          cache: 'npm'
-          cache-dependency-path: clientapp/package-lock.json
+          cache: 'npm' 
 
       - name: Install Dependencies
         run: npm install
@@ -27,9 +32,11 @@ jobs:
         run: npm test
         working-directory: clientapp
 
+      - name: Ensure test-results directory exists
+        run: mkdir -p test-results
+
       - name: Upload Test Reports
         uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: test-results/
-
