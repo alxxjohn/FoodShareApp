@@ -1,3 +1,9 @@
+name: Front End Tests
+
+on:
+  pull_request:
+    types: [opened, edited]
+
 jobs:
   test:
     runs-on: ubuntu-latest
