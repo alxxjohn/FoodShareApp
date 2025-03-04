@@ -1,6 +1,7 @@
 .PHONY: docker
 docker:
 	touch .env
+	cp deploy_env/.dev.env .env
 	docker-compose -f deploy_env/docker-compose.yml -f deploy_env/docker-compose.dev.yml --project-directory . up
 
 .PHONY: docker-builder
