@@ -1,8 +1,8 @@
-.PHONY: docker
 docker:
 	touch .env
 	cp deploy_env/.dev.env .env
-	docker-compose -f deploy_env/docker-compose.yml -f deploy_env/docker-compose.dev.yml --project-directory . up
+	docker-compose -f deploy_env/docker-compose.yml -f deploy_env/docker-compose.dev.yml --project-directory . up --build
+
 
 .PHONY: docker-builder
 dockerbuild:
@@ -47,3 +47,13 @@ mypy:
 # Run tests 
 test:
 	poetry run pytest ./foodshareapp/tests/
+
+
+.PHONY: frontendbuild
+fe-build:
+	poetry shell
+	cd client && npm run build
+	touch .env
+	cp deploy_env/.dev.env .env
+	docker-compose -f deploy_env/docker-compose.yml --project-directory . run --rm api pytest -vv .
+	docker-compose -f deploy_env/docker-compose.yml --project-directory . down
