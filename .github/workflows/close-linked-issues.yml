@@ -9,8 +9,22 @@ jobs:
   close-issues:
     runs-on: ubuntu-latest
     steps:
-      - name: Close linked issues
+      - name: Extract Issue Number from PR Body
+        id: extract-issue
+        run: |
+          ISSUE_NUMBER=$(echo "${{ github.event.pull_request.body }}" | grep -oE '#[0-9]+' | head -n 1 | tr -d '#')
+          if [[ -z "$ISSUE_NUMBER" ]]; then
+            echo "No issue number found. Exiting gracefully."
+            exit 0
+          fi
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_ENV
+          echo "Found issue #$ISSUE_NUMBER"
+
+      - name: Close Linked Issue
+        if: env.issue_number != ''
         uses: peter-evans/close-issues@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.pull_request.body }}
+          issue-number: ${{ env.issue_number }}
+          comment: 'Closing this issue as it is linked to a closed pull request.'
+          
