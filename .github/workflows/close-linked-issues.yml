@@ -1,0 +1,16 @@
+name: Close Associated Issue
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  close-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close linked issues
+        uses: peter-evans/close-issues@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.body }}
