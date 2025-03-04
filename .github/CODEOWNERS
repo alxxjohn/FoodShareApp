@@ -1,0 +1,7 @@
+# Auto-assign reviewers for all PRs
+* @alxxjohn
+
+# Auto-assign specific reviewers for certain files
+docs/* @doc-reviewer
+src/foodshareapp/* @alxxjohn
+src/clientapp/* @parkine
