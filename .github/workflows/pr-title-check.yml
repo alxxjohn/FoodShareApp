@@ -19,6 +19,6 @@ jobs:
             refactor
             style
             test
-          subjectPattern: "^(\\[JIRA-\\d+\\]) .+$"
+          subjectPattern: "^(feat|fix|chore|docs|refactor|test|ci) - .+$"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

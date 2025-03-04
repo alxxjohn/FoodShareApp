@@ -1,0 +1,29 @@
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: clientapp/package-lock.json
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: clientapp
+
+      - name: Run Tests
+        run: npm test
+        working-directory: clientapp
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: clientapp/test-results/
