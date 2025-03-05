@@ -10,41 +10,43 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4 
+        uses: actions/checkout@v4  # Ensure the repository is checked out
 
       - name: Debug package-lock.json location
-        run: find . -name "package-lock.json" || echo "No package-lock.json found"
+        run: |
+          echo "Checking for package-lock.json in root and subdirectories..."
+          find . -name "package-lock.json" || echo "No package-lock.json found!"
 
       - name: Generate package-lock.json if missing
         run: |
-          if [ ! -f "package-lock.json" ]; then
+          if [ ! -f "clientapp/package-lock.json" ]; then
             echo "No package-lock.json found in clientapp/. Generating..."
             npm install --package-lock-only
           else
             echo "package-lock.json already exists."
           fi
-        working-directory: clientapp  =
+        working-directory: clientapp
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
-          cache-dependency-path: clientapp/package-lock.json  =
+          cache-dependency-path: clientapp/package-lock.json  # Correct path
 
       - name: Install Dependencies
         run: npm install
-        working-directory: clientapp 
+        working-directory: clientapp  # Ensuring correct directory
 
       - name: Run Tests
         run: npm test
         working-directory: clientapp
 
       - name: Ensure test-results directory exists
-        run: mkdir -p clientapp/test-results   
+        run: mkdir -p clientapp/test-results  # Ensure correct path
 
       - name: Upload Test Reports
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: clientapp/test-results/  
+          path: clientapp/test-results/  # Upload from correct location
