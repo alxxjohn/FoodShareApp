@@ -12,17 +12,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4  
 
-      - name: Verify package-lock.json location
-        run: ls -la clientapp  # Debugging step
+      - name: Debug package-lock.json location
+        run: find . -name "package-lock.json" 
 
-      - name: Find package-lock.json (if needed)
-        run: find . -name "package-lock.json"
+      - name: Generate package-lock.json if missing
+        run: npm install --package-lock-only
+        working-directory: clientapp  
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4 
+        uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm' 
+          cache: 'npm'
+          cache-dependency-path: clientapp/package-lock.json  
 
       - name: Install Dependencies
         run: npm install
