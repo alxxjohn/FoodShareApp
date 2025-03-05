@@ -17,34 +17,34 @@ jobs:
 
       - name: Generate package-lock.json if missing
         run: |
-          if [ ! -f "clientapp/package-lock.json" ]; then
-            echo "No package-lock.json found. Generating..."
+          if [ ! -f "package-lock.json" ]; then
+            echo "No package-lock.json found in clientapp/. Generating..."
             npm install --package-lock-only
           else
             echo "package-lock.json already exists."
           fi
-        working-directory: clientapp  
+        working-directory: clientapp  =
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
-          cache-dependency-path: clientapp/package-lock.json  
+          cache-dependency-path: clientapp/package-lock.json  =
 
       - name: Install Dependencies
         run: npm install
-        working-directory: clientapp
+        working-directory: clientapp 
 
       - name: Run Tests
         run: npm test
         working-directory: clientapp
 
       - name: Ensure test-results directory exists
-        run: mkdir -p test-results
+        run: mkdir -p clientapp/test-results   
 
       - name: Upload Test Reports
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: test-results/
+          path: clientapp/test-results/  
