@@ -10,13 +10,19 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4  
+        uses: actions/checkout@v4 
 
       - name: Debug package-lock.json location
-        run: find . -name "package-lock.json" 
+        run: find . -name "package-lock.json" || echo "No package-lock.json found"
 
       - name: Generate package-lock.json if missing
-        run: npm install --package-lock-only
+        run: |
+          if [ ! -f "clientapp/package-lock.json" ]; then
+            echo "No package-lock.json found. Generating..."
+            npm install --package-lock-only
+          else
+            echo "package-lock.json already exists."
+          fi
         working-directory: clientapp  
 
       - name: Set up Node.js
