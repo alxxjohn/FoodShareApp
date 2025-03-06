@@ -1,8 +1,17 @@
-docker:
-	touch .env
-	cp deploy_env/.dev.env .env
-	docker-compose -f deploy_env/docker-compose.yml -f deploy_env/docker-compose.dev.yml --project-directory . up --build
+OS := $(shell uname 2>/dev/null || echo Windows)
 
+ifeq ($(OS),Windows)
+    TOUCH_CMD = cmd /c "if not exist .env (echo. > .env)"
+    COPY_CMD = copy deploy_env\.dev.env .env
+else
+    TOUCH_CMD = touch .env
+    COPY_CMD = cp deploy_env/.dev.env .env
+endif
+
+docker:
+	$(TOUCH_CMD)
+	$(COPY_CMD)
+	docker-compose -f deploy_env/docker-compose.yml -f deploy_env/docker-compose.dev.yml --project-directory . up --build
 
 .PHONY: docker-builder
 dockerbuild:
@@ -19,10 +28,9 @@ pre-commit:
 
 .PHONY: tests
 docker-tests:
-	touch .env
+	$(TOUCH_CMD)
 	docker-compose -f deploy_env/docker-compose.yml --project-directory . run --rm api pytest -vv .
 	docker-compose -f deploy_env/docker-compose.yml --project-directory . down
-
 
 .PHONY: check black flake8 mypy
 
@@ -48,12 +56,11 @@ mypy:
 test:
 	poetry run pytest ./foodshareapp/tests/
 
-
 .PHONY: frontendbuild
 fe-build:
 	poetry shell
 	cd client && npm run build
-	touch .env
-	cp deploy_env/.dev.env .env
+	$(TOUCH_CMD)
+	$(COPY_CMD)
 	docker-compose -f deploy_env/docker-compose.yml --project-directory . run --rm api pytest -vv .
 	docker-compose -f deploy_env/docker-compose.yml --project-directory . down
