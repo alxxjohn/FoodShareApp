@@ -4,7 +4,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
     host: '0.0.0.0',  // Ensure the server is accessible from outside the container
-    port: 8080,
+    port: process.env.VUE_PORT,
     proxy: {
       "/api": {
         target: "http://api:8000", 
