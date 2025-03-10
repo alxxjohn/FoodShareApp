@@ -7,7 +7,7 @@
   </template>
   
   <script>
-  import axios from 'axios';
+  import health_check from "@/services/health-check"
   
   export default {
     data() {
@@ -16,15 +16,14 @@
       };
     },
     methods: {
-      async health() {
-        try {
-          const res = await axios.get('/api/health');
-            this.status = res.status;
-        } catch (error) {
-            console.error('Error:', error);
-            this.status = 'Error connecting to api';
-        }
-      },
+      health(){
+        health_check.health()
+          .then(res => this.status = res.status)
+          .catch(error =>{ 
+            console.error("Login Error:", error);
+            this.status = error.status;
+          });
+      }
     },
   };
   </script>
