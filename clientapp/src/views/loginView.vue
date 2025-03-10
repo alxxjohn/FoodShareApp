@@ -15,8 +15,6 @@
   </form> 
 </template>
 
-<!-- <button type="button" class="btn btn-secondary" onclick="alert('Hello!')">Click Me</button> 
- I need to do it for the button Register-->
 
 
  <script>

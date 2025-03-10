@@ -1,7 +1,7 @@
-import api_client from "@/services/api-client";
+import apiClient from "@/services/apiClient";
 
 export default {
   health() {
-    return api_client.get("/health");
+    return apiClient.get("/health");
   }
 };

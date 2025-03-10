@@ -1,15 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Main from '@/views/MainView.vue'
-import Login from '@/views/LoginView.vue'
-import HomePage from '@/views/HomePage.vue'
+import main from '@/views/mainView.vue'
+import login from '@/views/loginView.vue'
+import signUp from '@/views/signUpView.vue'
+import homePage from '@/views/homePage.vue'
 // import Dashboard from '@/views/Dashboard.vue'
 // import store from '@/store' // Assuming you manage authentication state in Vuex or Pinia
 
 const routes = [
   // { path: '/', redirect: '/main' }, // Redirect root to /main
-  { path: '/', component:  HomePage},
-  { path: '/main', component: Main },
-  { path: '/login', component: Login }
+  { path: '/', component:  homePage},
+  { path: '/main', component: main },
+  { path: '/login', component: login },
+  { path: '/signup', component: signUp }
   // { path: '/dashboard', component: Dashboard }
 ]
 

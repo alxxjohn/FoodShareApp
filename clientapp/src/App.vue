@@ -1,21 +1,18 @@
 <template>
+    <NavBar />
+    
     <router-view /> <!-- This will display the current page -->
 </template>
 
-<!-- <script>
-import HomePage from './views/HomePage.vue'
-import Login from './views/LoginView.vue'
-import Main from './views/MainView.vue'
-
-export default {
-  name: 'App',
-  components: {
-    HomePage,
-    Login,
-    Main
+<script>
+  import NavBar from '@/components/NavBar.vue'
+  
+  export default {
+    components: {
+      NavBar
+    }
   }
-}
-</script> -->
+</script>
 
 <style>
 #app {
