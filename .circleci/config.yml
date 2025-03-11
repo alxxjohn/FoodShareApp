@@ -72,6 +72,11 @@ jobs:
       - run:
           name: Run Pytest
           command: poetry run pytest -vv --cov="foodshareapp" .
+    
+  trigger_github_actions:
+    docker:
+      - image: cimg/base:current
+    steps:
       - run:
           name: Trigger GitHub Actions for Issue Closure
           command: |
