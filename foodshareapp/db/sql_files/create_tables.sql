@@ -33,7 +33,8 @@ CREATE TABLE users (
 );
 
 
--- todo add business table -- 
+-- todo add business and foodbanks table table -- 
+---- ideally this should connect to a uuid in the users table  if user is_business --
 
 
 
@@ -44,6 +45,13 @@ CREATE TABLE users (
 
 
 
--- todo add foodbanks table -- 
+
+
+
+
+
+
+
+
 
 
