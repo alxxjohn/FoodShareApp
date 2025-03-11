@@ -37,16 +37,21 @@ class UserModel:
 
 @dataclass
 class NewUser:
-    __tablename__ = "foodshare_users"
+    __tablename__ = "users"
     uuid: UUID
     email: str
     username: str
-    firstname: str
-    lastname: str
+    firstname: Optional[str]
+    lastname: Optional[str]
     salt: str
     password: str
     last_login: datetime
     company_name: Optional[str]
+    address: Optional[str]
+    city: Optional[str]
+    state: Optional[str]
+    zip: Optional[str]
+    phone: Optional[str]
     is_business: bool
     is_admin: bool
 

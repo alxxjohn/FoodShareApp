@@ -65,7 +65,7 @@ async def register(
         firstname=new_user.firstname,
         lastname=new_user.lastname,
         password=new_user.password,
-        company_name=new_user.company_name is None,
+        company_name=new_user.company_name,
         address=new_user.address is None,
         city=new_user.city is None,
         state=new_user.state is None,

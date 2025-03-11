@@ -9,12 +9,11 @@ class NewUser(BaseModel):
     email: EmailStr
     company_name: Optional[str]
     username: str
-    firstname: str
-    lastname: str
+    firstname: Optional[str]
+    lastname: Optional[str]
     password: str
     salt: str
     last_login = datetime.now(timezone.utc)
-    company_name: Optional[str]
     address: Optional[str]
     city: Optional[str]
     state: Optional[str]
@@ -47,6 +46,7 @@ class CreateUserResponse(BaseModel):
     uuid: UUID
     username: str
     email: EmailStr
-    firstname: str
-    lastname: str
+    firstname: Optional[str]
+    lastname: Optional[str]
+    company_name: Optional[str]
     password: Optional[str]

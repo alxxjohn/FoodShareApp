@@ -16,10 +16,10 @@ class User(UserBase):
 
     returned when accessing user models from the API.
     """
-
+    company_name: str
     firstname: str
     lastname: str
-    password: Optional[str]
+    password: str
     tos_accepted: Optional[bool]
     tos_accepted_date: Optional[datetime]
     last_login: Optional[datetime]
@@ -28,6 +28,13 @@ class User(UserBase):
     account_locked: bool
     account_verified: bool
     account_verified_at: Optional[datetime]
+    address: str
+    city: str
+    state: str
+    zip: str
+    phone: str
+    is_business: bool = False
+    is_admin: bool = False
 
     class Config:
         orm_mode = True
