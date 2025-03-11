@@ -52,5 +52,7 @@ jobs:
           path: clientapp/test-results/ 
       
       - name: Report Status
+        run: |
+          echo "Frontend tests completed with status: ${{ job.status }}"
         if: always()
-        run: echo "Frontend tests completed with status: '${{ job.status }}'"
+
