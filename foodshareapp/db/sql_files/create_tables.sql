@@ -1,22 +1,30 @@
 
--- foodshare users table -- 
+--  users table -- 
 
-CREATE TABLE IF NOT EXISTS foodshare_users (
-    uuid uuid NOT NULL,
-    email text NOT NULL,
-    username text NOT NULL,
-    firstname text NOT NULL,
-    lastname text NOT NULL,
-    salt text NOT NULL,
-    password text NOT NULL,
-    tos_accepted boolean NOT NULL DEFAULT true,
-    tos_accepted_date timestamp with time zone NOT NULL DEFAULT now(),
-    last_login timestamp with time zone,
-    bad_login_attempt timestamp with time zone,
-    bad_login_count integer,
-    account_locked boolean NOT NULL DEFAULT false,
-    account_verified boolean DEFAULT true,
-    account_verified_at timestamp,
+CREATE TABLE users (
+    uuid TEXT PRIMARY KEY NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    username TEXT NOT NULL,
+    firstname TEXT ,
+    lastname TEXT ,
+    salt TEXT NOT NULL,
+    password TEXT NOT NULL,
+    tos_accepted BOOLEAN NOT NULL,
+    tos_accepted_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_login DATETIME,
+    bad_login_attempt DATETIME,
+    bad_login_count INTEGER,
+    account_locked BOOLEAN NOT NULL DEFAULT 0,
+    account_verified BOOLEAN DEFAULT 1,
+    account_verified_at DATETIME,
+    company_name TEXT,
+    address TEXT,
+    city TEXT,
+    state TEXT,
+    zip TEXT,
+    phone TEXT,
+    is_business BOOLEAN NOT NULL DEFAULT 0,
+    is_admin BOOLEAN NOT NULL DEFAULT 0,
 
 
     PRIMARY KEY (uuid),
@@ -25,7 +33,8 @@ CREATE TABLE IF NOT EXISTS foodshare_users (
 );
 
 
--- todo add business table -- 
+-- todo add business and foodbanks table table -- 
+---- ideally this should connect to a uuid in the users table  if user is_business --
 
 
 
@@ -36,6 +45,13 @@ CREATE TABLE IF NOT EXISTS foodshare_users (
 
 
 
--- todo add foodbanks table -- 
+
+
+
+
+
+
+
+
 
 

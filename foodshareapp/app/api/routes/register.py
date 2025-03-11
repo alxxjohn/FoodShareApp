@@ -46,6 +46,15 @@ async def register(
         salt=salt,
         password=password,
         last_login=datetime.utcnow(),
+        company_name=create_user.company_name,
+        address=create_user.address,
+        city=create_user.city,
+        state=create_user.state,
+        zip=create_user.zip,
+        phone=create_user.phone,
+        is_business=create_user.is_business is True,
+        is_admin=create_user.is_admin is True,
+
     )
     await db_user.insert_user(new_user)
 
@@ -56,6 +65,15 @@ async def register(
         firstname=new_user.firstname,
         lastname=new_user.lastname,
         password=new_user.password,
+        company_name=new_user.company_name,
+        address=new_user.address is None,
+        city=new_user.city is None,
+        state=new_user.state is None,
+        zip=new_user.zip is None,
+        phone=new_user.phone is None,
+        is_business=new_user.is_business is True,
+        is_admin=new_user.is_admin is True,
+
     )
     await transaction.commit()
     return response
