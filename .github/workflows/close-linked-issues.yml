@@ -1,16 +1,52 @@
-name: Close Associated Issue
+name: Close Linked Issues
 
 on:
   pull_request:
     types:
-      - closed
+      - closed 
 
 jobs:
-  close-issues:
+  close-linked-issues:
     runs-on: ubuntu-latest
     steps:
-      - name: Close linked issues
-        uses: peter-evans/close-issues@v2
+      - name: Check if PR is merged
+        id: check_merged
+        uses: actions/github-script@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.pull_request.body }}
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr.merged) {
+              console.log("PR is closed but not merged. Exiting...");
+              return;
+            }
+
+      - name: Extract linked issue number
+        id: extract_issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prBody = context.payload.pull_request.body;
+            const issueRegex = /(?:Closes|Fixes|Resolves) #(\d+)/gi;
+            let match;
+            let issues = [];
+            while ((match = issueRegex.exec(prBody)) !== null) {
+              issues.push(match[1]);
+            }
+
+            if (issues.length === 0) {
+              console.log("No linked issues found.");
+              return;
+            }
+
+            console.log(`Linked issues: ${issues.join(", ")}`);
+            core.setOutput("issues", issues.join(" "));
+
+      - name: Close linked issues
+        if: steps.extract_issue.outputs.issues != ''
+        uses: octokit/request-action@v2.x
+        with:
+          route: PATCH /repos/${{ github.repository }}/issues/{issue_number}
+          issue_number: ${{ steps.extract_issue.outputs.issues }}
+          state: closed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
