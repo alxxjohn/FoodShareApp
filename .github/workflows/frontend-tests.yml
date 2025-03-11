@@ -2,7 +2,7 @@ name: Front End Tests
 
 on:
   pull_request:
-    types: [opened, edited]
+    types: [opened, synchronize, reopened]
 
 jobs:
   frontend-tests:
@@ -50,3 +50,9 @@ jobs:
         with:
           name: test-results
           path: clientapp/test-results/ 
+      
+      - name: Report Status
+        run: |
+          echo "Frontend tests completed with status: ${{ job.status }}"
+        if: always()
+
