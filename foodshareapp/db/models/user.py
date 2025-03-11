@@ -13,6 +13,7 @@ class UserModel:
     uuid: UUID
     email: str
     username: str
+    company_name: Optional[str]
     firstname: str
     lastname: str
     salt: Optional[str]
@@ -25,6 +26,13 @@ class UserModel:
     account_locked: bool
     account_verified: bool
     account_verified_at: Optional[datetime]
+    address: Optional[str]
+    city: Optional[str]
+    state: Optional[str]
+    zip: Optional[str]
+    phone: Optional[str]
+    is_business: bool
+    is_admin: bool
 
 
 @dataclass
@@ -38,6 +46,9 @@ class NewUser:
     salt: str
     password: str
     last_login: datetime
+    company_name: Optional[str]
+    is_business: bool
+    is_admin: bool
 
 
 @dataclass
@@ -64,8 +75,8 @@ async def insert_user(newuser: NewUser) -> UUID:
     """Creates a new user"""
 
     stmnt = (
-        "INSERT INTO foodshare_users (uuid, email, username, firstname, lastname, salt, password, last_login) "
-        "VALUES (:uuid, :email, :username, :firstname, :lastname, :salt, :password, :last_login)"
+        "INSERT INTO foodshare_users (uuid, email, username, firstname, lastname, salt, password, last_login, company_name, address, city, state, zip, phone, is_business, is_admin) "
+        "VALUES (:uuid, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :company_name, :address, :city, :state, :zip, :phone, :is_business, :is_admin) "
         "RETURNING uuid"
     )
     return await db.execute(stmnt, values=asdict(newuser))
