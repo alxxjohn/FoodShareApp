@@ -72,6 +72,13 @@ jobs:
       - run:
           name: Run Pytest
           command: poetry run pytest -vv --cov="foodshareapp" .
+      - run:
+          name: Trigger GitHub Actions for Issue Closure
+          command: |
+            curl -X POST -H "Accept: application/vnd.github.v3+json" \
+                -H "Authorization: token $GITHUB_PAT" https://api.github.com/repos/alxxjohn/FoodShareApp/dispatches \
+                -d '{"event_type":"circleci-pr-merged","client_payload":{"pull_request_number": "'"$CIRCLE_PULL_REQUEST"'"}}'
+
 
 workflows:
   version: 2
@@ -81,3 +88,10 @@ workflows:
       - flake8
       - mypy
       - pytest
+      - trigger_github_actions:
+          requires:
+            - pytest
+          filters:
+            branches:
+              only:
+                - main

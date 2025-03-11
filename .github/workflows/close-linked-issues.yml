@@ -1,35 +1,37 @@
 name: Close Linked Issues
 
 on:
-  pull_request:
-    types:
-      - closed 
+  repository_dispatch:
+    types: [circleci-pr-merged]  # Custom event triggered by CircleCI
 
 jobs:
   close-linked-issues:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
     steps:
-      - name: Check if PR is merged
-        id: check_merged
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const pr = context.payload.pull_request;
-            if (!pr.merged) {
-              console.log("PR is closed but not merged. Exiting...");
-              return;
-            }
-
-      - name: Extract linked issue number
+      - name: Extract Linked Issues
         id: extract_issue
         uses: actions/github-script@v7
         with:
           script: |
-            const prBody = context.payload.pull_request.body;
+            const prNumber = ${{ github.event.client_payload.pull_request_number }};
+            if (!prNumber) {
+              console.log("No PR number received.");
+              return;
+            }
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
             const issueRegex = /(?:Closes|Fixes|Resolves) #(\d+)/gi;
             let match;
             let issues = [];
-            while ((match = issueRegex.exec(prBody)) !== null) {
+            while ((match = issueRegex.exec(pr.body)) !== null) {
               issues.push(match[1]);
             }
 
@@ -41,12 +43,17 @@ jobs:
             console.log(`Linked issues: ${issues.join(", ")}`);
             core.setOutput("issues", issues.join(" "));
 
-      - name: Close linked issues
+      - name: Close Linked Issues
         if: steps.extract_issue.outputs.issues != ''
-        uses: octokit/request-action@v2.x
+        uses: actions/github-script@v7
         with:
-          route: PATCH /repos/${{ github.repository }}/issues/{issue_number}
-          issue_number: ${{ steps.extract_issue.outputs.issues }}
-          state: closed
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issues = "${{ steps.extract_issue.outputs.issues }}".split(" ");
+            for (const issue_number of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: parseInt(issue_number, 10),
+                state: "closed"
+              });
+            }
