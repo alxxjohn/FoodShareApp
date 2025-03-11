@@ -96,6 +96,9 @@ workflows:
       - trigger_github_actions:
           requires:
             - pytest
+            - black
+            - flake8
+            - mypy
           filters:
             branches:
               only:
