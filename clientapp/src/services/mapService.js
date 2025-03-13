@@ -8,6 +8,7 @@ export default {
 
     const mockData = [
       {
+        id: 1,
         name: "Green Valley Food Bank",
         address: {
           lat: 37.7749,
@@ -20,6 +21,7 @@ export default {
         availability: true,
       },
       {
+        id: 2,
         name: "Hope for All Food Bank",
         address: {
           lat: 37.7758,
@@ -32,6 +34,7 @@ export default {
         availability: false,
       },
       {
+        id: 3,
         name: "Sunshine Food Pantry",
         address: {
           lat: 40.7128,
@@ -44,6 +47,7 @@ export default {
         availability: true,
       },
       {
+        id: 4,
         name: "Fresh Start Food Bank",
         address: {
           lat: 41.8781,

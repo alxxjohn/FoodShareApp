@@ -4,13 +4,13 @@
       v-for="(location, index) in markers" 
       :key="index" 
       :options="{ position: location }"
-      @click="onMarkerClick(location, index)" 
+      @click="onMarkerClick(location.id)"
     />
   </GoogleMap>
 </template>
 
 <script setup>
-import { defineProps, ref } from "vue";
+import { defineProps, defineEmits } from "vue";
 import { GoogleMap, Marker } from "vue3-google-map";
 
 const API_KEY = process.env.VUE_APP_GOOGLE_MAPS_API_KEY;
@@ -27,18 +27,13 @@ defineProps({
   },
 });
 
-// Store the selected marker information
-const selectedMarker = ref(null);
 
-// Handle the click event on a marker
-const onMarkerClick = (location, index) => {
-  // Set the selected marker's information (you could pass more data if needed)
-  selectedMarker.value = {
-    ...location,  // Include lat/lng if needed
-    name: `Food Bank ${index + 1}`,
-    street: `Street for location ${index + 1}`,
-    availableFoods: ["Canned Beans", "Rice", "Bread"], // You can replace these with actual data
-  };
+// Emit the selected marker data to the parent
+const emit = defineEmits(['markerClicked']);
+
+const onMarkerClick = (id) => {
+  // Emit the marker data to the parent component (FoodMapView.vue)
+  emit('markerClicked', id);
 };
 
 
