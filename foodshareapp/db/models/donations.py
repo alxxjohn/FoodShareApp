@@ -10,7 +10,9 @@ from foodshareapp.db.utils import db
 
 @dataclass
 class donationsModel:
-    pass
+    donation_uuid: UUID
+
+
 
 
 @dataclass
