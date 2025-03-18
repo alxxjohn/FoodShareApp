@@ -4,7 +4,6 @@
     <googleMap 
       :center="userLoc" 
       :markers="foodLocations" 
-      :foodInfo="foodInfo"
       @markerClicked="handleMarkerClick" 
       />
       <!-- @markerClicked listens markerClicked event from GoogleMap.vue-->
@@ -43,7 +42,7 @@
   </div>
 
   <div id="reserve-button" v-if="selectedMarker">
-      <button type="button" class="btn btn-primary" @click="reserve">Reserve</button>
+      <button type="button" class="btn btn-primary" @click="reserve" :disabled="disabledButton()">Reserve</button>
   </div>
 
 </template>
@@ -59,7 +58,7 @@ import { foodLists } from '@/services/foodService'
 import { reserveFood } from '@/services/reservationService'
 
 const foodLocations = ref([]);
-const foodInfo = ref([]);
+const locationInfo = ref([]);
 const selectedId = ref(null);
 const selectedMarker = ref(null);
 const selectedFood = ref(null);
@@ -75,10 +74,11 @@ onMounted(() => {
       foodLocations.value = data.map((location) => ({
         lat: location.address.lat,
         lng: location.address.lng,
-        id: location.id
+        id: location.id,
+        icon: getMarkerIcon(location.availability)
       }));
 
-      foodInfo.value = data.map((info) => ({
+      locationInfo.value = data.map((info) => ({
         id: info.id,
         name: info.name,
         street: info.street,
@@ -100,8 +100,27 @@ onMounted(() => {
 function handleMarkerClick (id) {
   // Store the clicked marker's data in the selectedMarker ref
   selectedId.value = id;
-  selectedMarker.value = foodInfo.value.find(info => info.id === id);
+  selectedMarker.value = locationInfo.value.find(info => info.id === id);
   console.log("Clicked Marker ID:", id);
+}
+
+//Change the marker color based on each location's availability
+function getMarkerIcon(availability){
+  if (availability === true) {
+    return "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; 
+  } else {
+    return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; 
+  }
+}
+
+//Diable reserve button if there is no availiabity at the location, or user didn't add all inforamtion
+function disabledButton(){  
+  return !(
+    selectedMarker.value.availability === true &&
+    uuId != null && 
+    selectedFood.value != null && 
+    selectedTime.value != null
+  );
 }
 
 function reserve(){

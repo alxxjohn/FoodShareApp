@@ -3,7 +3,7 @@
     <Marker 
       v-for="(location, index) in markers" 
       :key="index" 
-      :options="{ position: location }"
+      :options="{ position: location, icon: location.icon }"
       @click="onMarkerClick(location.id)"
     />
   </GoogleMap>
