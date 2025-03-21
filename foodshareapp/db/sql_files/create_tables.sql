@@ -37,6 +37,7 @@ CREATE TABLE users (
 ---- ideally this should connect to a uuid in the users table  if user is_business --
 
 
+
 -- todo add donations table -- 
 
 CREATE TABLE donation (
@@ -47,6 +48,7 @@ CREATE TABLE donation (
     donationAmount NUMERIC NOT NULL,
     PRIMARY KEY (donationID),
 );
+
 
 
 
