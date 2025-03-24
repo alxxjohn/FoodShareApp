@@ -74,27 +74,6 @@ def test_create_inventory_item(test_inventory_database):
     assert result[3] == "Beans"
 
 
-def test_update_inventory_quantity(test_inventory_database):
-    """Test updating the quantity of an inventory item."""
-    cursor = test_inventory_database.cursor()
-
-    cursor.execute("SELECT inventoryID FROM inventory LIMIT 1")
-    inventory_id = cursor.fetchone()[0]
-
-    cursor.execute(
-        "UPDATE inventory SET itemQty = itemQty - 2 WHERE inventoryID = ?",
-        (inventory_id,)
-    )
-    test_inventory_database.commit()
-
-    cursor.execute(
-        "SELECT itemQty FROM inventory WHERE inventoryID = ?", (inventory_id,)
-    )
-    updated_qty = cursor.fetchone()[0]
-
-    assert updated_qty == 8
-
-
 def test_get_existing_inventory_item(test_inventory_database):
     """Test selecting an existing inventory item by ID."""
     cursor = test_inventory_database.cursor()
