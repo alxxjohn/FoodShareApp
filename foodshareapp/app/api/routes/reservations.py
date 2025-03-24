@@ -1,4 +1,5 @@
 from uuid import uuid4, UUID
+from typing import List
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from foodshareapp.db.utils import Transaction, db_transaction
