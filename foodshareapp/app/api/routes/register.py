@@ -54,7 +54,6 @@ async def register(
         phone=create_user.phone,
         is_business=create_user.is_business is True,
         is_admin=create_user.is_admin is True,
-
     )
     await db_user.insert_user(new_user)
 
@@ -73,7 +72,6 @@ async def register(
         phone=new_user.phone is None,
         is_business=new_user.is_business is True,
         is_admin=new_user.is_admin is True,
-
     )
     await transaction.commit()
     return response

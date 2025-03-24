@@ -4,10 +4,12 @@ CREATE TABLE reservations
   reservationMadeTime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   foodbankID TEXT,
   itemID TEXT,
+  itemName TEXT,
   userID TEXT,
-  itemQuant INTEGER,
+  itemQty INTEGER,
   pickupTime DATETIME,
-  showedUP TEXT,
-  showedUPtime DATETIME
+  showedUP BOOLEAN,
+  showedUPtime DATETIME.
+  status TEXT,
 )
 

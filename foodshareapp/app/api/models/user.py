@@ -16,6 +16,7 @@ class User(UserBase):
 
     returned when accessing user models from the API.
     """
+
     company_name: str
     firstname: str
     lastname: str
