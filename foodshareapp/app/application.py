@@ -19,7 +19,7 @@ APP_ROOT = Path(__file__).parent.parent
 tags_metadata = [
     {
         "name": "Register",
-        "description": "Operations for registering a user.",
+        "description": "Register a user or business endpoint.",
     },
     {
         "name": "Auth",
