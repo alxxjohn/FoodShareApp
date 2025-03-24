@@ -34,8 +34,8 @@ tags_metadata = [
         "description": "Food Banks and Business endpoints.",
     },
     {
-        "name": "Food Donations",
-        "description": "Food Donations endpoints.",
+        "name": "Reservations",
+        "description": "Food Reservations endpoints.",
     },
     {
         "name": "Health",
