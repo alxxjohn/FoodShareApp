@@ -48,7 +48,8 @@ async def get_foodbank_inventory(foodbank_id: UUID) -> list[InventoryModel]:
         FROM inventory
         WHERE foodbank_id = :foodbank_id
     """
-    return await db.fetch_all(query, values={"foodbank_id": foodbank_id})
+    rows = await db.fetch_all(query, values={"foodbank_id": foodbank_id})
+    return [InventoryModel(**dict(row)) for row in rows]
 
 
 async def get_foodbank_donations(foodbank_id: UUID) -> list[DonationModel]:
@@ -58,4 +59,5 @@ async def get_foodbank_donations(foodbank_id: UUID) -> list[DonationModel]:
         WHERE foodbank_id = :foodbank_id
         ORDER BY donated_at DESC
     """
-    return await db.fetch_all(query, values={"foodbank_id": foodbank_id})
+    rows = await db.fetch_all(query, values={"foodbank_id": foodbank_id})
+    return [DonationModel(**dict(row)) for row in rows]
