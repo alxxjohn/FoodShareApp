@@ -45,6 +45,10 @@ tags_metadata = [
         "name": "Echo",
         "description": "Echo endpoint.",
     },
+    {
+        "name": "Inventory",
+        "description": "Inventory endpoint.",
+    },
 ]
 
 
