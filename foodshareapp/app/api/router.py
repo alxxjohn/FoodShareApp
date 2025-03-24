@@ -8,6 +8,7 @@ from foodshareapp.app.api.routes import (
     register,
     reservations,
     inventory,
+    foodbanks,
 )
 
 
@@ -23,3 +24,4 @@ api_router.include_router(
     reservations.router, prefix="/reservations", tags=["Reservations"]
 )
 api_router.include_router(inventory.router, prefix="/inventory", tags=["Inventory"])
+api_router.include_router(foodbanks.router, prefix="/foodbanks", tags=["Food Banks"])
