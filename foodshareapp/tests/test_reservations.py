@@ -40,7 +40,7 @@ def test_database():
             datetime.utcnow().isoformat(),
             False,
             None,
-            "active"
+            "active",
         )
     ]
 
@@ -51,7 +51,7 @@ def test_database():
          pickupTime, showedUp, showedUpTime, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        sample_data
+        sample_data,
     )
     conn.commit()
     yield conn
@@ -73,20 +73,18 @@ def test_create_reservation(test_database):
         datetime.utcnow().isoformat(),
         False,
         None,
-        "active"
+        "active",
     )
 
     cursor.execute(
         """
         INSERT INTO reservations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        new_reservation
+        new_reservation,
     )
     test_database.commit()
 
-    cursor.execute(
-        "SELECT * FROM reservations WHERE itemName = ?", ("Eggs",)
-    )
+    cursor.execute("SELECT * FROM reservations WHERE itemName = ?", ("Eggs",))
     reservation = cursor.fetchone()
 
     assert reservation is not None
@@ -110,14 +108,19 @@ def test_duplicate_reservation_id(test_database):
         datetime.utcnow().isoformat(),
         False,
         None,
-        "active"
+        "active",
     )
 
-    cursor.execute("INSERT INTO reservations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", reservation)
+    cursor.execute(
+        "INSERT INTO reservations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", reservation
+    )
     test_database.commit()
 
     with pytest.raises(sqlite3.IntegrityError):
-        cursor.execute("INSERT INTO reservations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", reservation)
+        cursor.execute(
+            "INSERT INTO reservations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            reservation,
+        )
         test_database.commit()
 
 
@@ -130,11 +133,13 @@ def test_update_reservation_status(test_database):
 
     cursor.execute(
         "UPDATE reservations SET status = ? WHERE reservationID = ?",
-        ("completed", reservation_id)
+        ("completed", reservation_id),
     )
     test_database.commit()
 
-    cursor.execute("SELECT status FROM reservations WHERE reservationID = ?", (reservation_id,))
+    cursor.execute(
+        "SELECT status FROM reservations WHERE reservationID = ?", (reservation_id,)
+    )
     updated_status = cursor.fetchone()[0]
 
     assert updated_status == "completed"
@@ -158,7 +163,9 @@ def test_get_existing_reservation(test_database):
     cursor.execute("SELECT reservationID FROM reservations LIMIT 1")
     reservation_id = cursor.fetchone()[0]
 
-    cursor.execute("SELECT * FROM reservations WHERE reservationID = ?", (reservation_id,))
+    cursor.execute(
+        "SELECT * FROM reservations WHERE reservationID = ?", (reservation_id,)
+    )
     reservation = cursor.fetchone()
 
     assert reservation is not None
@@ -181,15 +188,21 @@ def test_delete_reservation(test_database):
         datetime.utcnow().isoformat(),
         False,
         None,
-        "active"
+        "active",
     )
-    cursor.execute("INSERT INTO reservations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", reservation)
+    cursor.execute(
+        "INSERT INTO reservations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", reservation
+    )
     test_database.commit()
 
-    cursor.execute("DELETE FROM reservations WHERE reservationID = ?", (reservation_id,))
+    cursor.execute(
+        "DELETE FROM reservations WHERE reservationID = ?", (reservation_id,)
+    )
     test_database.commit()
 
-    cursor.execute("SELECT * FROM reservations WHERE reservationID = ?", (reservation_id,))
+    cursor.execute(
+        "SELECT * FROM reservations WHERE reservationID = ?", (reservation_id,)
+    )
     deleted = cursor.fetchone()
 
     assert deleted is None

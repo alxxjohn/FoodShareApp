@@ -63,7 +63,7 @@ async def insert_reservation(reservation: Reservation) -> CreateReservationRespo
     return await db.execute(stmt, values=asdict(reservation))
 
 
-async def update_reservation(reservation: Reservation) -> None:
+async def update_reservation(reservation: Reservation) -> Reservation:
     """Update an existing reservation."""
 
     stmnt = (
@@ -74,7 +74,7 @@ async def update_reservation(reservation: Reservation) -> None:
     return reservation
 
 
-async def delete_reservation(reservationID: UUID) -> None:
+async def delete_reservation(reservationID: UUID) -> UUID:
     """Delete a reservation."""
 
     stmnt = "DELETE FROM reservations WHERE reservationID = :reservationID"

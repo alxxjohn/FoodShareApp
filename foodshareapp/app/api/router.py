@@ -1,6 +1,13 @@
 from fastapi.routing import APIRouter
 
-from foodshareapp.app.api.routes import docs, echo, foodInsecurePerson, health, register, reservations
+from foodshareapp.app.api.routes import (
+    docs,
+    echo,
+    foodInsecurePerson,
+    health,
+    register,
+    reservations,
+)
 
 
 api_router = APIRouter()
@@ -11,4 +18,6 @@ api_router.include_router(
 )
 api_router.include_router(register.router, prefix="/register", tags=["Register"])
 api_router.include_router(echo.router, prefix="/echo", tags=["Echo"])
-api_router.include_router(reservations.router, prefix="/reservations", tags=["Reservations"])
+api_router.include_router(
+    reservations.router, prefix="/reservations", tags=["Reservations"]
+)

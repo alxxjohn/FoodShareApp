@@ -4,12 +4,13 @@ from typing import Optional
 from uuid import UUID
 
 
-class Reservation(BaseModel):
-    '''
+class CreateReservation(BaseModel):
+    """
     DTO for reservation models.
 
     returned when accessing reservation models from the API.
-    '''
+    """
+
     reservationID: UUID
     reservationMadeTime: datetime
     foodbankId: UUID
@@ -23,16 +24,7 @@ class Reservation(BaseModel):
     status: str
 
 
-class CreateReservation(BaseModel):
-    foodbankId: UUID
-    itemId: UUID
-    userId: UUID
-    itemName: str
-    itemQty: int
-    status: str
-
-
-class CreateReservationResponse(Reservation):
+class CreateReservationResponse(CreateReservation):
     reservationID: UUID
     reservationMadeTime: datetime
 

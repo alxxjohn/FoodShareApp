@@ -62,7 +62,7 @@ def test_database():
             "75001",
             "555-1234",
             1,
-            1
+            1,
         ),
         (
             "2c38e819-d4da-4e75-965d-dd9b2834e329",
@@ -87,8 +87,8 @@ def test_database():
             "90210",
             "555-5678",
             1,
-            0
-        )
+            0,
+        ),
     ]
 
     cursor.executemany(
@@ -100,7 +100,7 @@ def test_database():
         company_name, address, city, state, zip, phone, is_business, is_admin)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        sample_data
+        sample_data,
     )
     conn.commit()
 
@@ -135,17 +135,18 @@ def test_register_new_user(test_database):
         "60616",
         "555-9876",
         False,
-        False
+        False,
     )
 
     cursor.execute(
         "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        new_user
+        new_user,
     )
     test_database.commit()
 
     cursor.execute(
-        "SELECT * FROM users WHERE email = ?", ("newuser@example.com",)  # Correct email in SELECT query
+        "SELECT * FROM users WHERE email = ?",
+        ("newuser@example.com",),  # Correct email in SELECT query
     )
     user = cursor.fetchone()
 
@@ -184,12 +185,12 @@ def test_register_duplicate_email(test_database):
         "75001",
         "555-9999",
         0,
-        0
+        0,
     )
 
     cursor.execute(
         "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        existing_user
+        existing_user,
     )
     test_database.commit()
 
@@ -216,7 +217,7 @@ def test_register_duplicate_email(test_database):
         "75001",
         "555-9999",
         0,
-        0
+        0,
     )
 
     with pytest.raises(sqlite3.IntegrityError):
@@ -228,7 +229,7 @@ def test_register_duplicate_email(test_database):
                                company_name, address, city, state, zip, phone, is_business, is_admin)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            duplicate_user
+            duplicate_user,
         )
         test_database.commit()
 
@@ -260,7 +261,7 @@ def test_register_missing_fields(test_database):
         "90210",
         "555-8888",
         1,
-        1
+        1,
     )
 
     with pytest.raises(sqlite3.IntegrityError):
@@ -273,7 +274,7 @@ def test_register_missing_fields(test_database):
              company_name, address, city, state, zip, phone, is_business, is_admin)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            incomplete_user
+            incomplete_user,
         )
         test_database.commit()
 
@@ -305,7 +306,7 @@ def test_register_business_user(test_database):
         "90210",
         "555-4321",
         1,  # is_business = True
-        0   # is_admin = False
+        0,  # is_admin = False
     )
 
     cursor.execute(
@@ -316,15 +317,20 @@ def test_register_business_user(test_database):
                            company_name, address, city, state, zip, phone, is_business, is_admin)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        business_user
+        business_user,
     )
     test_database.commit()
 
-    cursor.execute("SELECT company_name, firstname, lastname FROM users WHERE email = ?", ("business@test.com",))
+    cursor.execute(
+        "SELECT company_name, firstname, lastname FROM users WHERE email = ?",
+        ("business@test.com",),
+    )
     user = cursor.fetchone()
 
     assert user is not None, "Business user should be found in the database"
-    assert user[0] == "Tech Corp", f"Expected company_name to be 'Tech Corp', got '{user[0]}'"
+    assert (
+        user[0] == "Tech Corp"
+    ), f"Expected company_name to be 'Tech Corp', got '{user[0]}'"
     assert user[1] is None, f"Expected firstname to be NULL, got '{user[1]}'"
     assert user[2] is None, f"Expected lastname to be NULL, got '{user[2]}'"
 
@@ -356,7 +362,7 @@ def test_register_admin_user(test_database):
         "10001",
         "555-0000",
         0,  # is_business = False
-        1   # is_admin = True
+        1,  # is_admin = True
     )
 
     cursor.execute(
@@ -367,10 +373,12 @@ def test_register_admin_user(test_database):
                            company_name, address, city, state, zip, phone, is_business, is_admin)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        admin_user
+        admin_user,
     )
     test_database.commit()
-    cursor.execute("SELECT email, is_admin FROM users WHERE email = ?", ("admin@test.com",))
+    cursor.execute(
+        "SELECT email, is_admin FROM users WHERE email = ?", ("admin@test.com",)
+    )
     user = cursor.fetchone()
 
     assert user is not None, "Admin user should be found in the database"
