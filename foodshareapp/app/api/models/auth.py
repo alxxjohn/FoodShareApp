@@ -8,8 +8,8 @@ class TokenSchema(BaseModel):
 
 
 class TokenPayload(BaseModel):
-    sub: str = None
-    exp: int = None
+    sub: str = "None"
+    exp: int = 0
 
 
 class UserAuth(BaseModel):

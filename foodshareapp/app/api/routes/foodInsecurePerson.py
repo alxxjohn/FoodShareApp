@@ -3,21 +3,17 @@ from dataclasses import asdict
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 
-# from fastapi.security import OAuth2PasswordBearer
-
-
+from foodshareapp.app.api.services.auth import get_current_user
 from foodshareapp.db.utils import Transaction, db_transaction
 from foodshareapp.app.api.models.user import ReturnUserResponse, DeleteUser
 import foodshareapp.db.models.user as db_user
 
-# TODO add token and auth
-# reuseable_oauth = OAuth2PasswordBearer(
-#     tokenUrl="/api/auth/login",
-#     scheme_name="JWT"
-# )
 
-router = APIRouter(dependencies=[Depends(db_transaction)])
+reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/api/auth/login", scheme_name="JWT")
+
+router = APIRouter(dependencies=[Depends(db_transaction), Depends(get_current_user)])
 
 
 @router.get(

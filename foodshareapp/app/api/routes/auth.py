@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer, HTTPBearer
 
-from foodshareapp.db.models.auth import (
+from foodshareapp.app.api.services.crypto import (
     create_access_token,
     create_refresh_token,
     verify_password,
@@ -21,7 +21,7 @@ reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/api/auth/login", scheme_name="
 
 
 @router.post(
-    "/login",
+    "/",
     summary="Create access and refresh tokens for user",
     response_model=TokenSchema,
 )

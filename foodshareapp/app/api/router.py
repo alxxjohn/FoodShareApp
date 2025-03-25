@@ -9,7 +9,7 @@ from foodshareapp.app.api.routes import (
     reservations,
     inventory,
     foodbanks,
-    auth
+    auth,
 )
 
 

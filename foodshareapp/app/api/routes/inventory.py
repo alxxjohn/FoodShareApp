@@ -2,12 +2,19 @@ from uuid import UUID
 from typing import List
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+
+from foodshareapp.app.api.services.auth import get_current_user
 from foodshareapp.db.utils import Transaction, db_transaction
 from foodshareapp.app.api.models.inventory import Inventory
 from foodshareapp.db.models import inventory as db_inventory
 
+
+reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/api/auth/login", scheme_name="JWT")
+
+
 timestamp = datetime.now(timezone.utc)
-router = APIRouter(dependencies=[Depends(db_transaction)])
+router = APIRouter(dependencies=[Depends(db_transaction), Depends(get_current_user)])
 
 
 @router.get(

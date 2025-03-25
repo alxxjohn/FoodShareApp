@@ -14,7 +14,7 @@ reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/api/auth/login", scheme_name="
 async def get_current_user(token: str = Depends(reuseable_oauth)):
     try:
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
-        token_data = TokenPayload(**payload)
+        token_data = TokenPayload(**dict(payload))
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -36,4 +36,4 @@ async def get_current_user(token: str = Depends(reuseable_oauth)):
             detail="Could not find user",
         )
 
-    return {"uuid": user.uuid, "email": user.email, "username": user.username}
+    return {"userId": user.userId, "email": user.email, "username": user.username}

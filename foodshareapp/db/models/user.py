@@ -10,7 +10,7 @@ from foodshareapp.db.utils import db
 
 @dataclass
 class UserModel:
-    uuid: UUID
+    userId: UUID
     email: str
     username: str
     company_name: Optional[str]
@@ -38,7 +38,7 @@ class UserModel:
 @dataclass
 class NewUser:
     __tablename__ = "users"
-    uuid: UUID
+    userId: UUID
     email: str
     username: str
     firstname: Optional[str]
@@ -80,20 +80,20 @@ async def insert_user(newuser: NewUser) -> UUID:
     """Creates a new user"""
 
     stmnt = (
-        "INSERT INTO foodshare_users (uuid, email, username, firstname, lastname, salt, password, last_login, company_name, address, city, state, zipCode, phone, is_business, is_admin) "
-        "VALUES (:uuid, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :company_name, :address, :city, :state, :zipCode, :phone, :is_business, :is_admin) "
+        "INSERT INTO foodshare_users (userId, email, username, firstname, lastname, salt, password, last_login, company_name, address, city, state, zipCode, phone, is_business, is_admin) "
+        "VALUES (:userId, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :company_name, :address, :city, :state, :zipCode, :phone, :is_business, :is_admin) "
         "RETURNING uuid"
     )
     return await db.execute(stmnt, values=asdict(newuser))
 
 
-async def get_user_by_id(uuid: UUID) -> Optional[UserModel]:
+async def get_user_by_id(userId: UUID) -> Optional[UserModel]:
     """Returns the user with the given id.
     Returns `None` if no such user exists.
     """
 
     stmnt = "SELECT * FROM foodshare_users WHERE uuid = :uuid"
-    db_user = await db.fetch_one(query=stmnt, values={"uuid": uuid})
+    db_user = await db.fetch_one(query=stmnt, values={"userId": userId})
 
     if db_user is None:
         return None
