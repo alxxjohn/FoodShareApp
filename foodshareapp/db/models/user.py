@@ -29,7 +29,7 @@ class UserModel:
     address: Optional[str]
     city: Optional[str]
     state: Optional[str]
-    zip: Optional[str]
+    zipCode: Optional[str]
     phone: Optional[str]
     is_business: bool
     is_admin: bool
@@ -50,7 +50,7 @@ class NewUser:
     address: Optional[str]
     city: Optional[str]
     state: Optional[str]
-    zip: Optional[str]
+    zipCode: Optional[str]
     phone: Optional[str]
     is_business: bool
     is_admin: bool
@@ -80,8 +80,8 @@ async def insert_user(newuser: NewUser) -> UUID:
     """Creates a new user"""
 
     stmnt = (
-        "INSERT INTO foodshare_users (uuid, email, username, firstname, lastname, salt, password, last_login, company_name, address, city, state, zip, phone, is_business, is_admin) "
-        "VALUES (:uuid, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :company_name, :address, :city, :state, :zip, :phone, :is_business, :is_admin) "
+        "INSERT INTO foodshare_users (uuid, email, username, firstname, lastname, salt, password, last_login, company_name, address, city, state, zipCode, phone, is_business, is_admin) "
+        "VALUES (:uuid, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :company_name, :address, :city, :state, :zipCode, :phone, :is_business, :is_admin) "
         "RETURNING uuid"
     )
     return await db.execute(stmnt, values=asdict(newuser))

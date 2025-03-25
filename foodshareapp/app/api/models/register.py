@@ -17,7 +17,7 @@ class NewUser(BaseModel):
     address: Optional[str]
     city: Optional[str]
     state: Optional[str]
-    zip: Optional[str]
+    zipCode: Optional[str]
     phone: Optional[str]
     is_business: bool = False
     is_admin: bool = False
@@ -34,7 +34,7 @@ class CreateUser(BaseModel):
     address: Optional[str]
     city: Optional[str]
     state: Optional[str]
-    zip: Optional[str]
+    zipCode: Optional[str]
     phone: Optional[str]
     is_business: bool
     is_admin: bool
