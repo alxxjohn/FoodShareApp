@@ -3,6 +3,8 @@ from datetime import datetime, timezone
 from pydantic import EmailStr
 from fastapi import APIRouter, Depends, HTTPException, status
 from foodshareapp.db.utils import Transaction, db_transaction
+
+
 from foodshareapp.db.models.user import NewUser
 from foodshareapp.db.models.business import NewBusiness
 from foodshareapp.app.api.models.register import CreateUser, CreateUserResponse
@@ -14,10 +16,6 @@ from foodshareapp.app.api.services.crypto import gen_salt, hash_password
 import foodshareapp.db.models.user as db_user
 import foodshareapp.db.models.business as db_business
 
-# reuseable_oauth = OAuth2PasswordBearer(
-#     tokenUrl="/api/auth/login",
-#     scheme_name="JWT"
-# )
 
 router = APIRouter(dependencies=[Depends(db_transaction)])
 
@@ -43,7 +41,7 @@ async def register_user(
     salt = gen_salt()
     password = hash_password(create_user.password, salt)
     new_user = NewUser(
-        uuid=uuid4(),
+        userId=uuid4(),
         email=EmailStr(create_user.email),
         username=create_user.username,
         firstname=create_user.firstname,
@@ -62,7 +60,7 @@ async def register_user(
     await db_user.insert_user(new_user)
 
     response = CreateUserResponse(
-        uuid=new_user.uuid,
+        userId=new_user.userId,
         email=EmailStr(new_user.email),
         username=new_user.username,
         firstname=new_user.firstname,
@@ -92,7 +90,7 @@ async def register_business(user_data: UserBusiness) -> CreateBusinessResponse:
     user_uuid = uuid4()
 
     new_user = NewUser(
-        uuid=user_uuid,
+        userId=user_uuid,
         email=user_data.email,
         username=user_data.username,
         firstname=user_data.firstname,
@@ -133,7 +131,7 @@ async def register_business(user_data: UserBusiness) -> CreateBusinessResponse:
             )
 
     return CreateBusinessResponse(
-        uuid=user_uuid,
+        userId=user_uuid,
         username=user_data.username,
         email=user_data.email,
         firstname=user_data.firstname,

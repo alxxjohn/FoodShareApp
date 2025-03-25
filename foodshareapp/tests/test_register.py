@@ -439,8 +439,8 @@ def test_register_business_user_with_linked_business(test_database):
         "Link City",
         "FL",
         "33101",
-        False,       # isFoodbank
-        user_id      # assoc_user
+        False,  # isFoodbank
+        user_id,  # assoc_user
     )
 
     # Insert user

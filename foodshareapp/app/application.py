@@ -38,16 +38,16 @@ tags_metadata = [
         "description": "Food Reservations endpoints.",
     },
     {
+        "name": "Inventory",
+        "description": "Inventory endpoint.",
+    },
+    {
         "name": "Health",
         "description": "Health check endpoint.",
     },
     {
         "name": "Echo",
         "description": "Echo endpoint.",
-    },
-    {
-        "name": "Inventory",
-        "description": "Inventory endpoint.",
     },
 ]
 
