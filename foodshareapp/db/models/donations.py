@@ -33,6 +33,16 @@ class CreateDonation:
 class CreateDonationResponse(Donation):
     donationID: UUID
     donationDate: datetime
+    businessID: UUID
+    foodbankID: UUID
+    donationWeight: int
+    donationDolAmt: float
+    donationsArray: List[UUID] 
+
+
+@dataclass
+class DeleteDonation(BaseModel):
+    donationID: UUID
 
 
 async def get_donation_by_id(donationID: UUID) -> Optional[Donation]:
@@ -65,11 +75,20 @@ async def insert_donation(donation: Donation) -> CreateDonationResponse:
     })
 
     for item_id in donation.donationsArray:
-        update_stmt = (
+        update_qty_stmt = (
             "UPDATE FoodBankInventory SET itemquant = itemquant + 1 "
             "WHERE foodbankID = :foodbankID AND itemID = :itemID"
         )
-        await inventory_db.execute(update_stmt, values={
+        await inventory_db.execute(update_qty_stmt, values={
+            "foodbankID": donation.foodbankID,
+            "itemID": str(item_id)
+        })
+
+        update_status_stmt = (
+            "UPDATE FoodBankInventory SET itemStatus = 'available' "
+            "WHERE foodbankID = :foodbankID AND itemID = :itemID"
+        )
+        await inventory_db.execute(update_status_stmt, values={
             "foodbankID": donation.foodbankID,
             "itemID": str(item_id)
         })
