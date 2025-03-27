@@ -8,7 +8,6 @@ def test_database():
     conn = sqlite3.connect(":memory:")
     cursor = conn.cursor()
 
-    # Create users table
     cursor.execute(
         """
         CREATE TABLE users (
@@ -39,7 +38,6 @@ def test_database():
         """
     )
 
-    # Create businesses table with lat/lng fields
     cursor.execute(
         """
         CREATE TABLE businesses (
@@ -51,7 +49,7 @@ def test_database():
             zipCode TEXT NOT NULL,
             lat TEXT,
             lng TEXT,
-            isFoodbank BOOLEAN NOT NULL DEFAULT 0,
+            is_foodbank BOOLEAN NOT NULL DEFAULT 0,
             assoc_user TEXT NOT NULL
         );
         """
@@ -108,7 +106,6 @@ def test_register_business_user_with_linked_business(test_database):
         user_id,
     )
 
-    # Insert user
     cursor.execute(
         """
         INSERT INTO users (uuid, email, username, firstname, lastname, salt, password,
@@ -120,10 +117,9 @@ def test_register_business_user_with_linked_business(test_database):
         new_user,
     )
 
-    # Insert linked business
     cursor.execute(
         """
-        INSERT INTO businesses (BusinessId, companyName, address, city, state, zipCode, lat, lng, isFoodbank, assoc_user)
+        INSERT INTO businesses (BusinessId, companyName, address, city, state, zipCode, lat, lng, is_foodbank, assoc_user)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         new_business,
@@ -143,3 +139,134 @@ def test_register_business_user_with_linked_business(test_database):
     assert business[6] == "25.7617", f"Expected lat to be 25.7617, got {business[6]}"
     assert business[7] == "-80.1918", f"Expected lng to be -80.1918, got {business[7]}"
     assert business[9] == user_id, "Business should be linked to the correct user"
+
+
+def test_register_foodbank_account(test_database):
+    """Test registering a foodbank business account."""
+    cursor = test_database.cursor()
+
+    user_id = "foodbank-user-0001"
+    business_id = "foodbank-biz-0001"
+
+    user = (
+        user_id,
+        "foodbank@example.com",
+        "foodbankuser",
+        "Food",
+        "Bank",
+        "salt",
+        "pw_hash",
+        1,
+        "2025-03-10 10:00:00",
+        None,
+        None,
+        0,
+        0,
+        1,
+        "2025-03-10 10:05:00",
+        "Helping Hands",
+        "100 Charity St",
+        "Care City",
+        "TX",
+        "73301",
+        "555-1212",
+        1,
+        0
+    )
+
+    business = (
+        business_id,
+        "Helping Hands",
+        "100 Charity St",
+        "Care City",
+        "TX",
+        "73301",
+        "30.2672",
+        "-97.7431",
+        True,
+        user_id
+    )
+
+    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", user)
+    cursor.execute("INSERT INTO businesses VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", business)
+    test_database.commit()
+
+    cursor.execute("SELECT is_foodbank FROM businesses WHERE BusinessId = ?", (business_id,))
+    is_foodbank = cursor.fetchone()[0]
+    assert is_foodbank == 1, "Business should be marked as a foodbank"
+
+
+def test_user_account_locked_status(test_database):
+    """Test inserting a user with account_locked = True."""
+    cursor = test_database.cursor()
+
+    user = (
+        "locked-user-0001",
+        "locked@example.com",
+        "lockeduser",
+        "Locked",
+        "Out",
+        "salt",
+        "pw_hash",
+        1,
+        "2025-04-01 09:00:00",
+        None,
+        None,
+        0,
+        1,
+        1,
+        "2025-04-01 09:10:00",
+        "Locked Co",
+        "404 Error Ln",
+        "Nowhere",
+        "NA",
+        "00000",
+        "000-0000",
+        0,
+        0
+    )
+
+    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", user)
+    test_database.commit()
+
+    cursor.execute("SELECT account_locked FROM users WHERE uuid = ?", ("locked-user-0001",))
+    locked_status = cursor.fetchone()[0]
+    assert locked_status == 1, "User account should be locked"
+
+
+def test_admin_user_registration(test_database):
+    """Test registering an admin user."""
+    cursor = test_database.cursor()
+
+    user = (
+        "admin-user-0001",
+        "admin@example.com",
+        "adminuser",
+        "Admin",
+        "User",
+        "salt",
+        "pw_hash",
+        1,
+        "2025-04-01 08:00:00",
+        None,
+        None,
+        0,
+        0,
+        1,
+        "2025-04-01 08:10:00",
+        "Admin Co",
+        "1 Main St",
+        "Capital",
+        "DC",
+        "20001",
+        "123-4567",
+        0,
+        1
+    )
+
+    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", user)
+    test_database.commit()
+
+    cursor.execute("SELECT is_admin FROM users WHERE uuid = ?", ("admin-user-0001",))
+    is_admin = cursor.fetchone()[0]
+    assert is_admin == 1, "User should be registered as an admin"
