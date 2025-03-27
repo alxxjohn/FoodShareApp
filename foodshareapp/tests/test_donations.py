@@ -2,6 +2,7 @@ import pytest
 import sqlite3
 from uuid import uuid4
 from datetime import datetime
+import json
 
 
 @pytest.fixture(scope="session")
@@ -14,12 +15,12 @@ def test_database():
         """
         CREATE TABLE donations (
             donationID TEXT PRIMARY KEY,
-            donationDate TEXT,
-            businessID TEXT,
-            foodbankID TEXT,
-            donationWeight INTEGER,
-            donationDolAmt REAL,
-            donationsArray TEXT
+            donationMadeTime TEXT,
+            foodbankId TEXT,
+            userId TEXT,
+            donationsArray TEXT,
+            pickupTime TEXT,
+            status TEXT
         );
         """
     )
@@ -30,17 +31,18 @@ def test_database():
             datetime.utcnow().isoformat(),
             str(uuid4()),
             str(uuid4()),
-            100,
-            250.00,
-            '["' + str(uuid4()) + '", "' + str(uuid4()) + '"]',
+            '[{"itemId": "' + str(uuid4()) + '", "itemName": "Rice", "itemQty": 10}]',
+            None,
+            "available",
         )
     ]
 
     cursor.executemany(
         """
-        INSERT INTO donations
-        (donationID, donationDate, businessID, foodbankID,
-         donationWeight, donationDolAmt, donationsArray)
+        INSERT INTO donations (
+            donationID, donationMadeTime, foodbankId, userId,
+            donationsArray, pickupTime, status
+        )
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
         sample_data,
@@ -52,31 +54,44 @@ def test_database():
 
 def test_create_donation(test_database):
     """Test inserting a new donation."""
+
     cursor = test_database.cursor()
+
+    donations_json = json.dumps(
+        [{"itemId": str(uuid4()), "itemName": "Beans", "itemQty": 5}]
+    )
 
     new_donation = (
         str(uuid4()),
         datetime.utcnow().isoformat(),
         str(uuid4()),
         str(uuid4()),
-        75,
-        180.00,
-        '["' + str(uuid4()) + '"]',
+        donations_json,
+        None,
+        "available",
     )
 
     cursor.execute(
         """
-        INSERT INTO donations VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO donations (
+            donationID, donationMadeTime, foodbankId, userId,
+            donationsArray, pickupTime, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
         new_donation,
     )
     test_database.commit()
 
-    cursor.execute("SELECT * FROM donations WHERE donationDolAmt = ?", (180.00,))
+    cursor.execute("SELECT * FROM donations ORDER BY donationMadeTime DESC LIMIT 1")
     donation = cursor.fetchone()
 
     assert donation is not None
-    assert donation[5] == 180.00
+
+    print("Raw donationsArray:", donation[4])
+    items = json.loads(donation[4])
+    print("Parsed items:", items)
+
+    assert any(item["itemName"] == "Beans" for item in items)
 
 
 def test_duplicate_donation_id(test_database):
@@ -84,15 +99,14 @@ def test_duplicate_donation_id(test_database):
     cursor = test_database.cursor()
 
     donation_id = str(uuid4())
-
     donation = (
         donation_id,
         datetime.utcnow().isoformat(),
         str(uuid4()),
         str(uuid4()),
-        20,
-        90.00,
-        '["' + str(uuid4()) + '"]',
+        '[{"itemId": "' + str(uuid4()) + '", "itemName": "Oil", "itemQty": 2}]',
+        None,
+        "available",
     )
 
     cursor.execute("INSERT INTO donations VALUES (?, ?, ?, ?, ?, ?, ?)", donation)
@@ -101,27 +115,6 @@ def test_duplicate_donation_id(test_database):
     with pytest.raises(sqlite3.IntegrityError):
         cursor.execute("INSERT INTO donations VALUES (?, ?, ?, ?, ?, ?, ?)", donation)
         test_database.commit()
-
-
-def test_update_donation_weight(test_database):
-    """Test updating the donationWeight of a donation."""
-    cursor = test_database.cursor()
-
-    cursor.execute("SELECT donationID FROM donations LIMIT 1")
-    donation_id = cursor.fetchone()[0]
-
-    cursor.execute(
-        "UPDATE donations SET donationWeight = ? WHERE donationID = ?",
-        (200, donation_id),
-    )
-    test_database.commit()
-
-    cursor.execute(
-        "SELECT donationWeight FROM donations WHERE donationID = ?", (donation_id,)
-    )
-    updated_weight = cursor.fetchone()[0]
-
-    assert updated_weight == 200
 
 
 def test_get_nonexistent_donation(test_database):
@@ -159,9 +152,9 @@ def test_delete_donation(test_database):
         datetime.utcnow().isoformat(),
         str(uuid4()),
         str(uuid4()),
-        55,
-        110.00,
-        '["' + str(uuid4()) + '"]',
+        '[{"itemId": "' + str(uuid4()) + '", "itemName": "Milk", "itemQty": 3}]',
+        None,
+        "available",
     )
     cursor.execute("INSERT INTO donations VALUES (?, ?, ?, ?, ?, ?, ?)", donation)
     test_database.commit()

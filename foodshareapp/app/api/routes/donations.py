@@ -22,25 +22,28 @@ router = APIRouter(dependencies=[Depends(db_transaction), Depends(get_current_us
 )
 async def create_donation(
     create_donation: CreateDonation, transaction: Transaction = Depends(db_transaction)
-) -> CreateDonationResponse:
-    """
-    Create a donation.
-    """
+):
     current_user = await get_current_user()
     current_user_id = current_user["userId"]
+    donation_id = uuid4()
+    timestamp = datetime.now(timezone.utc)
 
-    new_donation = Donation(
-        donationID=uuid4(),
-        donationMadeTime=datetime.now(timezone.utc),
-        foodbankId=uuid4(),
-        itemId=uuid4(),
-        itemName=create_donation.itemName,
+    donation_items = []
+    for item in create_donation.donationsArray:
+        donation_items.append(
+            {"itemId": str(uuid4()), "itemName": item.itemName, "itemQty": item.itemQty}
+        )
+
+    donation = Donation(
+        donationID=donation_id,
+        donationMadeTime=timestamp,
+        foodbankId=create_donation.foodbankId,
         userId=current_user_id,
-        itemQty=create_donation.itemQty,
+        donationsArray=donation_items,
         status="available",
     )
-    await db_donation.insert_donation(new_donation)
-    return CreateDonationResponse(**new_donation.dict())
+
+    return await db_donation.insert_donation(donation)
 
 
 @router.get("/{donationID}", status_code=status.HTTP_200_OK, response_model=Donation)
