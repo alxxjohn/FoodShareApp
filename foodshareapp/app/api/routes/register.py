@@ -20,7 +20,6 @@ import foodshareapp.db.models.business as db_business
 router = APIRouter(dependencies=[Depends(db_transaction)])
 
 
-# TODO add last login
 @router.post(
     "/user", status_code=status.HTTP_201_CREATED, response_model=CreateUserResponse
 )
