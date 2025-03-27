@@ -3,6 +3,7 @@ import main from '@/views/mainView.vue'
 import login from '@/views/loginView.vue'
 import signUp from '@/views/signUpView.vue'
 import homePage from '@/views/homePage.vue'
+import termsAndConditions from '@/views/termsAndConditions.vue'
 // import Dashboard from '@/views/Dashboard.vue'
 // import store from '@/store' // Assuming you manage authentication state in Vuex or Pinia
 
@@ -11,7 +12,8 @@ const routes = [
   { path: '/', component:  homePage},
   { path: '/main', component: main },
   { path: '/login', component: login },
-  { path: '/signup', component: signUp }
+  { path: '/signup', component: signUp },
+  { path: '/termsandconditions', component: termsAndConditions }
   // { path: '/dashboard', component: Dashboard }
 ]
 
