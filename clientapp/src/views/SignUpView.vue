@@ -3,54 +3,54 @@
   <form @submit.prevent="submitForm" class="row g-3">
     <div class="col-12">
       <label for="inputEmail4" class="form-label">Email</label>
-      <input type="email" class="form-control" id="inputEmail4">
+      <input type="email" class="form-control" id="inputEmail4" v-model="email">
     </div>
     <div class="col-md-6">
       <label for="username" class="form-label">Username</label>
-      <input type="username" class="form-control" id="username">
+      <input type="username" class="form-control" id="username" v-model="username">
     </div>
     <div class="col-md-6">
       <label for="inputPassword4" class="form-label">Password</label>
-      <input type="password" class="form-control" id="inputPassword4">
+      <input type="password" class="form-control" id="inputPassword4" v-model="password">
     </div>
     <div v-if="accountTypeRadio === 'personal'" class="col-md-6">
       <label for="inputFirstName" class="form-label">First Name</label>
-      <input type="firstName" class="form-control" id="inputFirstName">
+      <input type="firstName" class="form-control" id="inputFirstName" v-model="firstname">
     </div>
     <div v-if="accountTypeRadio === 'personal'" class="col-md-6">
       <label for="inputLastName" class="form-label">Last Name</label>
-      <input type="lastName" class="form-control" id="inputLastName">
+      <input type="lastName" class="form-control" id="inputLastName" v-model="lastname">
     </div>
     <div v-if="accountTypeRadio !== 'personal'" class="col-12">
       <label for="inputCompanyName" class="form-label">Company Name</label>
-      <input type="text" class="form-control" id="inputCompanyName" v-model="inputCompanyName">
+      <input type="text" class="form-control" id="inputCompanyName" v-model="companyname">
     </div>
     <div class="col-12">
       <label for="inputAddress" class="form-label">Address</label>
-      <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+      <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" v-model="address">
     </div>
     <div class="col-12">
       <label for="inputAddress2" class="form-label">Address 2</label>
-      <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+      <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor" v-model="address2">
     </div>
     <div class="col-md-4">
       <label for="inputCity" class="form-label">City</label>
-      <input type="text" class="form-control" id="inputCity">
+      <input type="text" class="form-control" id="inputCity" v-model="city">
     </div>
     <div class="col-md-4">
       <label for="inputState" class="form-label">State</label>
-      <select id="inputState" class="form-select">
+      <select id="inputState" class="form-select" v-model="state">
         <option selected>Choose...</option>
         <option>...</option>
       </select>
     </div>
     <div class="col-md-2">
       <label for="inputZip" class="form-label">Zip</label>
-      <input type="text" class="form-control" id="inputZip">
+      <input type="text" class="form-control" id="inputZip" v-model="zip">
     </div>
     <div class="col-md-2">
       <label for="inputPhone" class="form-label">Phone Number</label>
-      <input type="text" class="form-control" id="inputPhone">
+      <input type="text" class="form-control" id="inputPhone" v-model="phone">
     </div>
     <div class="col-md-6">
       <div class="form-check">
@@ -86,12 +86,16 @@
 
 <script>
 import authService from '@/services/authService';
+//import { state } from '@/utils/const';
 
  export default {
   data() {
     return {
       accountTypeRadio: 'personal',  // TypeScript type declaration
-      inputCompanyName: '',
+      companyname: '',
+      username: '',
+      firstname: '',
+      lastname: ''
     };
   },
 
@@ -99,15 +103,15 @@ import authService from '@/services/authService';
   submitForm() {
     const data = {
       email: this.email,
-      company_name: this.inputCompanyName,
+      company_name: this.companyname,
       username: this.username,
       firstname: this.firstname,
       lastname: this.lastname,
       password: this.password,
-      terms: this.terms,
+      terms: true,
       address: this.address,
       city: this.city,
-      state: this.state,
+      state: 'this.state',
       zip: this.zip,
       phone: this.phone,
       is_business: false,
