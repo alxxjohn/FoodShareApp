@@ -1,7 +1,7 @@
-
 networks:
   monitor-net:
     driver: bridge
+
 services:
   api:
     build:
@@ -10,7 +10,7 @@ services:
     image: foodshareapp:${FOODSHAREAPP_API_VERSION:-latest}
     restart: always
     env_file:
-    - .env
+      - .env
     depends_on:
       db:
         condition: service_healthy
@@ -19,7 +19,6 @@ services:
     links:
       - db
       - cache
-
     environment:
       FOODSHAREAPP_API_HOST: 0.0.0.0
       FOODSHAREAPP_API_DB_HOST: foodshareapp-db
@@ -30,6 +29,10 @@ services:
       REDIS_HOST: cache
       REDIS_PORT: 6379
       REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
 
   client:
     build:
@@ -38,11 +41,15 @@ services:
       target: prod
     restart: always
     ports:
-    - '${CLIENT_PROD_PORT}:${NGINX_PORT}'
+      - '${CLIENT_PROD_PORT}:${NGINX_PORT}'
     env_file:
-    - .env
+      - .env
     depends_on:
-    - api
+      - api
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
 
   db:
     image: postgres:13.6-bullseye
@@ -52,27 +59,27 @@ services:
       POSTGRES_USER: "foodshareapp"
       POSTGRES_DB: "foodshareapp"
     volumes:
-    - foodshareapp-db-data:/var/lib/postgresql/data
+      - foodshareapp-db-data:/var/lib/postgresql/data
     restart: always
     healthcheck:
       test: pg_isready -U foodshareapp
       interval: 2s
       timeout: 3s
       retries: 40
+
   cache:
     image: redis:6.2-alpine
     restart: always
     ports:
       - '6379:6379'
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    volumes: 
+    volumes:
       - cache:/data
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
       interval: 1s
       timeout: 3s
       retries: 5
-
 
 volumes:
   foodshareapp-db-data:

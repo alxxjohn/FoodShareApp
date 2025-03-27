@@ -12,7 +12,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <div class="navbar-nav mr-auto">
               <router-link to="/" class="nav-item nav-link">Main</router-link>
-              <router-link to="/SignOut" class="nav-link">Sign Out</router-link>
+              <!-- <router-link to="/SignOut" class="nav-link">Sign Out</router-link> -->
           </div>
       </div>
     </nav>
