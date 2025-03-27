@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import main from '@/views/mainView.vue'
-import login from '@/views/loginView.vue'
-import signUp from '@/views/signUpView.vue'
-import homePage from '@/views/homePage.vue'
-import termsAndConditions from '@/views/termsAndConditions.vue'
+import main from '@/views/MainView.vue'
+import login from '@/views/LoginView.vue'
+import signUp from '@/views/SignUpView.vue'
+import homePage from '@/views/HomePage.vue'
+import termsAndConditions from '@/views/TermsAndConditions.vue'
 import foodMap from '@/views/FoodMapView.vue'
 
 // import Dashboard from '@/views/Dashboard.vue'
@@ -15,7 +15,7 @@ const routes = [
   { path: '/main', component: main },
   { path: '/login', component: login },
   { path: '/signup', component: signUp },
-  { path: '/termsandconditions', component: termsAndConditions }
+  { path: '/termsandconditions', component: termsAndConditions },
   { path: '/foodmap', component: foodMap }
   // { path: '/dashboard', component: Dashboard }
 ]
