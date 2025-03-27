@@ -1,11 +1,11 @@
 from uuid import uuid4, UUID
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, status, HTTPException
 from foodshareapp.db.utils import Transaction, db_transaction
 from fastapi.security import OAuth2PasswordBearer
 
 
-from foodshareapp.db.models.donations import Donation
+# from foodshareapp.db.models.donations import Donation
 from foodshareapp.app.api.models.donations import CreateDonation, CreateDonationResponse, Donation
 from foodshareapp.app.api.services.auth import get_current_user
 
@@ -15,6 +15,7 @@ import foodshareapp.db.models.donations as db_donation
 
 reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/api/auth/login", scheme_name="JWT")
 router = APIRouter(dependencies=[Depends(db_transaction), Depends(get_current_user)])
+current_user = get_current_user()
 
 
 @router.post(
@@ -28,16 +29,18 @@ async def create_donation(
 
     """
 
+    current_user_id = current_user["userId"]
+
     new_donation = Donation(
         donationID=uuid4(),
-        donationMadeTime=datetime.utcnow(),
+        donationMadeTime=datetime.now(timezone.utc),
         foodbankId=uuid4(),
         itemId=uuid4(),
         itemName=create_donation.itemName,
-        userId=uuid4(),
+        userId=current_user_id,
         itemQty=create_donation.itemQty,
-        pickupTime=create_donation.pickupTime,
-        status=create_donation.status,
+        pickupTime=None,
+        status="Available",
     )
     await db_donation.insert_donation(new_donation)
     return CreateDonationResponse(**new_donation.dict())
