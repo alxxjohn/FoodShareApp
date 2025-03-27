@@ -3,7 +3,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app/src/
+      - .:/app/src
     environment:
       # Enables autoreload.
       FOODSHAREAPP_API_RELOAD: "True"

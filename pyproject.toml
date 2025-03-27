@@ -40,6 +40,7 @@ anyio = "^3.0.0"
 aiosqlite = "^0.21.0"
 geopy = "^2.4.1"
 urllib3 = "1.26.18"
+psycopg2-binary = "^2.9.5"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
