@@ -68,6 +68,6 @@ fe-build:
 
 db-fill:
 	echo "🚀 Loading SQL into Postgres..."
-	docker exec foodshareapp-api-1 python3 /app/src/load_sql.py
+	docker exec foodshareapp-api-1 python3 /app/src/db_loader/load_sql.py
 	echo \"🧪 Verifying required tables exist...\"
-	docker exec foodshareapp-api-1 python3 /app/src/check_db.py
+	docker exec foodshareapp-api-1 python3 /app/src/db_loader/check_db.py
