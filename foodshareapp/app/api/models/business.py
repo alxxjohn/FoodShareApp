@@ -22,6 +22,8 @@ class UserBusiness(BaseModel):
     city: str
     state: str
     zipCode: str
+    lat: str
+    lng: str
     phone: str
     BusinessId: UUID
     companyName: str
@@ -42,6 +44,8 @@ class NewBusiness(BaseModel):
     city: str
     state: str
     zipCode: str
+    lat: str
+    lng: str
     isFoodbank: bool
     assoc_user: UUID
 
@@ -57,6 +61,8 @@ class CreateBusinessResponse(BaseModel):
     city: str
     state: str
     zipCode: str
+    lat: str
+    lng: str
     isFoodbank: bool
     assoc_user: UUID
 
@@ -80,6 +86,8 @@ class CreateUserBusiness:
     city: str
     state: str
     zipCode: str
+    lat: str
+    lng: str
     phone: str
     is_business: bool = False
     is_admin: bool = False
