@@ -6,12 +6,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from foodshareapp.db.utils import Transaction, db_transaction
 from foodshareapp.db.models.user import NewUser
-from foodshareapp.db.models.business import NewBusiness
+from foodshareapp.db.models.business import NewBusiness, CreateUserBusiness
 from foodshareapp.app.api.models.register import CreateUser, CreateUserResponse
-from foodshareapp.app.api.models.business import (
-    CreateBusinessResponse,
-    UserBusiness,
-)
+from foodshareapp.app.api.models.business import CreateBusinessResponse
 from foodshareapp.app.api.services.crypto import gen_salt, hash_password
 import foodshareapp.db.models.user as db_user
 import foodshareapp.db.models.business as db_business
@@ -39,7 +36,6 @@ async def register_user(
 
     salt = gen_salt()
     password = hash_password(create_user.password, salt)
-
 
     new_user = NewUser(
         userId=uuid4(),
@@ -80,7 +76,7 @@ async def register_user(
 
 
 @router.post("/business", response_model=CreateBusinessResponse)
-async def register_business(user_data: UserBusiness) -> CreateBusinessResponse:
+async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResponse:
     """
     Creates a business model in the database.
     This also create a login user for the business Account.
@@ -89,7 +85,9 @@ async def register_business(user_data: UserBusiness) -> CreateBusinessResponse:
     salt = gen_salt()
     password = hash_password(user_data.password, salt)
     user_uuid = uuid4()
-    full_address = f"{user_data.address}, {user_data.city}, {user_data.state} {user_data.zipCode}"
+    full_address = (
+        f"{user_data.address}, {user_data.city}, {user_data.state} {user_data.zipCode}"
+    )
     lat, lng = geocode_address(full_address)
 
     new_user = NewUser(
@@ -125,7 +123,7 @@ async def register_business(user_data: UserBusiness) -> CreateBusinessResponse:
             zipCode=user_data.zipCode,
             lat=str(lat) if lat else "",
             lng=str(lng) if lng else "",
-            isFoodbank=user_data.isFoodbank,
+            is_foodbank=user_data.is_foodbank,
             assoc_user=user_uuid,
         )
         try:
@@ -144,6 +142,6 @@ async def register_business(user_data: UserBusiness) -> CreateBusinessResponse:
         zipCode=new_business.zipCode,
         lat=new_business.lat,
         lng=new_business.lng,
-        isFoodbank=new_business.isFoodbank,
+        is_foodbank=new_business.is_foodbank,
         assoc_user=new_business.assoc_user,
     )

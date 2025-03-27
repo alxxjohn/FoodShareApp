@@ -11,7 +11,7 @@ def geocode_address(address: str):
             return {
                 "latitude": location.latitude,
                 "longitude": location.longitude,
-                "formatted_address": location.address
+                "formatted_address": location.address,
             }
         return None
     except (GeocoderTimedOut, GeocoderServiceError) as e:
