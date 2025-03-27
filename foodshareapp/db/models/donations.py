@@ -10,12 +10,19 @@ from foodshareapp.db.models.inventory import db as inventory_db
 
 
 @dataclass
+class DonationItemResponse(BaseModel):
+    itemId: UUID
+    itemName: str
+    itemQty: int
+
+
+@dataclass
 class Donation(BaseModel):
     donationID: UUID
     donationMadeTime: datetime
     foodbankId: UUID
     userId: UUID
-    donationsArray: List[dict]
+    donationsArray: List[DonationItemResponse]
     pickupTime: datetime
     status: str
 
@@ -26,7 +33,7 @@ class CreateDonation:
     foodbankID: UUID
     donationWeight: int
     donationDolAmt: float
-    donationsArray: List[dict]
+    donationsArray: List[DonationItemResponse]
 
 
 @dataclass
@@ -37,7 +44,7 @@ class CreateDonationResponse(Donation):
     foodbankID: UUID
     donationWeight: int
     donationDolAmt: float
-    donationsArray: List[dict]
+    donationsArray: List[DonationItemResponse]
 
 
 @dataclass

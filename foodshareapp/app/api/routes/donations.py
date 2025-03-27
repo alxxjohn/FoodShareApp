@@ -5,7 +5,7 @@ from foodshareapp.db.utils import Transaction, db_transaction
 from fastapi.security import OAuth2PasswordBearer
 
 
-from foodshareapp.db.models.donations import Donation
+from foodshareapp.db.models.donations import Donation, DonationItemResponse
 from foodshareapp.app.api.models.donations import CreateDonation, CreateDonationResponse
 from foodshareapp.app.api.services.auth import get_current_user
 
@@ -30,9 +30,7 @@ async def create_donation(
 
     donation_items = []
     for item in create_donation.donationsArray:
-        donation_items.append(
-            {"itemId": str(uuid4()), "itemName": item.itemName, "itemQty": item.itemQty}
-        )
+        donation_items.append(DonationItemResponse(**item.dict()))
 
     donation = Donation(
         donationID=donation_id,
