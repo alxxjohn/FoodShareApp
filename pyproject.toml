@@ -38,7 +38,8 @@ starlette-testclient = "^0.2.0"
 trio = "^0.22.0"
 anyio = "^3.0.0"
 aiosqlite = "^0.21.0"
-psycopg2-binary = "^2.9.10"
+geopy = "^2.4.1"
+urllib3 = "1.26.18"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
