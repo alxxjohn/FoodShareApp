@@ -16,28 +16,29 @@
     </div>
     <div>
       <label>Address:</label>
-      <span>{{ selectedMarker.street }}</span>
+      <span>{{ selectedMarker.street }}, {{ selectedMarker.city }}, {{ selectedMarker.state }} {{ selectedMarker.zip }}</span>
     </div>
     <div>
       <label>Phone:</label>
       <span>{{ selectedMarker.phone }}</span>
     </div>
     <div>
-      <label>Open Hours:</label>
-      <span>{{ selectedMarker.openHours }}</span>
-    </div>
-    <div>
       <label>Available Foods:</label>
       <select v-model="selectedFood">
-        <option v-for="food in selectedMarker.availableFoods" :key="food.id" :value="food.id">
+        <option v-for="food in selectedMarkerInv.availableFoods" :key="food.id" :value="food">
           {{ food.desc }}
         </option>
       </select>
     </div>
+    <div v-if="selectedFood">
+      <label>Quantity: </label>
+      <input type="text" class="form-control" v-model="selectedQuant" aria-describedby="maxQuantHelp">
+      <div id="maxQuantHelp" class="form-text">The maximum quantity is {{ selectedFood.quant }}</div>
+    </div>
   </div>
 
   <div id="timepicker-form" v-if="selectedMarker"> 
-    <label for="timepicker">Select a time:</label>
+    <label>Select a time:</label>
     <input type="time" class="form-control" id="timepicker" v-model="selectedTime" />
   </div>
 
@@ -54,22 +55,23 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import googleMap from '@/components/GoogleMap.vue';
-import { foodLists } from '@/services/foodService'
+import { getFoodbankLists, getInventory } from '@/services/foodService'
 import { reserveFood } from '@/services/reservationService'
 
 const foodLocations = ref([]);
 const locationInfo = ref([]);
-const selectedId = ref(null);
 const selectedMarker = ref(null);
+const selectedMarkerInv = ref([]);
 const selectedFood = ref(null);
 const selectedTime = ref(null);
+const selectedQuant = ref(null);
 
 //TOOD: this should be retrieved from the back (login info? from cache?)
 const userLoc = ref({lat: 37.7730, lng: -122.4183});
 const uuId = 1;
 
 onMounted(() => {
-  foodLists()
+  getFoodbankLists()
     .then(data => {
       foodLocations.value = data.map((location) => ({
         lat: location.address.lat,
@@ -82,10 +84,11 @@ onMounted(() => {
         id: info.id,
         name: info.name,
         street: info.street,
+        city: info.city,
+        state: info.state,
+        zip: info.zip,
         phone: info.phone,
-        openHours: info.openHours,
         availability: info.availability,
-        availableFoods: info.availableFoods
       }));
     })
     .catch(error => {
@@ -97,11 +100,14 @@ onMounted(() => {
 
 
 // Handle the marker click event
-function handleMarkerClick (id) {
-  // Store the clicked marker's data in the selectedMarker ref
-  selectedId.value = id;
+async function handleMarkerClick (id) {
+  selectedMarkerInv.value = await getInventory(id);
+  
   selectedMarker.value = locationInfo.value.find(info => info.id === id);
+
   console.log("Clicked Marker ID:", id);
+
+
 }
 
 //Change the marker color based on each location's availability
@@ -119,12 +125,14 @@ function disabledButton(){
     selectedMarker.value.availability === true &&
     uuId != null && 
     selectedFood.value != null && 
-    selectedTime.value != null
+    selectedTime.value != null &&
+    selectedQuant.value > 0 &&
+    selectedQuant.value <= selectedFood.value.quant
   );
 }
 
 function reserve(){
-  reserveFood(uuId, selectedFood.value, selectedTime.value)
+  reserveFood(uuId, selectedFood.value.id, selectedTime.value)
     .then(result => {
       if (result.success) {
         console.log("Reservation successful:", result.data);
