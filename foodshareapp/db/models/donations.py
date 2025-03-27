@@ -17,7 +17,7 @@ class Donation(BaseModel):
     foodbankID: UUID
     donationWeight: int
     donationDolAmt: float
-    donationsArray: List[UUID] 
+    donationsArray: List[UUID]
 
 
 @dataclass
@@ -37,7 +37,7 @@ class CreateDonationResponse(Donation):
     foodbankID: UUID
     donationWeight: int
     donationDolAmt: float
-    donationsArray: List[UUID] 
+    donationsArray: List[UUID]
 
 
 @dataclass
@@ -64,34 +64,37 @@ async def insert_donation(donation: Donation) -> CreateDonationResponse:
         ":donationDolAmt, :donationsArray)"
     )
 
-    await db.execute(stmt, values={
-        "donationID": donation.donationID,
-        "donationDate": donation.donationDate,
-        "businessID": donation.businessID,
-        "foodbankID": donation.foodbankID,
-        "donationWeight": donation.donationWeight,
-        "donationDolAmt": donation.donationDolAmt,
-        "donationsArray": json.dumps([str(i) for i in donation.donationsArray]),
-    })
+    await db.execute(
+        stmt,
+        values={
+            "donationID": donation.donationID,
+            "donationDate": donation.donationDate,
+            "businessID": donation.businessID,
+            "foodbankID": donation.foodbankID,
+            "donationWeight": donation.donationWeight,
+            "donationDolAmt": donation.donationDolAmt,
+            "donationsArray": json.dumps([str(i) for i in donation.donationsArray]),
+        },
+    )
 
     for item_id in donation.donationsArray:
         update_qty_stmt = (
             "UPDATE FoodBankInventory SET itemquant = itemquant + 1 "
             "WHERE foodbankID = :foodbankID AND itemID = :itemID"
         )
-        await inventory_db.execute(update_qty_stmt, values={
-            "foodbankID": donation.foodbankID,
-            "itemID": str(item_id)
-        })
+        await inventory_db.execute(
+            update_qty_stmt,
+            values={"foodbankID": donation.foodbankID, "itemID": str(item_id)},
+        )
 
         update_status_stmt = (
             "UPDATE FoodBankInventory SET itemStatus = 'available' "
             "WHERE foodbankID = :foodbankID AND itemID = :itemID"
         )
-        await inventory_db.execute(update_status_stmt, values={
-            "foodbankID": donation.foodbankID,
-            "itemID": str(item_id)
-        })
+        await inventory_db.execute(
+            update_status_stmt,
+            values={"foodbankID": donation.foodbankID, "itemID": str(item_id)},
+        )
 
     return CreateDonationResponse(
         donationID=donation.donationID,

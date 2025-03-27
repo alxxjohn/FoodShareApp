@@ -10,7 +10,7 @@ from foodshareapp.app.api.routes import (
     inventory,
     foodbanks,
     auth,
-    donations
+    donations,
 )
 
 

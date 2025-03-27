@@ -14,6 +14,7 @@ class CreateReservation(BaseModel):
     itemId: UUID
     itemName: str
     itemQty: int
+    foodbankId: UUID
 
 
 class CreateReservationResponse(CreateReservation):

@@ -16,7 +16,6 @@ class Donation(BaseModel):
     userId: UUID
     itemId: UUID
     itemName: str
-    userId: UUID
     itemQty: int
     pickupTime: datetime
     status: str
@@ -28,6 +27,7 @@ class CreateDonation(BaseModel):
     Input for Endpoint
     returned when accessing donation models from the API.
     """
+
     foodbankId: UUID
     itemName: str
     itemQty: int
@@ -39,8 +39,7 @@ class CreateDonationResponse(CreateDonation):
     userId: UUID
     itemId: UUID
     itemName: str
-    userId: UUID
-    itemQty: int 
+    itemQty: int
     status: str
 
 
