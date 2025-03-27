@@ -171,7 +171,7 @@ def test_register_foodbank_account(test_database):
         "73301",
         "555-1212",
         1,
-        0
+        0,
     )
 
     business = (
@@ -184,14 +184,21 @@ def test_register_foodbank_account(test_database):
         "30.2672",
         "-97.7431",
         True,
-        user_id
+        user_id,
     )
 
-    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", user)
-    cursor.execute("INSERT INTO businesses VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", business)
+    cursor.execute(
+        "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        user,
+    )
+    cursor.execute(
+        "INSERT INTO businesses VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", business
+    )
     test_database.commit()
 
-    cursor.execute("SELECT is_foodbank FROM businesses WHERE BusinessId = ?", (business_id,))
+    cursor.execute(
+        "SELECT is_foodbank FROM businesses WHERE BusinessId = ?", (business_id,)
+    )
     is_foodbank = cursor.fetchone()[0]
     assert is_foodbank == 1, "Business should be marked as a foodbank"
 
@@ -223,13 +230,18 @@ def test_user_account_locked_status(test_database):
         "00000",
         "000-0000",
         0,
-        0
+        0,
     )
 
-    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", user)
+    cursor.execute(
+        "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        user,
+    )
     test_database.commit()
 
-    cursor.execute("SELECT account_locked FROM users WHERE uuid = ?", ("locked-user-0001",))
+    cursor.execute(
+        "SELECT account_locked FROM users WHERE uuid = ?", ("locked-user-0001",)
+    )
     locked_status = cursor.fetchone()[0]
     assert locked_status == 1, "User account should be locked"
 
@@ -261,10 +273,13 @@ def test_admin_user_registration(test_database):
         "20001",
         "123-4567",
         0,
-        1
+        1,
     )
 
-    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", user)
+    cursor.execute(
+        "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        user,
+    )
     test_database.commit()
 
     cursor.execute("SELECT is_admin FROM users WHERE uuid = ?", ("admin-user-0001",))
