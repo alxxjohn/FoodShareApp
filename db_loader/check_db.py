@@ -21,7 +21,7 @@ def check_tables_exist():
             cur.execute(
                 """
                 SELECT EXISTS (
-                    SELECT FROM information_schema.tables 
+                    SELECT FROM information_schema.tables
                     WHERE table_schema = 'public' AND table_name = %s
                 );
                 """,
