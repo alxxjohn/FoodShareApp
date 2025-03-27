@@ -5,7 +5,7 @@ from uuid import UUID
 
 
 class UserBase(BaseModel):
-    uuid: UUID
+    userId: UUID
     email: EmailStr
     username: str
 
@@ -16,7 +16,7 @@ class User(UserBase):
 
     returned when accessing user models from the API.
     """
-    company_name: str
+
     firstname: str
     lastname: str
     password: str
@@ -31,7 +31,7 @@ class User(UserBase):
     address: str
     city: str
     state: str
-    zip: str
+    zipCode: str
     phone: str
     is_business: bool = False
     is_admin: bool = False

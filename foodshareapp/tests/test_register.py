@@ -37,6 +37,20 @@ def test_database():
         );
         """
     )
+    cursor.execute(
+        """
+        CREATE TABLE businesses (
+            BusinessId TEXT PRIMARY KEY,
+            companyName TEXT NOT NULL,
+            address TEXT NOT NULL,
+            city TEXT NOT NULL,
+            state TEXT NOT NULL,
+            zipCode TEXT NOT NULL,
+            isFoodbank BOOLEAN NOT NULL DEFAULT 0,
+            assoc_user TEXT NOT NULL
+        );
+        """
+    )
 
     sample_data = [
         (
@@ -62,7 +76,7 @@ def test_database():
             "75001",
             "555-1234",
             1,
-            1
+            1,
         ),
         (
             "2c38e819-d4da-4e75-965d-dd9b2834e329",
@@ -87,8 +101,8 @@ def test_database():
             "90210",
             "555-5678",
             1,
-            0
-        )
+            0,
+        ),
     ]
 
     cursor.executemany(
@@ -100,7 +114,7 @@ def test_database():
         company_name, address, city, state, zip, phone, is_business, is_admin)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        sample_data
+        sample_data,
     )
     conn.commit()
 
@@ -135,17 +149,18 @@ def test_register_new_user(test_database):
         "60616",
         "555-9876",
         False,
-        False
+        False,
     )
 
     cursor.execute(
         "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        new_user
+        new_user,
     )
     test_database.commit()
 
     cursor.execute(
-        "SELECT * FROM users WHERE email = ?", ("newuser@example.com",)  # Correct email in SELECT query
+        "SELECT * FROM users WHERE email = ?",
+        ("newuser@example.com",),  # Correct email in SELECT query
     )
     user = cursor.fetchone()
 
@@ -184,12 +199,12 @@ def test_register_duplicate_email(test_database):
         "75001",
         "555-9999",
         0,
-        0
+        0,
     )
 
     cursor.execute(
         "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        existing_user
+        existing_user,
     )
     test_database.commit()
 
@@ -216,7 +231,7 @@ def test_register_duplicate_email(test_database):
         "75001",
         "555-9999",
         0,
-        0
+        0,
     )
 
     with pytest.raises(sqlite3.IntegrityError):
@@ -228,7 +243,7 @@ def test_register_duplicate_email(test_database):
                                company_name, address, city, state, zip, phone, is_business, is_admin)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            duplicate_user
+            duplicate_user,
         )
         test_database.commit()
 
@@ -260,7 +275,7 @@ def test_register_missing_fields(test_database):
         "90210",
         "555-8888",
         1,
-        1
+        1,
     )
 
     with pytest.raises(sqlite3.IntegrityError):
@@ -273,7 +288,7 @@ def test_register_missing_fields(test_database):
              company_name, address, city, state, zip, phone, is_business, is_admin)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            incomplete_user
+            incomplete_user,
         )
         test_database.commit()
 
@@ -305,7 +320,7 @@ def test_register_business_user(test_database):
         "90210",
         "555-4321",
         1,  # is_business = True
-        0   # is_admin = False
+        0,  # is_admin = False
     )
 
     cursor.execute(
@@ -316,15 +331,20 @@ def test_register_business_user(test_database):
                            company_name, address, city, state, zip, phone, is_business, is_admin)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        business_user
+        business_user,
     )
     test_database.commit()
 
-    cursor.execute("SELECT company_name, firstname, lastname FROM users WHERE email = ?", ("business@test.com",))
+    cursor.execute(
+        "SELECT company_name, firstname, lastname FROM users WHERE email = ?",
+        ("business@test.com",),
+    )
     user = cursor.fetchone()
 
     assert user is not None, "Business user should be found in the database"
-    assert user[0] == "Tech Corp", f"Expected company_name to be 'Tech Corp', got '{user[0]}'"
+    assert (
+        user[0] == "Tech Corp"
+    ), f"Expected company_name to be 'Tech Corp', got '{user[0]}'"
     assert user[1] is None, f"Expected firstname to be NULL, got '{user[1]}'"
     assert user[2] is None, f"Expected lastname to be NULL, got '{user[2]}'"
 
@@ -356,7 +376,7 @@ def test_register_admin_user(test_database):
         "10001",
         "555-0000",
         0,  # is_business = False
-        1   # is_admin = True
+        1,  # is_admin = True
     )
 
     cursor.execute(
@@ -367,11 +387,92 @@ def test_register_admin_user(test_database):
                            company_name, address, city, state, zip, phone, is_business, is_admin)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        admin_user
+        admin_user,
     )
     test_database.commit()
-    cursor.execute("SELECT email, is_admin FROM users WHERE email = ?", ("admin@test.com",))
+    cursor.execute(
+        "SELECT email, is_admin FROM users WHERE email = ?", ("admin@test.com",)
+    )
     user = cursor.fetchone()
 
     assert user is not None, "Admin user should be found in the database"
     assert user[1] == 1, f"Expected is_admin to be 1, got '{user[1]}'"
+
+
+def test_register_business_user_with_linked_business(test_database):
+    """Test inserting a business user and creating a linked business entry."""
+    cursor = test_database.cursor()
+
+    user_id = "f9f91234-abcd-4d9a-bc23-1234567890ef"
+    business_id = "b1234567-890a-4cde-f123-1234567890ab"
+
+    new_user = (
+        user_id,
+        "linkedbiz@example.com",
+        "linkedbizuser",
+        "Biz",
+        "Linked",
+        "saltyhash",
+        "pw_hash",
+        1,
+        "2025-03-25 15:00:00",
+        None,
+        None,
+        0,
+        0,
+        1,
+        "2025-03-25 15:05:00",
+        "Linked Biz LLC",
+        "500 Linked Way",
+        "Link City",
+        "FL",
+        "33101",
+        "555-2222",
+        1,  # is_business
+        0,  # is_admin
+    )
+
+    new_business = (
+        business_id,
+        "Linked Biz LLC",
+        "500 Linked Way",
+        "Link City",
+        "FL",
+        "33101",
+        False,  # isFoodbank
+        user_id,  # assoc_user
+    )
+
+    # Insert user
+    cursor.execute(
+        """
+        INSERT INTO users (uuid, email, username, firstname, lastname, salt, password,
+                           tos_accepted, tos_accepted_date, last_login, bad_login_attempt,
+                           bad_login_count, account_locked, account_verified, account_verified_at,
+                           company_name, address, city, state, zip, phone, is_business, is_admin)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        new_user,
+    )
+
+    # Insert linked business
+    cursor.execute(
+        """
+        INSERT INTO businesses (BusinessId, companyName, address, city, state, zipCode, isFoodbank, assoc_user)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        new_business,
+    )
+
+    test_database.commit()
+
+    cursor.execute("SELECT * FROM users WHERE uuid = ?", (user_id,))
+    user = cursor.fetchone()
+    assert user is not None, "User should be present in users table"
+    assert user[1] == "linkedbiz@example.com"
+
+    cursor.execute("SELECT * FROM businesses WHERE assoc_user = ?", (user_id,))
+    business = cursor.fetchone()
+    assert business is not None, "Business should be present in businesses table"
+    assert business[1] == "Linked Biz LLC"
+    assert business[7] == user_id, "Business should be linked to the correct user"
