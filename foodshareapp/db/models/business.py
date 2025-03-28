@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from pydantic import EmailStr
 from datetime import datetime
 from dataclasses import asdict
 from typing import Optional
@@ -26,9 +27,11 @@ class CreateBusiness:
     city: str
     state: str
     zipCode: str
+    lat: str
+    lng: str
     phone: str
     companyName: str
-    isFoodbank: bool = False
+    is_foodbank: bool = False
     is_business: bool = True
     is_admin: bool = False
 
@@ -44,7 +47,9 @@ class BusinessModel:
     city: str
     state: str
     zipCode: str
-    isFoodbank: bool
+    lat: str
+    lng: str
+    is_foodbank: bool
     assoc_user: UUID
 
 
@@ -57,16 +62,37 @@ class NewBusiness:
     city: str
     state: str
     zipCode: str
-    isFoodbank: bool
+    lat: str
+    lng: str
+    is_foodbank: bool
     assoc_user: UUID
+
+
+@dataclass
+class CreateUserBusiness:
+    firstname: str
+    lastname: str
+    password: str
+    companyName: str
+    email: EmailStr
+    username: str
+    tos_accepted: Optional[bool]
+    address: str
+    city: str
+    state: str
+    zipCode: str
+    phone: str
+    is_business: bool = True
+    is_foodbank: bool = False
+    is_admin: bool = False
 
 
 async def insert_business(NewBusiness: NewBusiness) -> UUID:
     """Creates a new business"""
 
     stmnt = (
-        "INSERT INTO businesses (BusinessId, companyName, address, city, state, zipCode, isFoodbank, assoc_user) "
-        "VALUES (:BusinessId, :companyName, :address, :city, :state, :zipCode, :isFoodbank, :assoc_user"
+        "INSERT INTO businesses (BusinessId, companyName, address, city, state, zipCode, lat, lng, is_foodbank, assoc_user) "
+        "VALUES (:BusinessId, :companyName, :address, :city, :state, :zipCode, :lat, :lng, :is_foodbank, :assoc_user"
     )
     return await db.execute(stmnt, values=asdict(NewBusiness))
 

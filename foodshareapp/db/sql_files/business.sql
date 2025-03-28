@@ -7,7 +7,8 @@ CREATE TABLE business (
     zip TEXT NOT NULL,
     isFoodbank BOOLEAN NOT NULL DEFAULT 0,
     lat TEXT NOT NULL,
-    lng TEXT NOT NULL
+    lng TEXT NOT NULL,
+    assoc_user TEXT NOT NULL
 );
 
 --5 Foodbanks
@@ -43,4 +44,3 @@ INSERT INTO business  VALUES ('5b9003ac-f149-4c4e-8754-56ce0d762429', 'Carrabbas
 
 INSERT INTO business  VALUES ('42b21442-3bb6-48a2-992f-9c7c331e86c6', 'Texas Roadhouse', '3984 SW 43rd Street','Gainesville',
 'Fl', '32608', 0, '29.6170211', '-82.3895885');
-

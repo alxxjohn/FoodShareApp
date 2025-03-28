@@ -8,11 +8,15 @@ RUN apt-get update \
     && apt-get install gcc -y \
     && apt-get clean
 # Copying requirements of a project
+RUN apt-get update && apt-get install -y \
+    libpq-dev gcc build-essential && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY pyproject.toml poetry.lock /app/src/
 WORKDIR /app/src
 RUN pip3 install setuptools
 
-
+RUN pip install psycopg2-binary
 
 
 # Installing requirements

@@ -30,15 +30,6 @@ async def create_reservation(
 ) -> CreateReservationResponse:
     """Creates reservation."""
 
-    if (
-        await db_reservations.get_reservation_by_id(create_reservation.reservationID)
-        is not None
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="a reservation with that ID already exists",
-        )
-
     new_reservation = db_reservations.Reservation(
         reservationID=uuid4(),
         reservationMadeTime=timestamp,
@@ -48,8 +39,7 @@ async def create_reservation(
         userId=curr_userId,
         itemQty=create_reservation.itemQty,
         showedUp=False,
-        showedUpTime=None,
-        status=create_reservation.status,
+        status="active",
     )
     await db_reservations.insert_reservation(new_reservation)
     await transaction.commit()
