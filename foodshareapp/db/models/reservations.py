@@ -8,6 +8,9 @@ from foodshareapp.db.utils import db
 from foodshareapp.db.models.inventory import db as inventory_db
 
 
+## TODO: remove address
+
+
 @dataclass
 class Reservation(BaseModel):
     reservationID: UUID
