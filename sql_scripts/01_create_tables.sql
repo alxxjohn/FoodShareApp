@@ -1,13 +1,13 @@
 
 CREATE TABLE IF NOT EXISTS users (
-    uuid TEXT PRIMARY KEY NOT NULL,
+    userId UUID PRIMARY KEY NOT NULL,
     email TEXT UNIQUE NOT NULL,
     username TEXT NOT NULL,
     firstname TEXT,
     lastname TEXT,
     salt TEXT NOT NULL,
     password TEXT NOT NULL,
-    tos_accepted BOOLEAN NOT NULL,
+    tos_accepted BOOLEAN NOT NULL DEFAULT TRUE,
     tos_accepted_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP,
     bad_login_attempt TIMESTAMP,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
     address TEXT,
     city TEXT,
     state TEXT,
-    zip TEXT,
+    zipCode TEXT,
     phone TEXT,
     is_business BOOLEAN NOT NULL DEFAULT FALSE,
     is_admin BOOLEAN NOT NULL DEFAULT FALSE,
@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS business (
     address TEXT NOT NULL,
     city TEXT NOT NULL,
     state TEXT NOT NULL,
-    zip_code TEXT NOT NULL,
+    zipCode TEXT NOT NULL,
     lat TEXT,
     lng TEXT,
     is_foodbank BOOLEAN NOT NULL DEFAULT FALSE,
-    assoc_user TEXT NOT NULL REFERENCES users(uuid) 
+    assoc_user UUID NOT NULL REFERENCES users(userid) 
 );
