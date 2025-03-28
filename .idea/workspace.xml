@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f7fb135-0a7d-4c12-8264-8a3c174072fa" name="Changes" comment="" />
+    <list default="true" id="5f7fb135-0a7d-4c12-8264-8a3c174072fa" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/foodshareapp/db/sql_files/donations.sql" beforeDir="false" afterPath="$PROJECT_DIR$/foodshareapp/db/sql_files/donations.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/foodshareapp/db/sql_files/inventory.sql" beforeDir="false" afterPath="$PROJECT_DIR$/foodshareapp/db/sql_files/FoodBankInventory.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/foodshareapp/db/sql_files/reservations.sql" beforeDir="false" afterPath="$PROJECT_DIR$/foodshareapp/db/sql_files/reservations.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/foodshareapp/db/sql_files/users.sql" beforeDir="false" afterPath="$PROJECT_DIR$/foodshareapp/db/sql_files/users.sql" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -42,6 +48,7 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;add-all__sql__and__sample__data&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -197,7 +204,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="8e2e7029-f122-4293-bd26-e353eec36c08" name="Changes" comment="" />
+      <changelist id="5f7fb135-0a7d-4c12-8264-8a3c174072fa" name="Changes" comment="" />
       <created>1741123860357</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -220,6 +227,12 @@
       <workItem from="1742226682235" duration="4415000" />
       <workItem from="1742321034492" duration="615000" />
       <workItem from="1742589526252" duration="2077000" />
+      <workItem from="1743029751103" duration="1405000" />
+      <workItem from="1743041117712" duration="3807000" />
+      <workItem from="1743093431732" duration="15491000" />
+      <workItem from="1743115117149" duration="2000" />
+      <workItem from="1743120186642" duration="2568000" />
+      <workItem from="1743172278575" duration="1927000" />
     </task>
     <servers />
   </component>
