@@ -13,7 +13,6 @@ class UserModel:
     userId: UUID
     email: str
     username: str
-    company_name: Optional[str]
     firstname: str
     lastname: str
     salt: Optional[str]
@@ -46,7 +45,6 @@ class NewUser:
     salt: str
     password: str
     last_login: datetime
-    company_name: Optional[str]
     address: Optional[str]
     city: Optional[str]
     state: Optional[str]
@@ -82,7 +80,7 @@ async def insert_user(newuser: NewUser) -> UUID:
     stmnt = (
         "INSERT INTO users (userId, email, username, firstname, lastname, salt, password, last_login, address, city, state, zipCode, phone, is_business, is_admin) "
         "VALUES (:userId, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :address, :city, :state, :zipCode, :phone, :is_business, :is_admin) "
-        "RETURNING uuid"
+        "RETURNING userId"
     )
     return await db.execute(stmnt, values=asdict(newuser))
 
@@ -92,7 +90,7 @@ async def get_user_by_id(userId: UUID) -> Optional[UserModel]:
     Returns `None` if no such user exists.
     """
 
-    stmnt = "SELECT * FROM users WHERE uuid = :uuid"
+    stmnt = "SELECT * FROM users WHERE userId = :userId"
     db_user = await db.fetch_one(query=stmnt, values={"userId": userId})
 
     if db_user is None:
