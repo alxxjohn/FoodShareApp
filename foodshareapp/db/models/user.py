@@ -80,8 +80,8 @@ async def insert_user(newuser: NewUser) -> UUID:
     """Creates a new user"""
 
     stmnt = (
-        "INSERT INTO users (userId, email, username, firstname, lastname, salt, password, last_login, company_name, address, city, state, zipCode, phone, is_business, is_admin) "
-        "VALUES (:userId, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :company_name, :address, :city, :state, :zipCode, :phone, :is_business, :is_admin) "
+        "INSERT INTO users (userId, email, username, firstname, lastname, salt, password, last_login, address, city, state, zipCode, phone, is_business, is_admin) "
+        "VALUES (:userId, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :address, :city, :state, :zipCode, :phone, :is_business, :is_admin) "
         "RETURNING uuid"
     )
     return await db.execute(stmnt, values=asdict(newuser))
