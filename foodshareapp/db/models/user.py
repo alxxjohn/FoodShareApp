@@ -13,7 +13,6 @@ class UserModel:
     userId: UUID
     email: str
     username: str
-    company_name: Optional[str]
     firstname: str
     lastname: str
     salt: Optional[str]
@@ -46,7 +45,6 @@ class NewUser:
     salt: str
     password: str
     last_login: datetime
-    company_name: Optional[str]
     address: Optional[str]
     city: Optional[str]
     state: Optional[str]
