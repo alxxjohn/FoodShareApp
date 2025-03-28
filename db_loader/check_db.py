@@ -1,7 +1,7 @@
 import os
 import psycopg2
 
-REQUIRED_TABLES = ["users", "businesses"]
+REQUIRED_TABLES = ["users", "business"]
 
 DB_CONFIG = {
     "host": os.getenv("FOODSHAREAPP_API_DB_HOST", "foodshareapp-db"),
