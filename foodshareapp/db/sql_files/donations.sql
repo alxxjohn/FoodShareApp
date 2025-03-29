@@ -6,7 +6,7 @@ CREATE TABLE donations (
     foodbankID TEXT NOT NULL,
     donationDate DATETIME NOT NULL,
     donationWeight FLOAT NOT NULL,
-    donationDolAmt FLOAT,
+    donationDolAmt FLOAT NOT NULL,
     donationsArray TEXT NOT NULL
 );
 
@@ -26,7 +26,6 @@ INSERT INTO  donations  VALUES ('14efbc57-fd3d-48c6-9be8-f59c5c1f800f', '5b9003a
 '{412b8bbc-238a-4b66-8de5-fc2e534d9481, 1, chicken}');
 
 --Cheesecake Factory donates twice in same day to Love Bank
-
 INSERT INTO  donations  VALUES ('122f3003-c45d-4323-858c-14636846dfe4', '7685b68c-9ddc-4d80-9a1c-bf701b581a09',
 'dfe80b5e-89ff-4649-a174-8a3ff35e423b','2025-03-25 10:00:10',1, 13.25,
 '{0a8f90db-abe4-4da4-b8b8-1deb8d01b1fb, 1, quesadilla}');

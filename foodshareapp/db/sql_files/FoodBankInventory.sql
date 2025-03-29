@@ -5,12 +5,12 @@ CREATE TABLE FoodBankInventory
   itemID TEXT PRIMARY KEY NOT NULL,
   foodbankID TEXT NOT NULL,
   itemName TEXT NOT NULL,
-  itemQuant INTEGER NOT NULL
+  itemQuant INTEGER NOT NULL,
   itemStatus TEXT NOT NULL
 );
 
 --Hope Bank
-INSERT INTO  FoodBankInventory VALUES ('1548ace8-4a45-4b16-9848-39be2a8173fc', 'dcf47826-e330-4754-8f86-3ebae7a4663b',
+INSERT INTO FoodBankInventory VALUES ('1548ace8-4a45-4b16-9848-39be2a8173fc', 'dcf47826-e330-4754-8f86-3ebae7a4663b',
 'Orange',2, 'Available');
 
 INSERT INTO  FoodBankInventory VALUES ('b7d29616-29e5-4cf9-92ee-904a7390b66e', 'dcf47826-e330-4754-8f86-3ebae7a4663b',
