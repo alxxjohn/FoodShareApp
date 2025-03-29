@@ -38,6 +38,10 @@ tags_metadata = [
         "description": "Food Reservations endpoints.",
     },
     {
+        "name": "Donations",
+        "description": "Food Donation endpoints.",
+    },
+    {
         "name": "Inventory",
         "description": "Inventory endpoint.",
     },

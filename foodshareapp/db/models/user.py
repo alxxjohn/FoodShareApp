@@ -13,7 +13,6 @@ class UserModel:
     userId: UUID
     email: str
     username: str
-    company_name: Optional[str]
     firstname: str
     lastname: str
     salt: Optional[str]
@@ -46,7 +45,6 @@ class NewUser:
     salt: str
     password: str
     last_login: datetime
-    company_name: Optional[str]
     address: Optional[str]
     city: Optional[str]
     state: Optional[str]
@@ -67,7 +65,7 @@ async def get_user_by_email(email: str) -> Optional[UserModel]:
     Returns `None` if no such user exists.
     """
 
-    stmnt = "SELECT * FROM foodshare_users WHERE email = :email"
+    stmnt = "SELECT * FROM users WHERE email = :email"
     db_user = await db.fetch_one(query=stmnt, values={"email": email})
 
     if db_user is None:
@@ -80,9 +78,9 @@ async def insert_user(newuser: NewUser) -> UUID:
     """Creates a new user"""
 
     stmnt = (
-        "INSERT INTO foodshare_users (userId, email, username, firstname, lastname, salt, password, last_login, company_name, address, city, state, zipCode, phone, is_business, is_admin) "
-        "VALUES (:userId, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :company_name, :address, :city, :state, :zipCode, :phone, :is_business, :is_admin) "
-        "RETURNING uuid"
+        "INSERT INTO users (userId, email, username, firstname, lastname, salt, password, last_login, address, city, state, zipCode, phone, is_business, is_admin) "
+        "VALUES (:userId, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :address, :city, :state, :zipCode, :phone, :is_business, :is_admin) "
+        "RETURNING userId"
     )
     return await db.execute(stmnt, values=asdict(newuser))
 
@@ -92,7 +90,7 @@ async def get_user_by_id(userId: UUID) -> Optional[UserModel]:
     Returns `None` if no such user exists.
     """
 
-    stmnt = "SELECT * FROM foodshare_users WHERE uuid = :uuid"
+    stmnt = "SELECT * FROM users WHERE userId = :userId"
     db_user = await db.fetch_one(query=stmnt, values={"userId": userId})
 
     if db_user is None:
@@ -106,7 +104,7 @@ async def get_user_by_username(username: str) -> Optional[UserModel]:
     Returns `None` if no such user exists.
     """
 
-    stmnt = "SELECT * FROM foodshare_users WHERE username = :username"
+    stmnt = "SELECT * FROM users WHERE username = :username"
     db_user = await db.fetch_one(query=stmnt, values={"username": username})
 
     if db_user is None:
@@ -118,5 +116,5 @@ async def get_user_by_username(username: str) -> Optional[UserModel]:
 async def delete_user_by_email(email: str) -> None:
     """Deletes the user with the given email"""
 
-    stmnt = "DELETE FROM foodshare_users WHERE email = :email"
+    stmnt = "DELETE FROM users WHERE email = :email"
     await db.execute(query=stmnt, values={"email": email})
