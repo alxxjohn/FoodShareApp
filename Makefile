@@ -57,6 +57,9 @@ mypy:
 test:
 	poetry run pytest ./foodshareapp/tests/
 
+test-client:
+	cd clientapp && npx jest
+
 .PHONY: frontendbuild
 fe-build:
 	poetry shell
