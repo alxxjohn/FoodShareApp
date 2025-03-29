@@ -2,6 +2,11 @@
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/circleci/59GahiQ3nJgSMTPjnGijAL/6GteubzC7gi6ZBBpMDEVUE/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/59GahiQ3nJgSMTPjnGijAL/6GteubzC7gi6ZBBpMDEVUE/tree/main)  [![Front End Tests](https://github.com/alxxjohn/FoodShareApp/actions/workflows/frontend-tests.yml/badge.svg)](https://github.com/alxxjohn/FoodShareApp/actions/workflows/frontend-tests.yml) [![CodeQL](https://github.com/alxxjohn/FoodShareApp/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/alxxjohn/FoodShareApp/actions/workflows/github-code-scanning/codeql)
 
+
+
+![Failed to load logo](/clientapp/public/logo.png)
+
+
 ## Table of Contents
 
 - [Installation](#installation)
