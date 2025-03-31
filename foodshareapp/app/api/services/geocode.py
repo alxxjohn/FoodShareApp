@@ -8,10 +8,7 @@ def geocode_address(address: str):
     try:
         location = geolocator.geocode(address, timeout=10)
         if location:
-            return {
-                "latitude": location.latitude,
-                "longitude": location.longitude
-            }
+            return location.latitude, location.longitude
         return None
     except (GeocoderTimedOut, GeocoderServiceError) as e:
         print(f"Geocoding error: {e}")
