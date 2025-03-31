@@ -11,10 +11,10 @@ class Inventory(BaseModel):
     """
 
     inventoryID: UUID
-    foodbankId: UUID
-    itemId: UUID
-    itemName: str
-    itemQty: int
+    foodbank_id: UUID
+    item_id: UUID
+    item_name: str
+    item_qty: int
     date_added: datetime
     status: str
 

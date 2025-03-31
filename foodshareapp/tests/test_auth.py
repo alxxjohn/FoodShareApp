@@ -1,144 +1,86 @@
 import pytest
-import sqlite3
 from fastapi.testclient import TestClient
+import foodshareapp.app.application as app_module
+
+client = TestClient(app_module.app)
 
 
-from foodshareapp.app.application import app
-from foodshareapp.app.api.routes.auth import router as auth_router
+@pytest.fixture(autouse=True)
+def override_dependencies(monkeypatch):
+    import foodshareapp.db.models.auth as db_user
+    import foodshareapp.app.api.services.crypto as crypto
+    import foodshareapp.db.utils as db_utils
+
+    mock_get_user_pass(monkeypatch)
+    mock_update_functions(monkeypatch, db_user)
+    mock_crypto_functions(monkeypatch, crypto)
+    mock_db_transaction(app_module, db_utils)
+
+    yield
+    app_module.app.dependency_overrides = {}
 
 
-app.include_router(auth_router, prefix="/api/auth")
+def mock_get_user_pass(monkeypatch):
+    async def mock_get_user_pass(username):
+        if username == "alex@test.com":
+            return {
+                "uuid": "ba177717-21c0-4744-b081-d9d575d4e1d8",
+                "email": "alex@test.com",
+                "salt": "salt",
+                "password": "hashedpassword",
+                "bad_login_count": 0,
+                "account_locked": False,
+            }
+        return None
 
-client = TestClient(app)
-
-
-@pytest.fixture(scope="session")
-def test_database():
-    conn = sqlite3.connect(":memory:")
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        CREATE TABLE users (
-            uuid TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            username TEXT NOT NULL,
-            firstname TEXT,
-            lastname TEXT,
-            salt TEXT NOT NULL,
-            password TEXT NOT NULL,
-            tos_accepted BOOLEAN NOT NULL DEFAULT 1,
-            tos_accepted_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            last_login DATETIME,
-            bad_login_attempt DATETIME,
-            bad_login_count INTEGER,
-            account_locked BOOLEAN NOT NULL DEFAULT 0,
-            account_verified BOOLEAN DEFAULT 1,
-            account_verified_at DATETIME,
-            company_name TEXT,
-            address TEXT,
-            city TEXT,
-            state TEXT,
-            zip TEXT,
-            phone TEXT,
-            is_business BOOLEAN NOT NULL DEFAULT 0,
-            is_admin BOOLEAN NOT NULL DEFAULT 0
-        );
-        """
+    monkeypatch.setattr("foodshareapp.db.models.auth.get_user_pass", mock_get_user_pass)
+    monkeypatch.setattr(
+        "foodshareapp.app.api.services.crypto.verify_password", lambda p, h, s: True
     )
 
-    sample_users = [
-        (
-            "ba177717-21c0-4744-b081-d9d575d4e1d8",
-            "alex@test.com",
-            "alex1",
-            "Alex",
-            "TestLast",
-            "random_salt",
-            "hashedpassword",
-            1,
-            "2025-03-10 12:00:00",
-            None,
-            None,
-            0,
-            0,
-            1,
-            "2025-03-10 12:05:00",
-            "Alex's Business",
-            "123 Test St",
-            "Test City",
-            "TX",
-            "75001",
-            "555-1234",
-            1,
-            1,
-        ),
-        (
-            "locked-uuid-user-00000000000000",
-            "locked@example.com",
-            "lockeduser",
-            "Locked",
-            "User",
-            "salt",
-            "hashedpassword",
-            1,
-            "2025-03-10 12:00:00",
-            None,
-            None,
-            0,
-            1,
-            1,
-            "2025-03-10 12:05:00",
-            "Locked Corp",
-            "456 Lock St",
-            "Lock City",
-            "NY",
-            "10001",
-            "555-0000",
-            0,
-            0,
-        ),
-    ]
 
-    cursor.executemany(
-        """
-        INSERT INTO users
-        (uuid, email, username, firstname, lastname, salt, password,
-         tos_accepted, tos_accepted_date, last_login, bad_login_attempt,
-         bad_login_count, account_locked, account_verified, account_verified_at,
-         company_name, address, city, state, zip, phone, is_business, is_admin)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        sample_users,
+def mock_update_functions(monkeypatch, db_user):
+    async def noop(*args, **kwargs):
+        return None
+
+    monkeypatch.setattr(db_user, "update_bad_login", noop)
+    monkeypatch.setattr(db_user, "update_login", noop)
+
+
+def mock_crypto_functions(monkeypatch, _crypto):
+    monkeypatch.setattr(
+        "foodshareapp.app.api.routes.auth.verify_password", lambda p, h, s: True
     )
-    conn.commit()
-
-    yield conn
-    conn.close()
-
-
-def test_insert_user_login_data(test_database):
-    cursor = test_database.cursor()
-    cursor.execute("SELECT * FROM users WHERE email = ?", ("alex@test.com",))
-    user = cursor.fetchone()
-    assert user is not None
-    assert user[1] == "alex@test.com"
-    assert user[12] == 0  # account_locked
-    assert user[11] == 0  # bad_login_count
+    monkeypatch.setattr(
+        "foodshareapp.app.api.routes.auth.create_access_token",
+        lambda uuid, expires_delta: "mock-access-token",
+    )
+    monkeypatch.setattr(
+        "foodshareapp.app.api.routes.auth.create_refresh_token",
+        lambda uuid: "mock-refresh-token",
+    )
 
 
-def test_locked_user_login_data(test_database):
-    cursor = test_database.cursor()
-    cursor.execute("SELECT * FROM users WHERE email = ?", ("locked@example.com",))
-    user = cursor.fetchone()
-    assert user is not None
-    assert user[12] == 1  # account_locked should be True
+def mock_db_transaction(app_module, db_utils):
+    class MockDbTransaction:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        async def commit(self):
+            pass
+
+    app_module.app.dependency_overrides[db_utils.db_transaction] = (
+        lambda: MockDbTransaction()
+    )
 
 
-def mock_verify_password(input_password, stored_hash, salt):
-    # Always return True for testing
-    return True
-
-
-def mock_create_token(uuid):
-    return "mocked.jwt.token"
+def test_login_failure_invalid_user():
+    response = client.post(
+        "/api/auth/login",
+        data={"username": "fake@test.com", "password": "wrong"},
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+    assert response.status_code == 404

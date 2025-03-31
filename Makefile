@@ -70,7 +70,12 @@ fe-build:
 	docker-compose -f deploy_env/docker-compose.yml --project-directory . down
 
 db-fill:
+	chmod +x db_loader/user_fill.sh
 	echo "🚀 Loading SQL into Postgres..."
 	docker exec foodshareapp-api-1 python3 /app/src/db_loader/load_sql.py
 	echo \"🧪 Verifying required tables exist...\"
 	docker exec foodshareapp-api-1 python3 /app/src/db_loader/check_db.py
+	echo "🚀 Loading login users into Postgres..."
+	./db_loader/user_fill.sh
+	echo "🚀 Loading business users into Postgres..."
+	./db_loader/business_fill.sh

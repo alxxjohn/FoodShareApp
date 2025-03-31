@@ -21,7 +21,7 @@ reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/api/auth/login", scheme_name="
 
 
 @router.post(
-    "/",
+    "/login",
     summary="Create access and refresh tokens for user",
     response_model=TokenSchema,
 )
