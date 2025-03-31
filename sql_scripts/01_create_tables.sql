@@ -46,6 +46,12 @@ CREATE TABLE IF NOT EXISTS business (
     assoc_user UUID NOT NULL REFERENCES users(uuid) 
 );
 
+----------------------------------------------
+----------------------------------------------
+-- TABLES BELOW ARE NOT ACTIVE IN BACKEND ---
+----------------------------------------------
+----------------------------------------------
+
 
 CREATE TABLE IF NOT EXISTS inventory
 (
