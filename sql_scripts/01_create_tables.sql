@@ -1,3 +1,9 @@
+------------------------------------
+------------------------------------
+-- MAIN TABLES FOR THE DATABASE --- 
+------------------------------------
+------------------------------------
+
 
 CREATE TABLE IF NOT EXISTS users (
     uuid UUID PRIMARY KEY NOT NULL,
