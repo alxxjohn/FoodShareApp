@@ -38,7 +38,7 @@ async def register_user(
     password = hash_password(create_user.password, salt)
 
     new_user = NewUser(
-        userId=uuid4(),
+        uuid=uuid4(),
         email=EmailStr(create_user.email),
         username=create_user.username,
         firstname=create_user.firstname,
@@ -57,7 +57,7 @@ async def register_user(
     await db_user.insert_user(new_user)
 
     response = CreateUserResponse(
-        userId=new_user.userId,
+        uuid=new_user.uuid,
         email=EmailStr(new_user.email),
         username=new_user.username,
         firstname=new_user.firstname,
@@ -84,14 +84,14 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
 
     salt = gen_salt()
     password = hash_password(user_data.password, salt)
-    user_uuid = uuid4()
+    uuid = uuid4()
     full_address = (
         f"{user_data.address}, {user_data.city}, {user_data.state} {user_data.zipCode}"
     )
     lat, lng = geocode_address(full_address)
 
     new_user = NewUser(
-        userId=user_uuid,
+        uuid=uuid,
         email=user_data.email,
         username=user_data.username,
         firstname=user_data.firstname,
@@ -124,7 +124,7 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
             lat=str(lat) if lat else "",
             lng=str(lng) if lng else "",
             is_foodbank=user_data.is_foodbank,
-            assoc_user=user_uuid,
+            assoc_user=uuid,
         )
         try:
             await db_business.insert_business(new_business)

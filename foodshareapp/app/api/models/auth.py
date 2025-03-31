@@ -23,4 +23,5 @@ class UserOut(BaseModel):
 
 
 class SystemUser(UserOut):
+    uuid: UUID
     password: str

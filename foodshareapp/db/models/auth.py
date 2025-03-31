@@ -8,7 +8,7 @@ from foodshareapp.db.utils import db
 
 @dataclass
 class AuthResponse:
-    userId: UUID
+    uuid: UUID
     password: str
     salt: str
     email: str
@@ -31,7 +31,7 @@ class TokenResponse:
 @dataclass
 class EmailResponse:
     email: str
-    userId: UUID
+    uuid: UUID
     password: str
     username: str
 
@@ -41,7 +41,7 @@ async def get_user_pass(username: str) -> Optional[AuthResponse]:
     Returns `None` if no such user exists.
     """
 
-    stmnt = "SELECT userId, password, email, salt, bad_login_count, account_locked FROM users WHERE username = :username"
+    stmnt = "SELECT uuid, password, email, salt, bad_login_count, account_locked FROM users WHERE username = :username"
     db_user = await db.fetch_one(query=stmnt, values={"username": username})
 
     if db_user is None:
@@ -63,7 +63,7 @@ async def update_login(
             "bad_login_count": bad_login_count,
         },
     )
-    return None
+    return True
 
 
 async def update_bad_login(
@@ -79,7 +79,7 @@ async def update_bad_login(
             "bad_login_count": bad_login_count,
         },
     )
-    return None
+    return True
 
 
 async def get_user_by_email(email: str) -> Optional[EmailResponse]:
@@ -96,13 +96,13 @@ async def get_user_by_email(email: str) -> Optional[EmailResponse]:
     return EmailResponse(**dict(db_user))
 
 
-async def get_token_data(userId: str) -> Optional[EmailResponse]:
+async def get_token_data(uuid: str) -> Optional[EmailResponse]:
     """Returns a single user token by userId
     Returns `None` if no such user exists.
     """
 
-    stmnt = "SELECT userId,email,password,username FROM users WHERE userId = :uuid"
-    db_user = await db.fetch_one(query=stmnt, values={"userId": userId})
+    stmnt = "SELECT uuid,email,password,username FROM users WHERE uuid = :uuid"
+    db_user = await db.fetch_one(query=stmnt, values={"uuid": uuid})
 
     if db_user is None:
         return None

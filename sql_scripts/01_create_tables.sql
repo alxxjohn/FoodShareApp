@@ -1,6 +1,6 @@
 
 CREATE TABLE IF NOT EXISTS users (
-    userId UUID PRIMARY KEY NOT NULL,
+    uuid UUID PRIMARY KEY NOT NULL,
     email TEXT UNIQUE NOT NULL,
     username TEXT NOT NULL,
     firstname TEXT,
@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS users (
     account_locked BOOLEAN NOT NULL DEFAULT FALSE,
     account_verified BOOLEAN DEFAULT TRUE,
     account_verified_at TIMESTAMP,
-    company_name TEXT,
     address TEXT,
     city TEXT,
     state TEXT,
@@ -38,5 +37,5 @@ CREATE TABLE IF NOT EXISTS business (
     lat TEXT,
     lng TEXT,
     is_foodbank BOOLEAN NOT NULL DEFAULT FALSE,
-    assoc_user UUID NOT NULL REFERENCES users(userid) 
+    assoc_user UUID NOT NULL REFERENCES users(uuid) 
 );

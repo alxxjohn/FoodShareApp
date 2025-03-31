@@ -76,4 +76,4 @@ db-fill:
 	echo \"🧪 Verifying required tables exist...\"
 	docker exec foodshareapp-api-1 python3 /app/src/db_loader/check_db.py
 	echo "🚀 Loading login users into Postgres..."
-	
+	./db_loader/user_fill.sh
