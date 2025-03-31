@@ -105,7 +105,7 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
         phone=user_data.phone,
         is_business=user_data.is_business,
         is_admin=user_data.is_admin,
-        last_login=datetime.now(timezone.utc),
+        last_login=datetime.utcnow()
     )
 
     try:
@@ -115,8 +115,8 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
 
     if user_data.is_business:
         new_business = NewBusiness(
-            BusinessId=uuid4(),
-            companyName=user_data.companyName,
+            business_id=uuid4(),
+            company_name=user_data.company_name,
             address=user_data.address,
             city=user_data.city,
             state=user_data.state,
@@ -134,8 +134,8 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
             )
 
     return CreateBusinessResponse(
-        BusinessId=new_business.BusinessId,
-        companyName=new_business.companyName,
+        business_id=new_business.business_id,
+        company_name=new_business.company_name,
         address=new_business.address,
         city=new_business.city,
         state=new_business.state,

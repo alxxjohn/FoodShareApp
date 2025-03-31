@@ -10,8 +10,7 @@ def geocode_address(address: str):
         if location:
             return {
                 "latitude": location.latitude,
-                "longitude": location.longitude,
-                "formatted_address": location.address,
+                "longitude": location.longitude
             }
         return None
     except (GeocoderTimedOut, GeocoderServiceError) as e:

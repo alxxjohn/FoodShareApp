@@ -25,8 +25,8 @@ class UserBusiness(BaseModel):
     lat: str
     lng: str
     phone: str
-    BusinessId: UUID
-    companyName: str
+    business_id: UUID
+    company_name: str
     is_foodbank: bool
     assoc_user: UUID
     is_business: bool = False
@@ -38,8 +38,8 @@ class NewBusiness(BaseModel):
     DTO for business models."
     """ ""
 
-    BusinessId: UUID
-    companyName: str
+    business_id: UUID
+    company_name: str
     address: str
     city: str
     state: str
@@ -55,8 +55,8 @@ class CreateBusinessResponse(BaseModel):
     DTO for business models."
     """ ""
 
-    BusinessId: UUID
-    companyName: str
+    business_id: UUID
+    company_name: str
     address: str
     city: str
     state: str

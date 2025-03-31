@@ -8,13 +8,13 @@ API_URL="http://localhost:8000/api/register"
 # First user data
 USER1=$(cat <<EOF
 {
-  "email": "alex@alex12.com",
-  "username": "alex12",
-  "firstname": "alex3",
-  "lastname": "alex3",
-  "password": "alex12",
+  "email": "alex@ufl.edu",
+  "username": "alex",
+  "firstname": "alex",
+  "lastname": "john",
+  "password": "alex",
   "terms": true,
-  "address": "5340",
+  "address": "1020 N. Main St.",
   "city": "Orlando",
   "state": "FL",
   "zipCode": "32663",
@@ -29,10 +29,10 @@ EOF
 USER2=$(cat <<EOF
 {
   "email": "alex@alex12.com",
-  "username": "alex34343",
-  "firstname": "alex34343",
-  "lastname": "alex365353",
-  "password": "alex12232",
+  "username": "alex12",
+  "firstname": "alex3",
+  "lastname": "alex3",
+  "password": "alex12",
   "terms": true,
   "address": "5340",
   "city": "Orlando",
@@ -40,7 +40,7 @@ USER2=$(cat <<EOF
   "zipCode": "32663",
   "phone": "31098767663",
   "is_business": true,
-  "is_admin": false
+  "is_admin": true
 }
 EOF
 )
