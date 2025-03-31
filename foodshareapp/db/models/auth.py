@@ -50,9 +50,7 @@ async def get_user_pass(username: str) -> Optional[AuthResponse]:
     return AuthResponse(**dict(db_user))
 
 
-async def update_login(
-    email: str, last_login: datetime, bad_login_count: int
-) -> Optional[AuthResponse]:
+async def update_login(email: str, last_login: datetime, bad_login_count: int) -> bool:
     """Updates a login date for user row"""
     stmnt = "UPDATE users SET last_login = :last_login, bad_login_count = :bad_login_count WHERE email = :email"
     await db.execute(
@@ -68,7 +66,7 @@ async def update_login(
 
 async def update_bad_login(
     email: str, bad_login_attempt: datetime, bad_login_count: int
-) -> Optional[AuthResponse]:
+) -> bool:
     """Updates a login date for user row"""
     stmnt = "UPDATE users SET bad_login_attempt = :bad_login_attempt, bad_login_count = :bad_login_count WHERE email = :email"
     await db.execute(

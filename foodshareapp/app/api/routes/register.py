@@ -1,5 +1,5 @@
 from uuid import uuid4
-from datetime import datetime, timezone
+from datetime import datetime
 from pydantic import EmailStr
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -105,7 +105,7 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
         phone=user_data.phone,
         is_business=user_data.is_business,
         is_admin=user_data.is_admin,
-        last_login=datetime.utcnow()
+        last_login=datetime.utcnow(),
     )
 
     try:
