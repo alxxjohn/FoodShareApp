@@ -61,7 +61,6 @@ CREATE TABLE IF NOT EXISTS inventory
   item_qty INTEGER NOT NULL,
   date_added TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   item_status TEXT
-
 );
 
 
@@ -70,6 +69,7 @@ CREATE TABLE IF NOT EXISTS reservations
   reservation_uuid UUID PRIMARY KEY NOT NULL,
   reservation_creation_date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_uuid TEXT,
+  reserve_time TIMESTAMPTZ,
   picked_up BOOLEAN,
   picked_up_time TIMESTAMPTZ,
   reservations_array JSONB[] NOT NULL,

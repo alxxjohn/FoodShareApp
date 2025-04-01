@@ -18,31 +18,6 @@ router = APIRouter(dependencies=[Depends(db_transaction), Depends(get_current_us
 
 
 @router.get(
-    "/{inventoryID}/",
-    status_code=status.HTTP_200_OK,
-    response_model=Inventory,
-)
-async def get_inventory(
-    inventoryID: UUID,
-    transaction: Transaction = Depends(db_transaction),
-) -> Inventory:
-    """Get inventory by `inventoryID`."""
-
-    inventory = await db_inventory.get_inventory_by_id(inventoryID)
-    if inventory is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="this inventory does not exist",
-        )
-
-    response = Inventory(
-        inventoryID=inventory.inventoryID,
-        date_added=inventory.date_added,
-    )
-    return response
-
-
-@router.get(
     "/",
     status_code=status.HTTP_200_OK,
     response_model=List[Inventory],

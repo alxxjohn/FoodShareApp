@@ -51,8 +51,8 @@ async def insert_inventory(inventory: Inventory) -> CreateInventoryResponse:
     """Insert a new inventory."""
 
     stmt = (
-        "INSERT INTO inventory (item_id, foodbankId, itemId, itemName, itemQty, date_added, status) "
-        "VALUES (:inventoryID, :foodbankId, :item_id, :itemName, :itemQty, :date_added, :status) "
+        "INSERT INTO inventory (item_id, foodbank_id, itemName, itemQty, date_added, item_status) "
+        "VALUES (:item_id, :foodbank_id, :item_id, :itemName, :itemQty, :date_added, :item_status) "
         "RETURNING item_id, date_added"
     )
     db_inventory = await db.fetch_one(stmt, values=asdict(inventory))
@@ -62,16 +62,16 @@ async def insert_inventory(inventory: Inventory) -> CreateInventoryResponse:
     return CreateInventoryResponse(**dict(db_inventory))
 
 
-async def delete_inventory(inventoryID: UUID) -> UUID:
+async def delete_inventory(item_id: UUID) -> UUID:
     """Delete an inventory."""
 
-    if await get_inventory_by_id(inventoryID) is None:
+    if await get_inventory_by_id(item_id) is None:
         raise ValueError("Inventory not found")
 
-    stmt = "DELETE FROM inventory WHERE inventoryID = :inventoryID"
-    await db.execute(stmt, values={"inventoryID": inventoryID})
+    stmt = "DELETE FROM inventory WHERE item_id = :item_id"
+    await db.execute(stmt, values={"item_id": item_id})
 
-    return inventoryID
+    return item_id
 
 
 async def list_inventory() -> list[Inventory]:

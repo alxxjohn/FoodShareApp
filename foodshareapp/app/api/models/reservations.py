@@ -4,6 +4,18 @@ from datetime import datetime
 from uuid import UUID
 
 
+class CreateReservationItem(BaseModel):
+    item_id: UUID
+    item_qty: int
+
+
+class ReservationItem(BaseModel):
+    item_id: UUID
+    item_name: str
+    item_qty: int
+    current_status: str
+
+
 class CreateReservation(BaseModel):
     """
     DTO for reservation models.
@@ -11,8 +23,8 @@ class CreateReservation(BaseModel):
     returned when accessing reservation models from the API.
     """
 
-    item_id: UUID
-    item_qty: int
+    reserve_time: datetime
+    reservations_array: List[CreateReservationItem]
 
 
 class CreateReservationResponse(BaseModel):
@@ -33,13 +45,6 @@ class updateReservationResponse(BaseModel):
     foodbank_id: UUID
 
 
-class ReservationItem(BaseModel):
-    item_id: UUID
-    item_name: str
-    item_qty: int
-    current_status: str
-
-
 class GetReservationResponse(BaseModel):
     reservation_uuid: UUID
     reservation_creation_date: datetime
@@ -48,4 +53,4 @@ class GetReservationResponse(BaseModel):
     showed_up_time: datetime
     showed_up: bool
     current_status: str
-    reservation_arry: List[ReservationItem]
+    reservations_array: List[ReservationItem]

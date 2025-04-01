@@ -30,52 +30,46 @@ async def create_reservation(
     transaction: Transaction = Depends(db_transaction),
     current_user: dict = Depends(get_current_user),
 ) -> CreateReservationResponse:
-    """Creates reservation and updates inventory."""
+    """Creates a reservation and updates inventory items accordingly."""
 
+    reservation_uuid = uuid4()
     current_user_id = current_user["uuid"]
+    reservation_creation_date = datetime.now(timezone.utc)
 
-    new_reservation = db_reservations.Reservation(
-        reservationID=uuid4(),
-        reservation_creation_date=timestamp,
-        foodbank_id=create_reservation.foodbank_id,
-        item_id=create_reservation.item_id,
-        item_name=create_reservation.item_name,
-        current_user_id=current_user_id,
-        picked_up=create_reservation.picked_up,
-        showedUp=False,
-        current_status="reserved",
+    for item in create_reservation.reservations_array:
+        inventory_item = await db_reservations.get_inventory_item_by_id(item.item_id)
+        if inventory_item is None:
+            raise HTTPException(
+                status_code=404, detail=f"Item {item['item_id']} not found in inventory"
+            )
+
+        new_quantity = inventory_item["item_qty"] - item.item_qty
+        if new_quantity < 0:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Not enough inventory for item {item['item_id']}",
+            )
+
+        if new_quantity == 0:
+            inventory_item["status"] = "reserved"
+
+        await db_reservations.update_inventory_quantity(item.item_id, new_quantity)
+
+    await db_reservations.insert_reservation(
+        create_reservation, user_uuid=current_user_id
     )
-
-    await db_reservations.insert_reservation(new_reservation)
-
-    inventory_item = await db_reservations.get_inventory_item_by_id(
-        create_reservation.itemId
-    )
-    if inventory_item is None:
-        raise HTTPException(status_code=404, detail="Inventory item not found")
-
-    new_quantity = inventory_item.quantity - create_reservation.itemQty
-    if new_quantity < 0:
-        raise HTTPException(status_code=400, detail="Not enough inventory")
-
-    inventory_item.quantity = new_quantity
-
-    if new_quantity == 0:
-        inventory_item.status = "reserved"
-
-    await db_reservations.update_inventory_item(inventory_item)
 
     await transaction.commit()
 
-    response = CreateReservationResponse(
-        reservation_uuid=new_reservation.reservation_uuid,
-        reservation_creation_date=new_reservation.reservation_creation_date,
-        item_id=create_reservation.item_id,
-        item_name=create_reservation.itemName,
-        item_qty=create_reservation.item_qty,
-        foodbank_id=create_reservation.foodbank_id,
+    return CreateReservationResponse(
+        reservation_uuid=reservation_uuid,
+        reservation_creation_date=reservation_creation_date,
+        user_uuid=current_user_id,
+        reservations_array=create_reservation.reservations_array,
+        picked_up=False,
+        picked_up_time=None,
+        current_status="reserved",
     )
-    return response
 
 
 @router.patch(

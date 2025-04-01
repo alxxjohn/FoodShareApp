@@ -1,40 +1,39 @@
-from dataclasses import dataclass, asdict
+from dataclasses import asdict
 from datetime import datetime
-from typing import Optional
-from uuid import UUID
+from typing import Optional, List
+from uuid import UUID, uuid4
 import json
 from pydantic import BaseModel
-from sqlalchemy import text
+
 
 from foodshareapp.db.utils import db
 from foodshareapp.db.models.inventory import db as inventory_db
+from foodshareapp.app.api.models.reservations import CreateReservationItem
 
 
-# TODO: remove address
-@dataclass
-class Reservation(BaseModel):
-    reservation_uuid: UUID
-    reservation_creation_date: datetime
-    foodbankId: UUID
+class ReservationItem(BaseModel):
     item_id: UUID
     item_name: str
-    user_uuid: UUID
-    item_qty: int
-    showed_up_time: datetime
-    showed_up: bool
-    showedUpTime: Optional[datetime]
-    current_status: str = "active"
-
-
-@dataclass
-class CreateReservation:
-    item_id: UUID
-    user_uuid: UUID
     item_qty: int
     current_status: str
 
 
-@dataclass
+class Reservation(BaseModel):
+    reservation_uuid: UUID
+    reserve_time: datetime
+    reservation_creation_date: datetime
+    user_uuid: UUID
+    showed_up_time: Optional[datetime]
+    showed_up: bool
+    reservations_array: List[ReservationItem]
+    current_status: str = "active"
+
+
+class CreateReservation(BaseModel):
+    reserve_time: datetime
+    reservations_array: List[CreateReservationItem]
+
+
 class CreateReservationResponse(Reservation):
     reservation_uuid: UUID
     reservation_creation_date: datetime
@@ -45,16 +44,14 @@ async def get_inventory_item_by_id(item_id: UUID):
     return await db.fetch_one(query, {"item_id": item_id})
 
 
-async def update_inventory_item(item):
-    query = """
+async def update_inventory_quantity(item_id: UUID, quantity: int):
+    stmt = """
         UPDATE inventory
-        SET item_qty = :item_qty, current_status = :current_status
+        SET item_qty = :quantity,
+            item_status = CASE WHEN :quantity = 0 THEN 'reserved' ELSE item_status END
         WHERE item_id = :item_id
     """
-    await db.execute(
-        query,
-        {"item_id": item.item_id, "item_qty": item.item_qty, "current_status": item.current_status},
-    )
+    await db.execute(stmt, {"item_id": item_id, "quantity": quantity})
 
 
 async def get_reservation_by_id(reservation_uuid: UUID) -> Optional[Reservation]:
@@ -69,53 +66,110 @@ async def get_reservation_by_id(reservation_uuid: UUID) -> Optional[Reservation]
     return Reservation(**dict(db_reservation))
 
 
-async def insert_reservation(reservation: CreateReservation) -> CreateReservationResponse:
-    async with db.transaction():
+async def insert_reservation(
+    reservation: CreateReservation, user_uuid: UUID
+) -> CreateReservationResponse:
+    reservation_uuid = uuid4()
+    creation_date = datetime.utcnow()
+    updated_reservations_array = []
 
-        insert_stmt = """
-            INSERT INTO reservations (
-                reservation_uuid, reservation_creation_date, user_uuid,
-                picked_up, picked_up_time, reservations_array, current_status
-            )
-            VALUES (
-                :reservation_uuid, :reservation_creation_date, :user_uuid,
-                :picked_up, :picked_up_time, :reservations_array, :current_status
-            )
+    for item in reservation.reservations_array:
+        inventory_query = """
+            SELECT item_name, item_qty
+            FROM inventory
+            WHERE item_id = :item_id
         """
+        inventory_record = await db.fetch_one(
+            inventory_query, {"item_id": str(item.item_id)}
+        )
 
+        if not inventory_record:
+            raise ValueError(f"Inventory item {item.item_id} not found")
+
+        new_qty = inventory_record["item_qty"] - item.item_qty
+        if new_qty < 0:
+            raise ValueError(
+                f"Requested quantity exceeds available stock for {inventory_record['item_name']}"
+            )
+
+        item_status = "reserved" if new_qty == 0 else "available"
+
+        update_inventory_query = """
+            UPDATE inventory
+            SET item_qty = :new_qty,
+                item_status = :item_status
+            WHERE item_id = :item_id
+        """
         await db.execute(
-            insert_stmt,
-            values={
-                "reservation_uuid": reservation.reservation_uuid,
-                "reservation_creation_date": reservation.reservation_creation_date,
-                "user_uuid": reservation.user_uuid,
-                "picked_up": reservation.picked_up,
-                "picked_up_time": reservation.picked_up_time,
-                "reservations_array": [json.dumps(item.dict(), default=str) for item in reservation.reservations_array],
-                "current_status": reservation.current_status,
+            update_inventory_query,
+            {
+                "new_qty": new_qty,
+                "item_status": item_status,
+                "item_id": str(item.item_id),
+            },
+        )
+
+        updated_reservations_array.append(
+            {
+                "item_id": str(item.item_id),
+                "item_name": inventory_record["item_name"],
+                "item_qty": item.item_qty,
+                "current_status": item_status,
             }
         )
 
-        # Step 2: Update inventory per item
-        for item in reservation.reservations_array:
-            update_stmt = text("""
-                UPDATE foodbankinventory
-                SET quantity = quantity - :reserved_quantity,
-                    status = CASE
-                        WHEN quantity - :reserved_quantity <= 0 THEN 'reserved'
-                        ELSE status
-                    END
-                WHERE inventory_id = :inventory_id
-            """)
-            await db.execute(
-                update_stmt,
-                values={
-                    "inventory_id": str(item.inventory_id),
-                    "reserved_quantity": item.quantity
-                }
-            )
+    insert_reservation_query = """
+        INSERT INTO reservations (
+            reservation_uuid,
+            reservation_creation_date,
+            reserve_time,
+            user_uuid,
+            picked_up,
+            picked_up_time,
+            reservations_array,
+            current_status
+        )
+        VALUES (
+            :reservation_uuid,
+            :reservation_creation_date,
+            :reserve_time,
+            :user_uuid,
+            :picked_up,
+            :picked_up_time,
+            :reservations_array,
+            :current_status
+        )
+    """
 
-    return CreateReservationResponse(**reservation.dict())
+    await db.execute(
+        insert_reservation_query,
+        {
+            "reservation_uuid": str(reservation_uuid),
+            "reservation_creation_date": creation_date,
+            "reserve_time": reservation.reserve_time,
+            "user_uuid": str(user_uuid),
+            "picked_up": False,
+            "picked_up_time": None,
+            "reservations_array": [
+                json.dumps(item, default=str) for item in updated_reservations_array
+            ],
+            "current_status": "reserved",
+        },
+    )
+
+    return CreateReservationResponse(
+        reservation_uuid=reservation_uuid,
+        reservation_creation_date=creation_date,
+        reserve_time=reservation.reserve_time,
+        item_id=item.item_id,
+        item_name=inventory_record["item_name"],
+        user_uuid=user_uuid,
+        item_qty=item.item_qty,
+        showed_up=False,
+        showedUpTime=None,
+        current_status="reserved",
+        reservations_array=updated_reservations_array,
+    )
 
 
 async def update_reservation(reservation: Reservation) -> Reservation:
