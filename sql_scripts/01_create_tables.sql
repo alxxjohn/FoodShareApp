@@ -46,12 +46,6 @@ CREATE TABLE IF NOT EXISTS business (
     assoc_user UUID NOT NULL REFERENCES users(uuid) 
 );
 
-----------------------------------------------
-----------------------------------------------
--- TABLES BELOW ARE NOT ACTIVE IN BACKEND ---
-----------------------------------------------
-----------------------------------------------
-
 
 CREATE TABLE IF NOT EXISTS inventory
 (
@@ -80,8 +74,5 @@ CREATE TABLE IF NOT EXISTS donations (
     donation_id UUID PRIMARY KEY NOT NULL,
     donation_creation_date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     foodbank_id UUID NOT NULL,
-    donations_array JSONB[] NOT NULL,
-    CONSTRAINT fk_foodbank_id FOREIGN KEY (foodbank_id) REFERENCES business(business_id),
-    CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(uuid),
-    CONSTRAINT fk_item_id FOREIGN KEY (item_id) REFERENCES inventory(item_id)
+    donations_array JSONB[] NOT NULL
 );
