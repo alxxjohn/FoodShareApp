@@ -1,99 +1,104 @@
-from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List
-from uuid import UUID, uuid4
-from pydantic import BaseModel
+from uuid import UUID
+from pydantic import BaseModel, validator
 import json
 
 from foodshareapp.db.utils import db
 from foodshareapp.db.models.inventory import db as inventory_db
 
 
-@dataclass
 class DonationItemResponse(BaseModel):
-    itemId: UUID
-    itemName: str
-    itemQty: int
+    item_id: UUID
+    item_name: str
+    item_qty: int
 
 
-@dataclass
 class Donation(BaseModel):
-    donationID: UUID
-    donationMadeTime: datetime
-    foodbankId: UUID
-    userId: UUID
-    donationsArray: List[DonationItemResponse]
-    pickupTime: datetime
-    status: str
+    donation_id: UUID
+    donation_creation_date: datetime
+    foodbank_id: UUID
+    donations_array: List[DonationItemResponse]
+
+    @validator("donation_creation_date", pre=True, always=True)
+    def ensure_utc(cls, v):
+        if v.tzinfo is None:
+            return v.replace(tzinfo=timezone.utc)
+        return v
 
 
-@dataclass
 class CreateDonation:
-    businessID: UUID
-    foodbankID: UUID
-    donationWeight: int
-    donationDolAmt: float
     donationsArray: List[DonationItemResponse]
 
 
-@dataclass
 class CreateDonationResponse(Donation):
-    donationID: UUID
-    donationDate: datetime
-    businessID: UUID
-    foodbankID: UUID
-    donationWeight: int
-    donationDolAmt: float
-    donationsArray: List[DonationItemResponse]
+    donation_id: UUID
+    donation_creation_date: datetime
+    foodbank_id: UUID
+    donations_array: List[DonationItemResponse]
 
 
-@dataclass
 class DeleteDonation(BaseModel):
-    donationID: UUID
+    donation_id: UUID
 
 
-async def get_donation_by_id(donationID: UUID) -> Optional[Donation]:
-    stmt = "SELECT * FROM donations WHERE donationID = :donationID"
-    record = await db.fetch_one(stmt, values={"donationID": donationID})
+async def get_foodbank_id_for_user(assoc_user: UUID) -> UUID:
+    stmt = """
+        SELECT business_id FROM business
+        WHERE assoc_user = :assoc_user AND is_foodbank = true
+    """
+    record = await db.fetch_one(stmt, values={"assoc_user": assoc_user})
+    if record is None:
+        return None
+    return record["business_id"]
+
+
+async def get_donation_by_id(donation_id: UUID) -> Optional[Donation]:
+    stmt = "SELECT * FROM donations WHERE donation_id = :donation_id"
+    record = await db.fetch_one(stmt, values={"donation_id": donation_id})
     if record is None:
         return None
 
     record_dict = dict(record)
-    record_dict["donationsArray"] = json.loads(record_dict["donationsArray"])
+
+    record_dict["donations_array"] = [
+        DonationItemResponse(**json.loads(item))
+        for item in record_dict["donations_array"]
+    ]
+
     return Donation(**record_dict)
 
 
 async def insert_donation(donation: Donation) -> CreateDonationResponse:
     stmt = """
         INSERT INTO donations (
-            donationID, donationMadeTime, foodbankId, userId,
-            donationsArray, pickupTime, status
+            donation_id, donation_creation_date, foodbank_id,
+            donations_array
         )
         VALUES (
-            :donationID, :donationMadeTime, :foodbankId, :userId,
-            :donationsArray, :pickupTime, :status
+            :donation_id, :donation_creation_date, :foodbank_id,
+            :donations_array
         )
     """
     await db.execute(
         stmt,
         values={
-            "donationID": donation.donationID,
-            "donationMadeTime": donation.donationMadeTime,
-            "foodbankId": donation.foodbankId,
-            "userId": donation.userId,
-            "donationsArray": json.dumps(donation.donationsArray),
-            "pickupTime": donation.pickupTime,
-            "status": donation.status,
+            "donation_id": donation.donation_id,
+            "donation_creation_date": donation.donation_creation_date,
+            "foodbank_id": donation.foodbank_id,
+            "donations_array": [
+                json.dumps(item.dict(), default=str)
+                for item in donation.donations_array
+            ],
         },
     )
-
     return CreateDonationResponse(**donation.dict())
 
 
-async def delete_donation(donationID: UUID) -> UUID:
-    stmt = "DELETE FROM donations WHERE donationID = :donationID"
-    await db.execute(stmt, values={"donationID": donationID})
-    return donationID
+async def delete_donation(donation_id: UUID) -> UUID:
+    stmt = "DELETE FROM donations WHERE donation_id = :donation_id"
+    await db.execute(stmt, values={"donation_id": donation_id})
+    return donation_id
 
 
 async def upsert_inventory_item(
@@ -103,44 +108,43 @@ async def upsert_inventory_item(
     Inserts or updates an inventory item for a foodbank.
     """
     check_stmt = """
-        SELECT itemQty FROM inventory
-        WHERE foodbankId = :foodbankId AND itemId = :itemId
+        SELECT item_qty FROM inventory
+        WHERE foodbank_id = :foodbank_id AND item_id = :item_id
     """
     inventory_record = await inventory_db.fetch_one(
         check_stmt,
-        values={"foodbankId": foodbank_id, "itemId": item_id},
+        values={"foodbank_id": foodbank_id, "item_id": item_id},
     )
 
     if inventory_record:
         update_stmt = """
             UPDATE inventory
-            SET itemQty = itemQty + :qty, itemStatus = 'available'
-            WHERE foodbankId = :foodbankId AND itemId = :itemId
+            SET item_qty = item_qty + :item_qty, item_status = 'available'
+            WHERE foodbank_id = :foodbank_id AND item_id = :item_id
         """
         await inventory_db.execute(
             update_stmt,
             values={
-                "qty": item_qty,
-                "foodbankId": foodbank_id,
-                "itemId": item_id,
+                "item_qty": item_qty,
+                "foodbank_id": foodbank_id,
+                "item_id": item_id,
             },
         )
     else:
         insert_stmt = """
             INSERT INTO inventory (
-                inventoryID, foodbankId, itemId, itemName, itemQty, itemStatus
+                foodbank_id, item_id, item_name, item_qty, item_status
             )
             VALUES (
-                :inventoryID, :foodbankId, :itemId, :itemName, :qty, 'available'
+                :foodbank_id, :item_id, :item_name, :item_qty, 'available'
             )
         """
         await inventory_db.execute(
             insert_stmt,
             values={
-                "inventoryID": uuid4(),
-                "foodbankId": foodbank_id,
-                "itemId": item_id,
-                "itemName": item_name,
-                "qty": item_qty,
+                "foodbank_id": foodbank_id,
+                "item_id": item_id,
+                "item_name": item_name,
+                "item_qty": item_qty,
             },
         )

@@ -5,19 +5,18 @@ from typing import List
 
 
 class DonationItem(BaseModel):
-    itemName: str
-    itemQty: int
+    item_name: str
+    item_qty: int
 
 
 class CreateDonation(BaseModel):
-    foodbankId: UUID
-    donationsArray: List[DonationItem]
+    donations_array: List[DonationItem]
 
 
 class DonationItemResponse(BaseModel):
-    itemId: UUID
-    itemName: str
-    itemQty: int
+    item_id: UUID
+    item_name: str
+    item_qty: int
 
 
 class Donation(BaseModel):
@@ -27,32 +26,25 @@ class Donation(BaseModel):
     returned when accessing donation models from the API.
     """
 
-    donationID: UUID
-    donationMadeTime: datetime
-    foodbankId: UUID
-    userId: UUID
-    donationsArray: List[DonationItemResponse]
-    pickupTime: datetime
-    status: str
+    donation_id: UUID
+    donation_creation_date: datetime
+    foodbank_id: UUID
+    donations_array: List[DonationItemResponse]
 
 
 class CreateDonationResponse(CreateDonation):
-    donationID: UUID
-    donationMadeTime: datetime
-    userId: UUID
-    donationsArray: List[DonationItem]
-    status: str
+    donation_id: UUID
+    donation_creation_date: datetime
+    foodbank_id: UUID
+    donations_array: List[DonationItem]
 
 
 class DeleteDonation(BaseModel):
-    donationID: UUID
+    donation_id: UUID
 
 
 class UpdateDonationResponse(BaseModel):
-    donationID: UUID
-    donationMadeTime: datetime
-    foodbankId: UUID
-    donationsArray: List[DonationItemResponse]
-    userId: UUID
-    pickupTime: datetime
-    status: str
+    donation_id: UUID
+    donation_creation_date: datetime
+    foodbank_id: UUID
+    donations_array: List[DonationItemResponse]

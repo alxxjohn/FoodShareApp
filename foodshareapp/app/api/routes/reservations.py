@@ -18,35 +18,62 @@ reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/api/auth/login", scheme_name="
 
 timestamp = datetime.now(timezone.utc)
 router = APIRouter(dependencies=[Depends(db_transaction), Depends(get_current_user)])
-curr_userId = uuid4()
 
 
 @router.post(
-    "/", status_code=status.HTTP_200_OK, response_model=CreateReservationResponse
+    "/",
+    status_code=status.HTTP_200_OK,
+    response_model=CreateReservationResponse,
 )
 async def create_reservation(
     create_reservation: CreateReservation,
     transaction: Transaction = Depends(db_transaction),
+    current_user: dict = Depends(get_current_user),
 ) -> CreateReservationResponse:
-    """Creates reservation."""
+    """Creates reservation and updates inventory."""
+
+    current_user_id = current_user["uuid"]
 
     new_reservation = db_reservations.Reservation(
         reservationID=uuid4(),
-        reservationMadeTime=timestamp,
-        foodbankId=create_reservation.foodbankId,
-        itemId=create_reservation.itemId,
-        itemName=create_reservation.itemName,
-        userId=curr_userId,
-        itemQty=create_reservation.itemQty,
+        reservation_creation_date=timestamp,
+        foodbank_id=create_reservation.foodbank_id,
+        item_id=create_reservation.item_id,
+        item_name=create_reservation.item_name,
+        current_user_id=current_user_id,
+        picked_up=create_reservation.picked_up,
         showedUp=False,
-        status="active",
+        current_status="reserved",
     )
+
     await db_reservations.insert_reservation(new_reservation)
+
+    inventory_item = await db_reservations.get_inventory_item_by_id(
+        create_reservation.itemId
+    )
+    if inventory_item is None:
+        raise HTTPException(status_code=404, detail="Inventory item not found")
+
+    new_quantity = inventory_item.quantity - create_reservation.itemQty
+    if new_quantity < 0:
+        raise HTTPException(status_code=400, detail="Not enough inventory")
+
+    inventory_item.quantity = new_quantity
+
+    if new_quantity == 0:
+        inventory_item.status = "reserved"
+
+    await db_reservations.update_inventory_item(inventory_item)
+
     await transaction.commit()
 
     response = CreateReservationResponse(
-        reservationID=new_reservation.reservationID,
-        reservationMadeTime=new_reservation.reservationMadeTime,
+        reservation_uuid=new_reservation.reservation_uuid,
+        reservation_creation_date=new_reservation.reservation_creation_date,
+        item_id=create_reservation.item_id,
+        item_name=create_reservation.itemName,
+        item_qty=create_reservation.item_qty,
+        foodbank_id=create_reservation.foodbank_id,
     )
     return response
 

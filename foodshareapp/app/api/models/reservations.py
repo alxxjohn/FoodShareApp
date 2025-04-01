@@ -1,6 +1,6 @@
 from pydantic import BaseModel
+from typing import List
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 
@@ -11,29 +11,41 @@ class CreateReservation(BaseModel):
     returned when accessing reservation models from the API.
     """
 
-    itemId: UUID
-    itemName: str
-    itemQty: int
-    foodbankId: UUID
+    item_id: UUID
+    item_qty: int
 
 
-class CreateReservationResponse(CreateReservation):
-    reservationID: UUID
-    reservationMadeTime: datetime
+class CreateReservationResponse(BaseModel):
+    reservation_uuid: UUID
+    reservation_creation_date: datetime
 
 
 class DeleteReservation(BaseModel):
-    reservationID: UUID
+    reservation_uuid: UUID
 
 
 class updateReservationResponse(BaseModel):
-    reservationID: UUID
-    reservationMadeTime: datetime
-    foodbankId: UUID
-    itemId: UUID
-    userId: UUID
-    itemQty: int
-    pickupTime: datetime
-    showedUp: bool
-    showedUpTime: Optional[datetime]
-    status: str
+    reservation_uuid: UUID
+    reservation_creation_date: datetime
+    item_id: UUID
+    item_name: str
+    item_qty: int
+    foodbank_id: UUID
+
+
+class ReservationItem(BaseModel):
+    item_id: UUID
+    item_name: str
+    item_qty: int
+    current_status: str
+
+
+class GetReservationResponse(BaseModel):
+    reservation_uuid: UUID
+    reservation_creation_date: datetime
+    foodbank_id: UUID
+    user_uuid: UUID
+    showed_up_time: datetime
+    showed_up: bool
+    current_status: str
+    reservation_arry: List[ReservationItem]
