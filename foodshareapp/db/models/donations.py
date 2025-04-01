@@ -49,7 +49,7 @@ async def get_foodbank_id_for_user(assoc_user: UUID) -> UUID:
     """
     record = await db.fetch_one(stmt, values={"assoc_user": assoc_user})
     if record is None:
-        return None
+        raise ValueError("Failed to insert donation")
     return record["business_id"]
 
 

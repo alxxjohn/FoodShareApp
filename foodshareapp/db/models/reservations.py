@@ -183,7 +183,7 @@ async def insert_reservation(
         showedUpTime=None,
         picked_up=False,
         current_status="reserved",
-        reservations_array=updated_reservations_array,
+        reservations_array=[ReservationItem(**item) for item in updated_reservations_array],
     )
 
 
@@ -272,6 +272,5 @@ async def update_reservation_partial(reservation_uuid: UUID, updates: dict):
 async def delete_inventory_for_reservation(reservation: Reservation):
     for item in reservation.reservations_array:
         await db.execute(
-            "DELETE FROM inventory WHERE item_id = :item_id",
-            {"item_id": item.item_id}
+            "DELETE FROM inventory WHERE item_id = :item_id", {"item_id": item.item_id}
         )
