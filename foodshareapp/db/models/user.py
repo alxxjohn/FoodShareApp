@@ -10,7 +10,7 @@ from foodshareapp.db.utils import db
 
 @dataclass
 class UserModel:
-    userId: UUID
+    uuid: UUID
     email: str
     username: str
     firstname: str
@@ -37,7 +37,7 @@ class UserModel:
 @dataclass
 class NewUser:
     __tablename__ = "users"
-    userId: UUID
+    uuid: UUID
     email: str
     username: str
     firstname: Optional[str]
@@ -78,20 +78,20 @@ async def insert_user(newuser: NewUser) -> UUID:
     """Creates a new user"""
 
     stmnt = (
-        "INSERT INTO users (userId, email, username, firstname, lastname, salt, password, last_login, address, city, state, zipCode, phone, is_business, is_admin) "
-        "VALUES (:userId, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :address, :city, :state, :zipCode, :phone, :is_business, :is_admin) "
-        "RETURNING userId"
+        "INSERT INTO users (uuid, email, username, firstname, lastname, salt, password, last_login, address, city, state, zipCode, phone, is_business, is_admin) "
+        "VALUES (:uuid, :email, :username, :firstname, :lastname, :salt, :password, :last_login, :address, :city, :state, :zipCode, :phone, :is_business, :is_admin) "
+        "RETURNING uuid"
     )
     return await db.execute(stmnt, values=asdict(newuser))
 
 
-async def get_user_by_id(userId: UUID) -> Optional[UserModel]:
+async def get_user_by_id(uuid: UUID) -> Optional[UserModel]:
     """Returns the user with the given id.
     Returns `None` if no such user exists.
     """
 
-    stmnt = "SELECT * FROM users WHERE userId = :userId"
-    db_user = await db.fetch_one(query=stmnt, values={"userId": userId})
+    stmnt = "SELECT * FROM users WHERE uuid = :uuid"
+    db_user = await db.fetch_one(query=stmnt, values={"uuid": uuid})
 
     if db_user is None:
         return None

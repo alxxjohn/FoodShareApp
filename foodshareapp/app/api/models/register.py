@@ -5,7 +5,7 @@ from uuid import UUID
 
 
 class NewUser(BaseModel):
-    userId: UUID
+    uuid: UUID
     email: EmailStr
     username: str
     firstname: Optional[str]
@@ -41,7 +41,7 @@ class CreateUser(BaseModel):
 
 
 class CreateUserResponse(BaseModel):
-    userId: UUID
+    uuid: UUID
     username: str
     email: EmailStr
     firstname: Optional[str]
