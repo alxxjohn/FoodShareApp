@@ -1,6 +1,6 @@
 from uuid import uuid4, UUID
 from datetime import datetime, timezone
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordBearer
 
 
@@ -9,8 +9,7 @@ from foodshareapp.app.api.services.auth import get_current_user
 from foodshareapp.app.api.models.reservations import (
     CreateReservationResponse,
     CreateReservation,
-    ReservationUpdate,
-    ReservationItemUpdate
+    ReservationUpdate
 )
 from foodshareapp.db.models import reservations as db_reservations
 
@@ -82,29 +81,28 @@ async def create_reservation(
 )
 async def update_reservation(
     reservation_uuid: UUID,
-    updates: ReservationUpdate,
+    reservation_update: ReservationUpdate, 
     transaction: Transaction = Depends(db_transaction),
 ) -> db_reservations.Reservation:
-    """Partially updates a reservation by `reservation_uuid`."""
+    """Partially updates reservation by `reservation_uuid`."""
 
-    existing = await db_reservations.get_reservation_by_id(reservation_uuid)
-    if existing is None:
+    reservation = await db_reservations.get_reservation_by_id(reservation_uuid)
+    if reservation is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This reservation does not exist",
         )
 
-    updated_data = existing.dict()
-    update_dict = updates.dict(exclude_unset=True)
+    update_data = reservation_update.dict(exclude_unset=True)
 
-    for key, value in update_dict.items():
-        updated_data[key] = value
+    await db_reservations.update_reservation_partial(reservation_uuid, update_data)
 
-    updated_reservation = db_reservations.Reservation(**updated_data)
-    await db_reservations.update_reservation(updated_reservation)
+    if update_data.get("current_status") == "picked_up":
+        await db_reservations.delete_inventory_for_reservation(reservation)
+
     await transaction.commit()
 
-    return updated_reservation
+    return await db_reservations.get_reservation_by_id(reservation_uuid)
 
 
 @router.get(

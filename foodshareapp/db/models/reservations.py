@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from datetime import datetime, timedelta
 from typing import Optional, List
 from uuid import UUID, uuid4
@@ -7,7 +6,6 @@ from pydantic import BaseModel
 
 
 from foodshareapp.db.utils import db
-from foodshareapp.db.models.inventory import db as inventory_db
 from foodshareapp.app.api.models.reservations import CreateReservationItem
 
 
@@ -23,8 +21,8 @@ class Reservation(BaseModel):
     reserve_time: datetime
     reservation_creation_date: datetime
     user_uuid: UUID
-    showed_up_time: Optional[datetime]
-    showed_up: bool
+    picked_up_time: Optional[datetime]
+    picked_up: bool
     reservations_array: List[ReservationItem]
     current_status: str = "active"
 
@@ -183,30 +181,10 @@ async def insert_reservation(
         user_uuid=user_uuid,
         showed_up=False,
         showedUpTime=None,
+        picked_up=False,
         current_status="reserved",
         reservations_array=updated_reservations_array,
     )
-
-
-async def update_reservation(reservation: Reservation) -> Reservation:
-    stmt = (
-        "UPDATE reservations SET reservation_creation_date = :reservation_creation_date, foodbank_id = :foodbank_id, item_id = :item_id, item_name=:item_name, userId = :userId, itemQty = :itemQty, pickupTime = :pickupTime, showedUp = :showedUp, showedUpTime = :showedUpTime, status = :status "
-        "WHERE reservation_uuid = :reservation_uuid"
-    )
-    await db.execute(stmt, values=asdict(reservation))
-
-    # If user picked up item, delete from inventory
-    if reservation.showedUp:
-        delete_stmt = "DELETE FROM inventory WHERE foodbank_id = :foodbank_id AND itemId = :itemId"
-        await inventory_db.execute(
-            delete_stmt,
-            values={
-                "foodbank_id": reservation.foodbank_id,
-                "itemId": reservation.itemId,
-            },
-        )
-
-    return reservation
 
 
 async def delete_reservation(reservation_uuid: UUID) -> UUID:
@@ -274,3 +252,26 @@ async def cleanup_expired_reservations() -> list[dict]:
         )
 
     return restored_items
+
+
+async def update_reservation_partial(reservation_uuid: UUID, updates: dict):
+    if not updates:
+        raise ValueError("No fields provided for update.")
+
+    set_clause = ", ".join(f"{key} = :{key}" for key in updates)
+    updates["reservation_uuid"] = str(reservation_uuid)
+
+    query = f"""
+        UPDATE reservations
+        SET {set_clause}
+        WHERE reservation_uuid = :reservation_uuid
+    """
+    await db.execute(query, updates)
+
+
+async def delete_inventory_for_reservation(reservation: Reservation):
+    for item in reservation.reservations_array:
+        await db.execute(
+            "DELETE FROM inventory WHERE item_id = :item_id",
+            {"item_id": item.item_id}
+        )

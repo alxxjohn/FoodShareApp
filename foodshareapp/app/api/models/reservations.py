@@ -50,23 +50,23 @@ class GetReservationResponse(BaseModel):
     reservation_creation_date: datetime
     foodbank_id: UUID
     user_uuid: UUID
-    showed_up_time: datetime
-    showed_up: bool
+    picked_up_time: datetime
+    picked_up: bool
     current_status: str
     reservations_array: List[ReservationItem]
 
 
 class ReservationItemUpdate(BaseModel):
     item_id: Optional[UUID]
-    item_name: Optional[str]
     item_qty: Optional[int]
+    item_name: Optional[str]
     current_status: Optional[str]
 
 
 class ReservationUpdate(BaseModel):
     reserve_time: Optional[datetime]
-    user_uuid: Optional[UUID]
-    showed_up_time: Optional[datetime]
+    picked_up: Optional[bool]
     showed_up: Optional[bool]
+    showed_up_time: Optional[datetime]
     reservations_array: Optional[List[ReservationItemUpdate]]
     current_status: Optional[str]
