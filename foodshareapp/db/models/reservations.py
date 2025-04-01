@@ -183,7 +183,9 @@ async def insert_reservation(
         showedUpTime=None,
         picked_up=False,
         current_status="reserved",
-        reservations_array=[ReservationItem(**item) for item in updated_reservations_array],
+        reservations_array=[
+            ReservationItem(**item) for item in updated_reservations_array
+        ],
     )
 
 
