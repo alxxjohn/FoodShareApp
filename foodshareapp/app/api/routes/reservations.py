@@ -9,6 +9,8 @@ from foodshareapp.app.api.services.auth import get_current_user
 from foodshareapp.app.api.models.reservations import (
     CreateReservationResponse,
     CreateReservation,
+    ReservationUpdate,
+    ReservationItemUpdate
 )
 from foodshareapp.db.models import reservations as db_reservations
 
@@ -51,6 +53,7 @@ async def create_reservation(
             )
 
         if new_quantity == 0:
+            inventory_item = dict(inventory_item)
             inventory_item["status"] = "reserved"
 
         await db_reservations.update_inventory_quantity(item.item_id, new_quantity)
@@ -73,32 +76,31 @@ async def create_reservation(
 
 
 @router.patch(
-    "/{reservationID}/",
+    "/{reservation_uuid}/",
     status_code=status.HTTP_200_OK,
     response_model=db_reservations.Reservation,
 )
 async def update_reservation(
-    reservationID: UUID, transaction: Transaction = Depends(db_transaction)
+    reservation_uuid: UUID,
+    updates: ReservationUpdate,
+    transaction: Transaction = Depends(db_transaction),
 ) -> db_reservations.Reservation:
-    """Updates reservation by `reservationID`."""
+    """Partially updates a reservation by `reservation_uuid`."""
 
-    reservation = await db_reservations.get_reservation_by_id(reservationID)
-    if reservation is None:
+    existing = await db_reservations.get_reservation_by_id(reservation_uuid)
+    if existing is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="this reservation does not exist",
+            detail="This reservation does not exist",
         )
 
-    updated_reservation = db_reservations.Reservation(
-        reservationID=reservation.reservationID,
-        reservationMadeTime=reservation.reservationMadeTime,
-        foodbankId=reservation.foodbankId,
-        itenName=reservation.itenName,
-        itemId=reservation.itemId,
-        userId=reservation.userId,
-        itemQty=reservation.itemQty,
-        status=reservation.status,
-    )
+    updated_data = existing.dict()
+    update_dict = updates.dict(exclude_unset=True)
+
+    for key, value in update_dict.items():
+        updated_data[key] = value
+
+    updated_reservation = db_reservations.Reservation(**updated_data)
     await db_reservations.update_reservation(updated_reservation)
     await transaction.commit()
 
@@ -106,14 +108,14 @@ async def update_reservation(
 
 
 @router.get(
-    "/{reservationID}/",
+    "/{reservation_uuid}/",
     status_code=status.HTTP_200_OK,
     response_model=db_reservations.Reservation,
 )
 async def get_reservation(
     reservationID: UUID, transaction: Transaction = Depends(db_transaction)
 ) -> db_reservations.Reservation:
-    """Gets reservation by `reservationID`."""
+    """Gets reservation by `reservation_uuid`."""
 
     reservation = await db_reservations.get_reservation_by_id(reservationID)
     if reservation is None:
@@ -125,12 +127,12 @@ async def get_reservation(
     return reservation
 
 
-@router.delete("/{reservationID}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{reservation_uuid}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_reservation(
-    reservationID: UUID, transaction: Transaction = Depends(db_transaction)
+    reservation_uuid: UUID, transaction: Transaction = Depends(db_transaction)
 ) -> UUID:
-    """Deletes reservation given by `reservationID`"""
+    """Deletes reservation given by `reservation_uuid`"""
 
-    await db_reservations.delete_reservation(reservationID)
+    await db_reservations.delete_reservation(reservation_uuid)
     await transaction.commit()
-    return reservationID
+    return HTTPException(status_code=status.HTTP_200_OK)

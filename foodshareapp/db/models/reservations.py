@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List
 from uuid import UUID, uuid4
 import json
@@ -63,7 +63,20 @@ async def get_reservation_by_id(reservation_uuid: UUID) -> Optional[Reservation]
     if db_reservation is None:
         return None
 
-    return Reservation(**dict(db_reservation))
+    raw = dict(db_reservation)
+    raw.setdefault("showed_up", False)
+    raw_array = raw.get("reservations_array")
+    if isinstance(raw_array, list):
+        parsed_array = []
+        for item in raw_array:
+            if isinstance(item, str):
+                parsed_array.append(json.loads(item))  # Parse JSON string to dict
+            elif isinstance(item, dict):
+                parsed_array.append(item)
+        raw["reservations_array"] = parsed_array
+    else:
+        raw["reservations_array"] = []
+    return Reservation(**raw)
 
 
 async def insert_reservation(
@@ -86,7 +99,13 @@ async def insert_reservation(
         if not inventory_record:
             raise ValueError(f"Inventory item {item.item_id} not found")
 
-        new_qty = inventory_record["item_qty"] - item.item_qty
+        inv_qty = int(inventory_record["item_qty"])
+        req_qty = int(item.item_qty)
+        new_qty = inv_qty - req_qty
+        print(
+            f"[DEBUG] item: {inventory_record['item_name']}, inventory: {inv_qty}, requested: {req_qty}, new: {new_qty}"
+        )
+
         if new_qty < 0:
             raise ValueError(
                 f"Requested quantity exceeds available stock for {inventory_record['item_name']}"
@@ -161,10 +180,7 @@ async def insert_reservation(
         reservation_uuid=reservation_uuid,
         reservation_creation_date=creation_date,
         reserve_time=reservation.reserve_time,
-        item_id=item.item_id,
-        item_name=inventory_record["item_name"],
         user_uuid=user_uuid,
-        item_qty=item.item_qty,
         showed_up=False,
         showedUpTime=None,
         current_status="reserved",
@@ -195,5 +211,66 @@ async def update_reservation(reservation: Reservation) -> Reservation:
 
 async def delete_reservation(reservation_uuid: UUID) -> UUID:
     stmt = "DELETE FROM reservations WHERE reservation_uuid = :reservation_uuid"
-    await db.execute(stmt, values={"reservationID": reservation_uuid})
+    await db.execute(stmt, values={"reservation_uuid": reservation_uuid})
     return reservation_uuid
+
+
+async def cleanup_expired_reservations() -> list[dict]:
+    expiration_threshold = datetime.utcnow() - timedelta(hours=1)
+
+    query = """
+        SELECT reservation_uuid, reservations_array
+        FROM reservations
+        WHERE picked_up = FALSE AND reserve_time < :threshold AND current_status = 'reserved'
+    """
+    expired_reservations = await db.fetch_all(
+        query, {"threshold": expiration_threshold}
+    )
+
+    restored_items = []
+
+    for reservation in expired_reservations:
+        reservation_uuid = reservation["reservation_uuid"]
+        reservations_array = reservation["reservations_array"]
+
+        try:
+            items = json.loads(reservations_array)
+        except Exception as e:
+            print(
+                f"[ERROR] Could not parse reservations_array for {reservation_uuid}: {e}"
+            )
+            continue
+
+        for item in items:
+            item_id = UUID(item["item_id"])
+            item_qty = item["item_qty"]
+
+            await db.execute(
+                """
+                UPDATE inventory
+                SET item_qty = item_qty + :qty,
+                    item_status = 'available'
+                WHERE item_id = :item_id
+            """,
+                {"qty": item_qty, "item_id": str(item_id)},
+            )
+
+            restored_items.append(
+                {
+                    "reservation_uuid": str(reservation_uuid),
+                    "item_id": str(item_id),
+                    "item_name": item.get("item_name", "unknown"),
+                    "restored_qty": item_qty,
+                }
+            )
+
+        await db.execute(
+            """
+            UPDATE reservations
+            SET current_status = 'expired'
+            WHERE reservation_uuid = :uuid
+        """,
+            {"uuid": str(reservation_uuid)},
+        )
+
+    return restored_items

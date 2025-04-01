@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import Optional, List
 from datetime import datetime
 from uuid import UUID
 
@@ -54,3 +54,19 @@ class GetReservationResponse(BaseModel):
     showed_up: bool
     current_status: str
     reservations_array: List[ReservationItem]
+
+
+class ReservationItemUpdate(BaseModel):
+    item_id: Optional[UUID]
+    item_name: Optional[str]
+    item_qty: Optional[int]
+    current_status: Optional[str]
+
+
+class ReservationUpdate(BaseModel):
+    reserve_time: Optional[datetime]
+    user_uuid: Optional[UUID]
+    showed_up_time: Optional[datetime]
+    showed_up: Optional[bool]
+    reservations_array: Optional[List[ReservationItemUpdate]]
+    current_status: Optional[str]
