@@ -1,4 +1,3 @@
-from uuid import UUID
 from typing import List
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -15,31 +14,6 @@ reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/api/auth/login", scheme_name="
 
 timestamp = datetime.now(timezone.utc)
 router = APIRouter(dependencies=[Depends(db_transaction), Depends(get_current_user)])
-
-
-@router.get(
-    "/{inventoryID}/",
-    status_code=status.HTTP_200_OK,
-    response_model=Inventory,
-)
-async def get_inventory(
-    inventoryID: UUID,
-    transaction: Transaction = Depends(db_transaction),
-) -> Inventory:
-    """Get inventory by `inventoryID`."""
-
-    inventory = await db_inventory.get_inventory_by_id(inventoryID)
-    if inventory is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="this inventory does not exist",
-        )
-
-    response = Inventory(
-        inventoryID=inventory.inventoryID,
-        date_added=inventory.date_added,
-    )
-    return response
 
 
 @router.get(
