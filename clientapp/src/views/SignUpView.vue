@@ -37,13 +37,16 @@
       <label for="inputCity" class="form-label">City</label>
       <input type="text" class="form-control" id="inputCity" v-model="city">
     </div>
+    
     <div class="col-md-4">
       <label for="inputState" class="form-label">State</label>
-      <select id="inputState" class="form-select" v-model="state">
-        <option selected>Choose...</option>
-        <option>...</option>
+      <select id="inputState" class="form-select" v-model="selectedState">
+        <option v-for="state in states" :key="state" :value="state">
+          {{ state }}
+        </option>
       </select>
     </div>
+
     <div class="col-md-2">
       <label for="inputZip" class="form-label">Zip</label>
       <input type="text" class="form-control" id="inputZip" v-model="zip">
@@ -86,17 +89,35 @@
 
 <script>
 import authService from '@/services/authService';
-//import { state } from '@/utils/const';
+import MockAdapter from 'axios-mock-adapter';
+import { states } from '@/utils/const.js';
+import apiClient from '@/services/apiClient';
+
 
  export default {
+  
   data() {
     return {
+      email: '',
       accountTypeRadio: 'personal',  // TypeScript type declaration
       companyname: '',
       username: '',
       firstname: '',
-      lastname: ''
+      lastname: '',
+      password: '',
+      states: states,
+      selectedState: '',
+      terms: false,
+      address: '',
+      address2: '',
+      city: '',
+      zip: '',
+      phone: '',
+      submitted: false
+
     };
+    
+    
   },
 
  methods: {
@@ -111,7 +132,7 @@ import authService from '@/services/authService';
       terms: true,
       address: this.address,
       city: this.city,
-      state: 'this.state',
+      state: this.selectedState,
       zip: this.zip,
       phone: this.phone,
       is_business: false,
@@ -121,20 +142,28 @@ import authService from '@/services/authService';
     console.log("Data = " + str);
     
     authService.register(data)
-    .then(() => {
+    .then((response) => {
+          console.log(response.data)
           this.message = 'Registration successful!';
           this.messageClass = 'success';
           this.name = ''; // Clear the input field
         })
-        .catch(() => {
+        .catch((error ) => {
+          console.log(error.response.data);
           this.message = 'Error registering name';
           this.messageClass = 'error';
         });
 
-        this.submitted = true;
+        //this.submitted = true;
     }
   }
 };
+
+
+const mock = new MockAdapter(apiClient);
+
+mock.onPost('/api/register/user').reply(200, {message: 'This is a mock test: Registration successful'});
+
 
  </script>
 
