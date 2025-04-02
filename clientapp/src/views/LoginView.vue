@@ -5,12 +5,14 @@
     <label for="username">Username</label>
     </div>
     <div class="form-floating">
-      <input type="password" class="form-control" id="password" placeholder="Password" v-model="login_info.username">
+      <input type="password" class="form-control" id="password" placeholder="Password" v-model="login_info.password">
       <label for="password">Password</label>
     </div>
     <div class="d-flex gap-2">
       <button class="btn btn-primary" type="submit">Sign In</button>
-      <button class="btn btn-primary" type="button">Register</button>
+      <router-link to="/signup">
+        <button class="btn btn-primary" type="button">Register</button>
+      </router-link>
     </div>
   </form> 
 </template>
