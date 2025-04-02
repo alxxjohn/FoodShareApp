@@ -15,17 +15,17 @@
       <div class="col-md-4">
         <div class="card bg-danger text-white p-3">
           <h5>Reserved</h5>
-          <!-- <ul class="list-unstyled">
-            <li v-for="food in reservedFoods" :key="food.id">{{ food.name }} ({{ food.reservedBy }})</li>
-          </ul> -->
+          <ul class="list-unstyled">
+            <li v-for="reservation in reserved" :key="reservation.id">{{ reservation.firstname }} ({{ reservation.reservationTime }})</li>
+          </ul>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card bg-secondary text-white p-3">
           <h5>Picked Up</h5>
-          <!-- <ul class="list-unstyled">
-            <li v-for="food in pickedUpFoods" :key="food.id" @click="selectFood(food)">{{ food.name }}</li>
-          </ul> -->
+          <ul class="list-unstyled">
+            <li v-for="reservation in pickedup" :key="reservation.id">{{ reservation.firstname }} ({{ reservation.showedUpTime }})</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -42,6 +42,7 @@
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { getInventory } from '@/services/foodService'
+import { getReservationList } from '@/services/reservationService'
 
 
 const router = useRouter();
@@ -49,21 +50,36 @@ const router = useRouter();
 const foodbankId = 1;
 
 const available = ref([{name:null, quant:null}]);
+const reserved = ref([]);
+const pickedup = ref([]);
 
 onMounted(() => {
   getInventory(foodbankId)
     .then(data => {
-      console.log("data: "+JSON.stringify(data, null, 2)); 
       available.value = data.availableFoods.map((inven) => ({
         name: inven.name,
         quant: inven.quant
       }));
     })
     .catch(error => {
-      console.error("Failed to fetch inventory", error);
+      console.error("Failed to fetch the inventory", error);
     })
-   console.log("request: "+JSON.stringify(available.value, null, 2)); 
+  getReservationList(foodbankId)
+    .then(data => {
+      data.reservationList.forEach((reservation) => {
+        if (reservation.status === 'reserved'){
+          reserved.value.push(reservation);
+        } else if (reservation.status === 'pickedup'){
+          pickedup.value.push(reservation);
+        }
+      })
+      reserved.value.sort((a, b) => a.reservationTime.localeCompare(b.reservationTime));
+      pickedup.value.sort((a, b) => a.showedUpTime.localeCompare(b.showedUpTime));
 
+    })
+    .catch(error => {
+      console.error("Failed to fetch the reservation list", error);
+    })
 });
 
 

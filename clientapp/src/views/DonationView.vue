@@ -33,11 +33,16 @@
                 class="btn btn-outline-success ms-2">+</button>
       </div>
 
+    </div>
 
-      <div class="col-md-2" id="donation-button" v-if="index === 0">
+    <div class="button-box">
+      <div class="col-md-2" id="donation-button">
         <button type="button" class="btn btn-primary" @click="addDonation" :disabled="disabledButton()">Add Donations</button>
       </div>
 
+      <div class="col-md-2" id="cancel-button">
+        <button type="button" class="btn btn-danger" @click="cancelDonation">Cancel</button>
+      </div>
     </div>
     
   </div>
@@ -48,6 +53,9 @@
 // import { ref, onMounted } from 'vue';
 import { ref } from 'vue';
 import { addDonationService } from '@/services/foodService';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const addedFoodList = ref([{name: null, quant:null}]); 
 const maxList = 10; // user can add maximum 10 items at a time
@@ -91,5 +99,20 @@ function addDonation(){
     });
 }
 
+//redirect to reservation-list page
+function cancelDonation(){
+  router.push('/reservation-list');
+}
+
 
 </script>
+
+<style>
+  .button-box {
+    display: flex; 
+    justify-content: center; 
+    gap: 1rem; 
+  }
+
+
+</style>
