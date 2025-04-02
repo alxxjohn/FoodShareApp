@@ -10,39 +10,38 @@ from foodshareapp.db.utils import db
 
 @dataclass
 class Inventory(BaseModel):
-    inventoryID: UUID
-    foodbankId: UUID
-    itemId: UUID
-    itemName: str
-    itemQty: int
+    foodbank_id: UUID
+    item_id: UUID
+    item_name: str
+    item_qty: int
     date_added: datetime
-    status: str = "donated"
+    item_status: str = "donated"
 
 
 class CreateInventory(BaseModel):
-    foodbankId: UUID
-    itemId: UUID
-    itemName: str
-    itemQty: int
-    status: str
+    foodbank_id: UUID
+    item_id: UUID
+    item_name: str
+    item_qty: int
+    item_status: str
 
 
 @dataclass
 class CreateInventoryResponse(Inventory):
-    inventoryID: UUID
+    item_id: UUID
     date_added: datetime
 
 
 @dataclass
 class DeleteInventory(BaseModel):
-    inventoryID: UUID
+    item_id: UUID
 
 
-async def get_inventory_by_id(inventoryID: UUID) -> Optional[Inventory]:
+async def get_inventory_by_id(item_id: UUID) -> Optional[Inventory]:
     """Get inventory by ID."""
 
-    stmt = "SELECT * FROM inventory WHERE inventoryID = :inventoryID"
-    db_inventory = await db.fetch_one(stmt, values={"inventoryID": inventoryID})
+    stmt = "SELECT * FROM inventory WHERE item_id = :item_id"
+    db_inventory = await db.fetch_one(stmt, values={"item_id": item_id})
     if db_inventory is None:
         return None
     return Inventory(**dict(db_inventory))
@@ -52,9 +51,9 @@ async def insert_inventory(inventory: Inventory) -> CreateInventoryResponse:
     """Insert a new inventory."""
 
     stmt = (
-        "INSERT INTO inventory (inventoryID, foodbankId, itemId, itemName, itemQty, date_added, status) "
-        "VALUES (:inventoryID, :foodbankId, :itemId, :itemName, :itemQty, :date_added, :status) "
-        "RETURNING inventoryID, date_added"
+        "INSERT INTO inventory (item_id, foodbank_id, itemName, itemQty, date_added, item_status) "
+        "VALUES (:item_id, :foodbank_id, :item_id, :itemName, :itemQty, :date_added, :item_status) "
+        "RETURNING item_id, date_added"
     )
     db_inventory = await db.fetch_one(stmt, values=asdict(inventory))
     if db_inventory is None:
@@ -63,16 +62,16 @@ async def insert_inventory(inventory: Inventory) -> CreateInventoryResponse:
     return CreateInventoryResponse(**dict(db_inventory))
 
 
-async def delete_inventory(inventoryID: UUID) -> UUID:
+async def delete_inventory(item_id: UUID) -> UUID:
     """Delete an inventory."""
 
-    if await get_inventory_by_id(inventoryID) is None:
+    if await get_inventory_by_id(item_id) is None:
         raise ValueError("Inventory not found")
 
-    stmt = "DELETE FROM inventory WHERE inventoryID = :inventoryID"
-    await db.execute(stmt, values={"inventoryID": inventoryID})
+    stmt = "DELETE FROM inventory WHERE item_id = :item_id"
+    await db.execute(stmt, values={"item_id": item_id})
 
-    return inventoryID
+    return item_id
 
 
 async def list_inventory() -> list[Inventory]:

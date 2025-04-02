@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from pydantic import EmailStr
 from datetime import datetime
 from dataclasses import asdict
 from typing import Optional
@@ -26,9 +27,11 @@ class CreateBusiness:
     city: str
     state: str
     zipCode: str
+    lat: str
+    lng: str
     phone: str
     companyName: str
-    isFoodbank: bool = False
+    is_foodbank: bool = False
     is_business: bool = True
     is_admin: bool = False
 
@@ -38,46 +41,69 @@ class CreateBusiness:
 
 @dataclass
 class BusinessModel:
-    BusinessId: UUID
-    companyName: str
+    business_id: UUID
+    company_name: str
     address: str
     city: str
     state: str
     zipCode: str
-    isFoodbank: bool
+    lat: str
+    lng: str
+    is_foodbank: bool
     assoc_user: UUID
 
 
 @dataclass
 class NewBusiness:
     __tablename__ = "businesses"
-    BusinessId: UUID
-    companyName: str
+    business_id: UUID
+    company_name: str
     address: str
     city: str
     state: str
     zipCode: str
-    isFoodbank: bool
+    lat: str
+    lng: str
+    is_foodbank: bool
     assoc_user: UUID
+
+
+@dataclass
+class CreateUserBusiness:
+    firstname: str
+    lastname: str
+    password: str
+    company_name: str
+    email: EmailStr
+    username: str
+    tos_accepted: Optional[bool]
+    address: str
+    city: str
+    state: str
+    zipCode: str
+    phone: str
+    is_business: bool = True
+    is_foodbank: bool = False
+    is_admin: bool = False
 
 
 async def insert_business(NewBusiness: NewBusiness) -> UUID:
     """Creates a new business"""
 
     stmnt = (
-        "INSERT INTO businesses (BusinessId, companyName, address, city, state, zipCode, isFoodbank, assoc_user) "
-        "VALUES (:BusinessId, :companyName, :address, :city, :state, :zipCode, :isFoodbank, :assoc_user"
+        "INSERT INTO business (business_id, company_name, address, city, state, zipCode, lat, lng, is_foodbank, assoc_user) "
+        "VALUES (:business_id, :company_name, :address, :city, :state, :zipCode, :lat, :lng, :is_foodbank, :assoc_user)"
     )
     return await db.execute(stmnt, values=asdict(NewBusiness))
 
 
-async def get_business_by_business_id(BusinessId: UUID) -> Optional[BusinessModel]:
+async def get_business_by_business_id(business_id: UUID) -> Optional[BusinessModel]:
     """Returns the business with the given id.
     Returns `None` if no such user exists.
     """
 
-    stmnt = "SELECT * FROM businesses WHERE BusinessId = :BusinessId"
-    db_user = await db.fetch_one(query=stmnt, values={"BusinessId": BusinessId})
+    stmnt = "SELECT * FROM business WHERE business_id = :business_id"
+    db_user = await db.fetch_one(query=stmnt, values={"business_id": business_id})
 
     if db_user is None:
         return None

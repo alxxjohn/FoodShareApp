@@ -76,7 +76,6 @@ def test_foodbanks_database():
         ),
     )
 
-    # Insert sample inventory
     cursor.execute(
         """
         INSERT INTO inventory (foodbankID, itemID, itemName, itemQuant)
@@ -85,7 +84,6 @@ def test_foodbanks_database():
         (foodbank_id, str(uuid4()), "Canned Soup", 50),
     )
 
-    # Insert sample donation
     cursor.execute(
         """
         INSERT INTO donations (donationID, businessID, foodBankID, donationDate, donationWeight, donationDolAmt, itemID, itemAmount)

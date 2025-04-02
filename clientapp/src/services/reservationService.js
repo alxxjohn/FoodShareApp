@@ -1,8 +1,10 @@
 // import apiClient from "@/services/apiClient";
 
 //IF we use back API
-// export function reserveFood (userId, foodId, reservationTime) {
-//   return apiClient.post("/reservations/reserve", { userId, foodId, reservationTime })
+// export function reserveFood (request) {
+//  Log the request
+//  console.log("request: "+JSON.stringify(request, null, 2)); 
+//  return apiClient.post("/reservations/reserve", { request })
 //     .then(response => {
 //       return { success: true, data: response.data };
 //     })
@@ -11,10 +13,8 @@
 //     });
 // }
 
-export function reserveFood (userId, foodId, reservationTime) {
-  console.log("userId: "+userId);
-  console.log("foodId: "+foodId);
-  console.log("reservationTime: "+reservationTime);
+export function reserveFood (request) {
+  console.log("requestBody: "+JSON.stringify(request, null, 2));
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({ success: true, message: "Reservation successful!" });

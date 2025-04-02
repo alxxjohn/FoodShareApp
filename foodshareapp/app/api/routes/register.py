@@ -1,26 +1,22 @@
 from uuid import uuid4
-from datetime import datetime, timezone
+from datetime import datetime
 from pydantic import EmailStr
 from fastapi import APIRouter, Depends, HTTPException, status
+
+
 from foodshareapp.db.utils import Transaction, db_transaction
-
-
 from foodshareapp.db.models.user import NewUser
-from foodshareapp.db.models.business import NewBusiness
+from foodshareapp.db.models.business import NewBusiness, CreateUserBusiness
 from foodshareapp.app.api.models.register import CreateUser, CreateUserResponse
-from foodshareapp.app.api.models.business import (
-    CreateBusinessResponse,
-    UserBusiness,
-)
+from foodshareapp.app.api.models.business import CreateBusinessResponse
 from foodshareapp.app.api.services.crypto import gen_salt, hash_password
 import foodshareapp.db.models.user as db_user
 import foodshareapp.db.models.business as db_business
-
+from foodshareapp.app.api.services.geocode import geocode_address
 
 router = APIRouter(dependencies=[Depends(db_transaction)])
 
 
-# TODO add last login
 @router.post(
     "/user", status_code=status.HTTP_201_CREATED, response_model=CreateUserResponse
 )
@@ -40,8 +36,9 @@ async def register_user(
 
     salt = gen_salt()
     password = hash_password(create_user.password, salt)
+
     new_user = NewUser(
-        userId=uuid4(),
+        uuid=uuid4(),
         email=EmailStr(create_user.email),
         username=create_user.username,
         firstname=create_user.firstname,
@@ -60,7 +57,7 @@ async def register_user(
     await db_user.insert_user(new_user)
 
     response = CreateUserResponse(
-        userId=new_user.userId,
+        uuid=new_user.uuid,
         email=EmailStr(new_user.email),
         username=new_user.username,
         firstname=new_user.firstname,
@@ -79,7 +76,7 @@ async def register_user(
 
 
 @router.post("/business", response_model=CreateBusinessResponse)
-async def register_business(user_data: UserBusiness) -> CreateBusinessResponse:
+async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResponse:
     """
     Creates a business model in the database.
     This also create a login user for the business Account.
@@ -87,10 +84,14 @@ async def register_business(user_data: UserBusiness) -> CreateBusinessResponse:
 
     salt = gen_salt()
     password = hash_password(user_data.password, salt)
-    user_uuid = uuid4()
+    uuid = uuid4()
+    full_address = (
+        f"{user_data.address}, {user_data.city}, {user_data.state} {user_data.zipCode}"
+    )
+    lat, lng = geocode_address(full_address)
 
     new_user = NewUser(
-        userId=user_uuid,
+        uuid=uuid,
         email=user_data.email,
         username=user_data.username,
         firstname=user_data.firstname,
@@ -104,7 +105,7 @@ async def register_business(user_data: UserBusiness) -> CreateBusinessResponse:
         phone=user_data.phone,
         is_business=user_data.is_business,
         is_admin=user_data.is_admin,
-        last_login=datetime.now(timezone.utc),
+        last_login=datetime.utcnow(),
     )
 
     try:
@@ -114,14 +115,16 @@ async def register_business(user_data: UserBusiness) -> CreateBusinessResponse:
 
     if user_data.is_business:
         new_business = NewBusiness(
-            BusinessId=uuid4(),
-            companyName=user_data.companyName,
+            business_id=uuid4(),
+            company_name=user_data.company_name,
             address=user_data.address,
             city=user_data.city,
             state=user_data.state,
             zipCode=user_data.zipCode,
-            isFoodbank=user_data.isFoodbank,
-            assoc_user=user_uuid,
+            lat=str(lat) if lat else "",
+            lng=str(lng) if lng else "",
+            is_foodbank=user_data.is_foodbank,
+            assoc_user=uuid,
         )
         try:
             await db_business.insert_business(new_business)
@@ -131,10 +134,14 @@ async def register_business(user_data: UserBusiness) -> CreateBusinessResponse:
             )
 
     return CreateBusinessResponse(
-        userId=user_uuid,
-        username=user_data.username,
-        email=user_data.email,
-        firstname=user_data.firstname,
-        lastname=user_data.lastname,
-        companyName=user_data.companyName,
+        business_id=new_business.business_id,
+        company_name=new_business.company_name,
+        address=new_business.address,
+        city=new_business.city,
+        state=new_business.state,
+        zipCode=new_business.zipCode,
+        lat=new_business.lat,
+        lng=new_business.lng,
+        is_foodbank=new_business.is_foodbank,
+        assoc_user=new_business.assoc_user,
     )

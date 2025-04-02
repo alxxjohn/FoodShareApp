@@ -13,6 +13,7 @@ docker:
 	$(COPY_CMD)
 	docker-compose -f deploy_env/docker-compose.yml -f deploy_env/docker-compose.dev.yml --project-directory . up --build
 
+
 .PHONY: docker-builder
 dockerbuild:
 	docker-compose -f deploy_env/docker-compose.yml --project-directory . up --build
@@ -56,6 +57,9 @@ mypy:
 test:
 	poetry run pytest ./foodshareapp/tests/
 
+test-client:
+	cd clientapp && npx jest
+
 .PHONY: frontendbuild
 fe-build:
 	poetry shell
@@ -64,3 +68,14 @@ fe-build:
 	$(COPY_CMD)
 	docker-compose -f deploy_env/docker-compose.yml --project-directory . run --rm api pytest -vv .
 	docker-compose -f deploy_env/docker-compose.yml --project-directory . down
+
+db-fill:
+	chmod +x db_loader/user_fill.sh
+	echo "🚀 Loading SQL into Postgres..."
+	docker exec foodshareapp-api-1 python3 /app/src/db_loader/load_sql.py
+	echo \"🧪 Verifying required tables exist...\"
+	docker exec foodshareapp-api-1 python3 /app/src/db_loader/check_db.py
+	echo "🚀 Loading login users into Postgres..."
+	./db_loader/user_fill.sh
+	echo "🚀 Loading business users into Postgres..."
+	./db_loader/business_fill.sh

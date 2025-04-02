@@ -22,5 +22,10 @@
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+
+  /* Set max width and center */
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
