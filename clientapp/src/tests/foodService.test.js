@@ -77,11 +77,11 @@ describe("getInventory", () => {
   const mockResponse = {
     id: 1,
     availableFoods: [
-      { id: 1, desc: "Canned Beans", quant:1 },
-      { id: 2, desc: "Rice", quant:10 },
-      { id: 3, desc: "Bread", quant:5 },
-      { id: 4, desc: "Vegetables", quant:2 },
-      { id: 5, desc: "Cereal", quant:1 }
+      { id: 1, name: "Canned Beans", quant:1 },
+      { id: 2, name: "Rice", quant:10 },
+      { id: 3, name: "Bread", quant:5 },
+      { id: 4, name: "Vegetables", quant:2 },
+      { id: 5, name: "Cereal", quant:1 }
     ]
   };
   afterEach(() => {

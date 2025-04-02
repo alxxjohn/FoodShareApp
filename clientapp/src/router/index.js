@@ -4,6 +4,8 @@ import login from '@/views/LoginView.vue'
 import signUp from '@/views/SignUpView.vue'
 import homePage from '@/views/HomePage.vue'
 import foodMap from '@/views/FoodMapView.vue'
+import reservationList from '@/views/ReservationListView.vue'
+import donation from '@/views/DonationView.vue'
 // import Dashboard from '@/views/Dashboard.vue'
 // import store from '@/store' // Assuming you manage authentication state in Vuex or Pinia
 
@@ -13,7 +15,9 @@ const routes = [
   { path: '/main', component: main },
   { path: '/login', component: login },
   { path: '/signup', component: signUp },
-  { path: '/foodmap', component: foodMap }
+  { path: '/foodmap', component: foodMap },
+  { path: '/reservation-list', component: reservationList },
+  { path: '/donation', component: donation }
   // { path: '/dashboard', component: Dashboard }
 ]
 
