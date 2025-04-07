@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8e2e7029-f122-4293-bd26-e353eec36c08" name="Changes" comment="" />
+    <list default="true" id="5f7fb135-0a7d-4c12-8264-8a3c174072fa" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -34,6 +36,9 @@
   &quot;associatedIndex&quot;: 2
 }</component>
   <component name="ProjectId" id="2trxBXikklnuY7fvCgYPVsGeplq" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -42,11 +47,13 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;#74 on add-all__sql__and__sample__data&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -197,7 +204,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="8e2e7029-f122-4293-bd26-e353eec36c08" name="Changes" comment="" />
+      <changelist id="5f7fb135-0a7d-4c12-8264-8a3c174072fa" name="Changes" comment="" />
       <created>1741123860357</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -220,6 +227,14 @@
       <workItem from="1742226682235" duration="4415000" />
       <workItem from="1742321034492" duration="615000" />
       <workItem from="1742589526252" duration="2077000" />
+      <workItem from="1743029751103" duration="1405000" />
+      <workItem from="1743041117712" duration="3807000" />
+      <workItem from="1743093431732" duration="15491000" />
+      <workItem from="1743115117149" duration="2000" />
+      <workItem from="1743120186642" duration="2568000" />
+      <workItem from="1743172278575" duration="21419000" />
+      <workItem from="1743214920401" duration="288000" />
+      <workItem from="1743275248155" duration="51000" />
     </task>
     <servers />
   </component>
