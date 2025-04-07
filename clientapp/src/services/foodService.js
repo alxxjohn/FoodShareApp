@@ -1,4 +1,5 @@
-// import apiClient from "../services/apiClient";
+// import apiClient from "./apiClient";
+
 
 //  TODO: get user's location(long/lat) to center the map, from login info? or new api request?
 export async function getFoodbankLists() {
@@ -15,7 +16,7 @@ export async function getFoodbankLists() {
       state:"CA",
       zip:"94110",
       phone: "+1 (415) 555-1234",     
-      availability: true,
+      availability: true, 
     },
     {
       id: 2,
@@ -81,11 +82,11 @@ export async function getInventory(foodbankId){
       {
         id: 1,
         availableFoods: [
-          { id: 1, desc: "Canned Beans", quant:1 },
-          { id: 2, desc: "Rice", quant:10 },
-          { id: 3, desc: "Bread", quant:5 },
-          { id: 4, desc: "Vegetables", quant:2 },
-          { id: 5, desc: "Cereal", quant:1 }
+          { id: 1, name: "Canned Beans", quant:1 },
+          { id: 2, name: "Rice", quant:10 },
+          { id: 3, name: "Bread", quant:5 },
+          { id: 4, name: "Vegetables", quant:2 },
+          { id: 5, name: "Cereal", quant:1 }
         ]
       },
       {
@@ -95,21 +96,21 @@ export async function getInventory(foodbankId){
       {
         id: 3,
         availableFoods: [
-          { id: 6, desc: "Canned Vegetables", quant:3 },
-          { id: 7, desc: "Rice", quant:2 },
-          { id: 8, desc: "Cereal", quant:10 },
-          { id: 9, desc: "Tomato Sauce", quant:12 },
-          { id: 10, desc: "Juice", quant:8 }
+          { id: 6, name: "Canned Vegetables", quant:3 },
+          { id: 7, name: "Rice", quant:2 },
+          { id: 8, name: "Cereal", quant:10 },
+          { id: 9, name: "Tomato Sauce", quant:12 },
+          { id: 10, name: "Juice", quant:8 }
         ] 
       },
       {
         id: 4,
         availableFoods: [
-          { id: 11, desc: "Chicken", quant:3 },
-          { id: 12, desc: "Canned Corn", quant:12 },
-          { id: 13, desc: "Pasta", quant:8 },
-          { id: 14, desc: "Oatmeal", quant:9 },
-          { id: 15, desc: "Eggs", quant:1 }
+          { id: 11, name: "Chicken", quant:3 },
+          { id: 12, name: "Canned Corn", quant:12 },
+          { id: 13, name: "Pasta", quant:8 },
+          { id: 14, name: "Oatmeal", quant:9 },
+          { id: 15, name: "Eggs", quant:1 }
         ]
       }
     
@@ -119,13 +120,38 @@ export async function getInventory(foodbankId){
 }
 
 
+//IT should retreive only available inventory from the foodbank/business
 //API version
 // export function getInventory(foodbankId){
 //     return apiClient.get(`/foodbanks/${foodbankId}/inventory`)
+  //     .then(response => {
+  //       return { success: true, data: response.data };
+  //     })
+  //     .catch(error => {
+  //       return { success: false, error: error.response?.data || error.message };
+  //     });
+// }
+
+
+
+// API VERSION
+// export function addDonationService(request){
+//   //  console.log("request: "+JSON.stringify(request, null, 2)); 
+
+//   return apiClient.post(`/donations`, {request})
 //     .then(response => {
-//       return { success: true, data: response.data };
+//       return { success: true, data: response.data};
 //     })
-//     .catch(error => {
-//       return { success: false, error: error.response?.data || error.message };
+//     .catch(error =>{
+//       return {success: false, error: error.response?.data || error.message};
 //     });
 // }
+
+export async function addDonationService(request){
+  console.log("request: "+JSON.stringify(request, null, 2));
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ success: true, message: "Reservation successful!" });
+    }, 500); // Simulate network delay
+  });
+}
