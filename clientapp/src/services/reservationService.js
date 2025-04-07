@@ -1,9 +1,9 @@
-// import apiClient from "@/services/apiClient";
+// import apiClient from "./apiClient";
 
 //IF we use back API
 // export function reserveFood (request) {
-//  Log the request
-//  console.log("request: "+JSON.stringify(request, null, 2)); 
+// //  Log the request
+// //  console.log("request: "+JSON.stringify(request, null, 2)); 
 //  return apiClient.post("/reservations/reserve", { request })
 //     .then(response => {
 //       return { success: true, data: response.data };
@@ -15,7 +15,7 @@
 
 export async function reserveFood (request) {
   //Log the request
-  console.log("requestBody: "+JSON.stringify(request, null, 2));
+  console.log("request: "+JSON.stringify(request, null, 2));
   
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -24,11 +24,11 @@ export async function reserveFood (request) {
   });
 }
 
-//API version
+// API version
 // Get all the reservation from the foodbank/business by their id
 // export function getReservationList(foodbankId){
 //   //Log the foodbankId
-//   console.log("getReservation, foodbankId:" + foodbankId);
+//   // console.log("getReservation, foodbankId:" + foodbankId);
   
 //   //TODO: I need to change the api url (currently it doesn'e exist)
 //   return apiClient.get(`/reservations/${foodbankId}`)

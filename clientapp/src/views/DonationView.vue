@@ -3,7 +3,7 @@
 <h2 class="text-center">Add Donation</h2>
 
 
-  <div id="food-and-quant" class="row g-3 d-flex">
+  <div id="food-and-qty" class="row g-3 d-flex">
     <div v-for="(item, index) in addedFoodList" :key="index" class="row g-3 align-items-end">
       <div class="col-md-1">
         <h4>{{ index+1 }}.</h4>
@@ -13,7 +13,7 @@
         <label v-if="index === 0" class="form-label">Description:</label>
         <input type="text" 
           class="form-control" 
-          v-model="addedFoodList[index].name" 
+          v-model="addedFoodList[index].item_name" 
         />
       </div>
       
@@ -21,7 +21,7 @@
         <label v-if="index === 0" class="form-label">Quantity:</label>
         <input type="text" 
           class="form-control" 
-          v-model="addedFoodList[index].quant" 
+          v-model="addedFoodList[index].item_qty" 
         />
       </div>
 
@@ -50,14 +50,13 @@
 </template>
 
 <script setup>
-// import { ref, onMounted } from 'vue';
 import { ref } from 'vue';
 import { addDonationService } from '@/services/foodService';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-const addedFoodList = ref([{name: null, quant:null}]); 
+const addedFoodList = ref([{item_name: null, item_qty:null}]); 
 const maxList = 10; // user can add maximum 10 items at a time
 
 
@@ -65,7 +64,7 @@ const maxList = 10; // user can add maximum 10 items at a time
 function addList(){
   
   if (addedFoodList.value.length < maxList) {
-    addedFoodList.value.push({ name: null, quant: null });
+    addedFoodList.value.push({ item_name: null, item_qty: null });
   }
 }
 
@@ -80,13 +79,14 @@ function removeList(index){
 //TODO: modify to adapt more sophisticate validation
 function disabledButton(){
   return !(
-    addedFoodList.value[0].name != null &&
-    addedFoodList.value[0].quant != null
+    addedFoodList.value[0].item_name != null &&
+    addedFoodList.value[0].item_qty != null
   );
 }
 
 function addDonation(){
-  addDonationService(addedFoodList.value)
+  const request = createRequestBody(addedFoodList.value);
+  addDonationService(request)
     .then(result => {
       if (result.success) {
         console.log("Reservation successful:", result.data);
@@ -97,6 +97,14 @@ function addDonation(){
     .catch(error => {
       console.error("Unexpected error:", error);
     });
+}
+
+function createRequestBody(foodList){
+  const request = {
+    donations_array: foodList, 
+  };
+
+  return request;
 }
 
 //redirect to reservation-list page

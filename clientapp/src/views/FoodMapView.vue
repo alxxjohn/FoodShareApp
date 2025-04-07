@@ -158,9 +158,9 @@ function disabledButton(){
 
 //TODO: send an array of food items not a single item
 function reserve(){
-  const requestBody = createRequestBody();
+  const request = createRequestBody();
 
-  reserveFood(requestBody)
+  reserveFood(request)
     .then(result => {
       if (result.success) {
         console.log("Reservation successful:", result.data);
@@ -209,17 +209,16 @@ function invalidQuant(index){
 
   function createRequestBody(){
     const request = {
-      food:[], 
-      time:selectedTime.value
+      reservations_array:[], 
+      reserve_time:selectedTime.value
     };
 
     for(let i = 0; i < selectedFoodList.value.length; i++ ){
       const addedFood = {
-        id:selectedFoodList.value[i].food.id, 
-        name:selectedFoodList.value[i].food.name, 
-        quant:selectedFoodList.value[i].quant
+        item_id:selectedFoodList.value[i].food.id, 
+        item_qty:selectedFoodList.value[i].quant
       };
-      request.food.push(addedFood);
+      request.reservations_array.push(addedFood);
     }
 
     return request;

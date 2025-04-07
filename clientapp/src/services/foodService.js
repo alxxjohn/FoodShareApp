@@ -15,7 +15,7 @@ export async function getFoodbankLists() {
       state:"CA",
       zip:"94110",
       phone: "+1 (415) 555-1234",     
-      availability: true,
+      availability: true, 
     },
     {
       id: 2,
@@ -133,11 +133,11 @@ export async function getInventory(foodbankId){
 
 
 
-//API VERSION
-// export function addDonation(request){
+// API VERSION
+// export function addDonationService(request){
 //   //  console.log("request: "+JSON.stringify(request, null, 2)); 
 
-//   return apiClient.post(`/donations`)
+//   return apiClient.post(`/donations`, {request})
 //     .then(response => {
 //       return { success: true, data: response.data};
 //     })
@@ -147,7 +147,7 @@ export async function getInventory(foodbankId){
 // }
 
 export async function addDonationService(request){
-  console.log("requestBody: "+JSON.stringify(request, null, 2));
+  console.log("request: "+JSON.stringify(request, null, 2));
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({ success: true, message: "Reservation successful!" });

@@ -1,4 +1,4 @@
-import { getFoodbankLists, getInventory } from "../services/foodService";
+import { getFoodbankLists, getInventory, addDonationService } from "../services/foodService";
 import apiClient from "../services/apiClient";
 import MockAdapter from "axios-mock-adapter";
 
@@ -111,6 +111,47 @@ describe("getInventory", () => {
     mock.onGet(`/foodbanks/${foodbankId}/inventory`).reply(500);
 
     const result = await getInventory(foodbankId);
+    
+    expect(result.success).toBe(false);
+    expect(result.error).toBeTruthy(); // Ensuring some error is returned
+  });
+});
+
+
+describe("addDonationService", () => {
+  const mockRequest = {
+    donations_array: [
+      {item_name: "Canned Beans", item_qty:1 },
+      {item_name: "Apple", item_qty:3 },
+      {item_name: "Bread", item_qty:5 }
+    ]
+  };
+  afterEach(() => {
+    mock.reset(); // Reset mock after each test
+  });
+
+  it("should return success when API call is successful", async () => {
+
+    mock.onPost(`/donations`, {request: mockRequest}).reply(200);
+
+    const result = await addDonationService(mockRequest);
+
+    expect(result.success).toBe(true);
+  });
+
+  it("should return error when API call fails", async () => {
+    mock.onPost(`/donations`, {request: mockRequest}).reply(500, { message: "Internal Server Error" });
+
+    const result = await addDonationService(mockRequest);
+
+    expect(result.success).toBe(false);
+    expect(result.error.message).toBe("Internal Server Error");
+  });
+
+  it("should handle error response without message properly", async () => {
+    mock.onPost(`/donations`, {request: mockRequest}).reply(500);
+
+    const result = await addDonationService(mockRequest);
     
     expect(result.success).toBe(false);
     expect(result.error).toBeTruthy(); // Ensuring some error is returned
