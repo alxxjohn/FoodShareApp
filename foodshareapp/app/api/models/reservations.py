@@ -1,7 +1,19 @@
 from pydantic import BaseModel
+from typing import Optional, List
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
+
+
+class CreateReservationItem(BaseModel):
+    item_id: UUID
+    item_qty: int
+
+
+class ReservationItem(BaseModel):
+    item_id: UUID
+    item_name: str
+    item_qty: int
+    current_status: str
 
 
 class CreateReservation(BaseModel):
@@ -11,29 +23,50 @@ class CreateReservation(BaseModel):
     returned when accessing reservation models from the API.
     """
 
-    itemId: UUID
-    itemName: str
-    itemQty: int
-    foodbankId: UUID
+    reserve_time: datetime
+    reservations_array: List[CreateReservationItem]
 
 
-class CreateReservationResponse(CreateReservation):
-    reservationID: UUID
-    reservationMadeTime: datetime
+class CreateReservationResponse(BaseModel):
+    reservation_uuid: UUID
+    reservation_creation_date: datetime
 
 
 class DeleteReservation(BaseModel):
-    reservationID: UUID
+    reservation_uuid: UUID
 
 
 class updateReservationResponse(BaseModel):
-    reservationID: UUID
-    reservationMadeTime: datetime
-    foodbankId: UUID
-    itemId: UUID
-    userId: UUID
-    itemQty: int
-    pickupTime: datetime
-    showedUp: bool
-    showedUpTime: Optional[datetime]
-    status: str
+    reservation_uuid: UUID
+    reservation_creation_date: datetime
+    item_id: UUID
+    item_name: str
+    item_qty: int
+    foodbank_id: UUID
+
+
+class GetReservationResponse(BaseModel):
+    reservation_uuid: UUID
+    reservation_creation_date: datetime
+    foodbank_id: UUID
+    user_uuid: UUID
+    picked_up_time: datetime
+    picked_up: bool
+    current_status: str
+    reservations_array: List[ReservationItem]
+
+
+class ReservationItemUpdate(BaseModel):
+    item_id: Optional[UUID]
+    item_qty: Optional[int]
+    item_name: Optional[str]
+    current_status: Optional[str]
+
+
+class ReservationUpdate(BaseModel):
+    reserve_time: Optional[datetime]
+    picked_up: Optional[bool]
+    showed_up: Optional[bool]
+    showed_up_time: Optional[datetime]
+    reservations_array: Optional[List[ReservationItemUpdate]]
+    current_status: Optional[str]

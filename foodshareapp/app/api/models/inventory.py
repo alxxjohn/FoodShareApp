@@ -10,7 +10,6 @@ class Inventory(BaseModel):
     returned when accessing inventory models from the API.
     """
 
-    inventoryID: UUID
     foodbank_id: UUID
     item_id: UUID
     item_name: str
@@ -26,19 +25,18 @@ class CreateInventory(BaseModel):
     returned when accessing inventory models from the API.
     """
 
-    inventoryID: UUID
-    foodbankId: UUID
-    itemId: UUID
-    itemName: str
-    itemQty: int
+    foodbank_id: UUID
+    item_id: UUID
+    item_name: str
+    item_qty: int
     date_added: datetime
-    status: str
+    item_status: str
 
 
 class CreateInventoryResponse(CreateInventory):
-    inventoryID: UUID
+    item_id: UUID
     date_added: datetime
 
 
 class DeleteInventory(BaseModel):
-    inventoryID: UUID
+    item_id: UUID

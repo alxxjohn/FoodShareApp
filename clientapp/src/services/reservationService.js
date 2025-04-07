@@ -4,6 +4,7 @@
 // export function reserveFood (request) {
 // //  Log the request
 // //  console.log("request: "+JSON.stringify(request, null, 2)); 
+
 //  return apiClient.post("/reservations/reserve", { request })
 //     .then(response => {
 //       return { success: true, data: response.data };

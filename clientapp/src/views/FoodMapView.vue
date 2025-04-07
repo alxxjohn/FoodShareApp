@@ -31,6 +31,7 @@
         <select class="form-select" v-model="selectedFoodList[index].food">
           <option v-for="food in selectedMarkerInv.availableFoods" :key="food.id" :value="food">
             {{ food.name }}
+
           </option>
         </select>
       </div>
@@ -45,6 +46,7 @@
           :placeholder="selectedFoodList[index].food ? `Max quantity: ${selectedFoodList[index].food.quant}` : 'Quantity'" 
           :class="{ 'is-invalid': invalidQuant(index) }" 
         />
+
       </div>
 
       <div class="col-md-1 d-flex">
@@ -62,6 +64,7 @@
 
       <div class="col-md-2" id="reserve-button" v-if="index === 0">
         <button type="button" class="btn btn-primary" @click="reserve" :disabled="disabledButton() && invalidQuant">Reserve</button>
+
       </div>
 
     </div>
@@ -87,6 +90,7 @@ const selectedTime = ref(null);
 const selectedFoodList = ref([{food: null, quant:null}]); 
 
 let maxDropdowns = 1;
+
 
 
 //TOOD: since the user doesn't add their address when register, it can be some random address to start
@@ -161,6 +165,7 @@ function reserve(){
   const request = createRequestBody();
 
   reserveFood(request)
+
     .then(result => {
       if (result.success) {
         console.log("Reservation successful:", result.data);
@@ -205,12 +210,14 @@ function invalidQuant(index){
   //if selected quantity(item.quant) is smaller or equal to max quantity (item.food.quant) for selected foods
   return item.quant > item.food.quant && item.quant < 0;
 
+
   }
 
   function createRequestBody(){
     const request = {
       reservations_array:[], 
       reserve_time:selectedTime.value
+
     };
 
     for(let i = 0; i < selectedFoodList.value.length; i++ ){
@@ -219,6 +226,7 @@ function invalidQuant(index){
         item_qty:selectedFoodList.value[i].quant
       };
       request.reservations_array.push(addedFood);
+
     }
 
     return request;
