@@ -43,7 +43,7 @@ def random_secret_hex(nbytes: int = TOKEN_NBYTES):
 
 
 def create_access_token(
-    subject: Union[str, Any], expires_delta: Optional[timedelta]
+    subject: Union[str, Any], expires_delta: Optional[timedelta] = None
 ) -> str:
     if not expires_delta:
         expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -55,9 +55,9 @@ def create_access_token(
 
 
 def create_refresh_token(
-    subject: Union[str, Any], expires_delta: Optional[timedelta]
+    subject: Union[str, Any], expires_delta: Optional[timedelta] = None
 ) -> str:
-    if not expires_delta:  # Ensure it's a timedelta
+    if not expires_delta:
         expires_delta = timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
 
     expire = datetime.now(timezone.utc) + expires_delta

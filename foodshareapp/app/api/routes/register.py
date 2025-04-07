@@ -1,5 +1,5 @@
 from uuid import uuid4
-from datetime import datetime, timezone
+from datetime import datetime
 from pydantic import EmailStr
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -38,7 +38,7 @@ async def register_user(
     password = hash_password(create_user.password, salt)
 
     new_user = NewUser(
-        userId=uuid4(),
+        uuid=uuid4(),
         email=EmailStr(create_user.email),
         username=create_user.username,
         firstname=create_user.firstname,
@@ -57,7 +57,7 @@ async def register_user(
     await db_user.insert_user(new_user)
 
     response = CreateUserResponse(
-        userId=new_user.userId,
+        uuid=new_user.uuid,
         email=EmailStr(new_user.email),
         username=new_user.username,
         firstname=new_user.firstname,
@@ -84,14 +84,14 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
 
     salt = gen_salt()
     password = hash_password(user_data.password, salt)
-    user_uuid = uuid4()
+    uuid = uuid4()
     full_address = (
         f"{user_data.address}, {user_data.city}, {user_data.state} {user_data.zipCode}"
     )
     lat, lng = geocode_address(full_address)
 
     new_user = NewUser(
-        userId=user_uuid,
+        uuid=uuid,
         email=user_data.email,
         username=user_data.username,
         firstname=user_data.firstname,
@@ -105,7 +105,7 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
         phone=user_data.phone,
         is_business=user_data.is_business,
         is_admin=user_data.is_admin,
-        last_login=datetime.now(timezone.utc),
+        last_login=datetime.utcnow(),
     )
 
     try:
@@ -115,8 +115,8 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
 
     if user_data.is_business:
         new_business = NewBusiness(
-            BusinessId=uuid4(),
-            companyName=user_data.companyName,
+            business_id=uuid4(),
+            company_name=user_data.company_name,
             address=user_data.address,
             city=user_data.city,
             state=user_data.state,
@@ -124,7 +124,7 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
             lat=str(lat) if lat else "",
             lng=str(lng) if lng else "",
             is_foodbank=user_data.is_foodbank,
-            assoc_user=user_uuid,
+            assoc_user=uuid,
         )
         try:
             await db_business.insert_business(new_business)
@@ -134,8 +134,8 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
             )
 
     return CreateBusinessResponse(
-        BusinessId=new_business.BusinessId,
-        companyName=new_business.companyName,
+        business_id=new_business.business_id,
+        company_name=new_business.company_name,
         address=new_business.address,
         city=new_business.city,
         state=new_business.state,

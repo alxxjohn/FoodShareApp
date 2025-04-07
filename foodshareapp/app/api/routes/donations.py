@@ -21,37 +21,57 @@ router = APIRouter(dependencies=[Depends(db_transaction), Depends(get_current_us
     "/", status_code=status.HTTP_201_CREATED, response_model=CreateDonationResponse
 )
 async def create_donation(
-    create_donation: CreateDonation, transaction: Transaction = Depends(db_transaction)
+    create_donation: CreateDonation,
+    transaction: Transaction = Depends(db_transaction),
+    current_user: dict = Depends(get_current_user),
 ):
-    current_user = await get_current_user()
-    current_user_id = current_user["userId"]
+    current_user_id = current_user["uuid"]
+
+    foodbank_id = await db_donation.get_foodbank_id_for_user(current_user_id)
+    if foodbank_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Foodbank not found for user",
+        )
+
     donation_id = uuid4()
     timestamp = datetime.now(timezone.utc)
 
     donation_items = []
-    for item in create_donation.donationsArray:
-        donation_items.append(DonationItemResponse(**item.dict()))
+    for item in create_donation.donations_array:
+        item_id = uuid4()
+        donation_items.append(
+            DonationItemResponse(
+                item_id=item_id, item_name=item.item_name, item_qty=item.item_qty
+            )
+        )
+
+        await db_donation.upsert_inventory_item(
+            foodbank_id=foodbank_id,
+            item_id=item_id,
+            item_name=item.item_name,
+            item_qty=item.item_qty,
+        )
 
     donation = Donation(
-        donationID=donation_id,
-        donationMadeTime=timestamp,
-        foodbankId=create_donation.foodbankId,
-        userId=current_user_id,
-        donationsArray=donation_items,
+        donation_id=donation_id,
+        donation_creation_date=timestamp,
+        foodbank_id=foodbank_id,
+        donations_array=donation_items,
         status="available",
     )
 
     return await db_donation.insert_donation(donation)
 
 
-@router.get("/{donationID}", status_code=status.HTTP_200_OK, response_model=Donation)
-async def get_donation(donationID: UUID) -> Donation:
+@router.get("/{donation_id}", status_code=status.HTTP_200_OK, response_model=Donation)
+async def get_donation(donation_id: UUID) -> Donation:
     """
-    get a donation by `donationID`.
+    get a donation by `donation_id`.
 
     """
 
-    donation = await db_donation.get_donation_by_id(donationID)
+    donation = await db_donation.get_donation_by_id(donation_id)
     if donation is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -60,17 +80,17 @@ async def get_donation(donationID: UUID) -> Donation:
     return Donation(**donation.dict())
 
 
-@router.delete("/{donationID}", status_code=status.HTTP_200_OK)
-async def delete_donation(donationID: UUID) -> datetime:
+@router.delete("/{donation_id}", status_code=status.HTTP_200_OK)
+async def delete_donation(donation_id: UUID) -> datetime:
     """
     Delete a donation by `donationID`.
     """
-    donation = await db_donation.get_donation_by_id(donationID)
+    donation = await db_donation.get_donation_by_id(donation_id)
     if donation is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Donation not found",
         )
-    await db_donation.delete_donation(donationID)
+    await db_donation.delete_donation(donation_id)
     deleteTimestamp = datetime.now(timezone.utc)
     return deleteTimestamp

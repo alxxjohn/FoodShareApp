@@ -36,4 +36,4 @@ async def get_current_user(token: str = Depends(reuseable_oauth)):
             detail="Could not find user",
         )
 
-    return {"userId": user.userId, "email": user.email, "username": user.username}
+    return {"uuid": user.uuid, "email": user.email, "username": user.username}
