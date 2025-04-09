@@ -89,9 +89,10 @@
 
 <script>
 import authService from '@/services/authService';
-import MockAdapter from 'axios-mock-adapter';
+//import MockAdapter from 'axios-mock-adapter';
 import { states } from '@/utils/const.js';
-import apiClient from '@/services/apiClient';
+//import axios from 'axios';
+//import apiClient from '@/services/apiClient';
 
 
  export default {
@@ -124,7 +125,6 @@ import apiClient from '@/services/apiClient';
   submitForm() {
     const data = {
       email: this.email,
-      company_name: this.companyname,
       username: this.username,
       firstname: this.firstname,
       lastname: this.lastname,
@@ -133,7 +133,7 @@ import apiClient from '@/services/apiClient';
       address: this.address,
       city: this.city,
       state: this.selectedState,
-      zip: this.zip,
+      zipCode: this.zip,
       phone: this.phone,
       is_business: false,
       is_admin: false
@@ -143,26 +143,24 @@ import apiClient from '@/services/apiClient';
     
     authService.register(data)
     .then((response) => {
-          console.log(response.data)
+          console.log(response)
           this.message = 'Registration successful!';
           this.messageClass = 'success';
           this.name = ''; // Clear the input field
         })
         .catch((error ) => {
-          console.log(error.response.data);
+          console.log(error.response);
           this.message = 'Error registering name';
           this.messageClass = 'error';
         });
-
-        //this.submitted = true;
     }
   }
 };
 
 
-const mock = new MockAdapter(apiClient);
+//const mock = new MockAdapter(apiClient);
 
-mock.onPost('/api/register/user').reply(200, {message: 'This is a mock test: Registration successful'});
+//mock.onPost('/api/register/user').reply(200, {message: 'This is a mock test: Registration successful'});
 
 
  </script>
