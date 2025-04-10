@@ -5,7 +5,7 @@
       <div class="col-md-4">
         <div class="card bg-primary text-white p-3">
           <h5>Available</h5>
-          <ul class="list-unstyled">
+          <ul class="text-start">
             <li v-for="food in available" :key="food.id">{{ food.name }}: {{ food.quant }}</li>
           </ul>
         </div>
@@ -15,15 +15,38 @@
       <div class="col-md-4">
         <div class="card bg-danger text-white p-3">
           <h5>Reserved</h5>
-          <ul class="list-unstyled">
-            <li v-for="reservation in reserved" :key="reservation.id">{{ reservation.firstname }} ({{ reservation.reservationTime }})</li>
+          
+          <ul class="text-start">
+            <li 
+              v-for="reservation in reserved" 
+              :key="reservation.id"
+              @click="openReservation(reservation)"
+              style="cursor: pointer;"
+            > 
+              <div class="row align-items-center">
+                <div class="col-6">
+                  {{ reservation.firstname }} ({{ reservation.reservationTime }})
+                </div>
+                <div            
+                  v-if="activeReservationId === reservation.id" 
+                  class="bg-light border rounded p-1 col-6"
+                  @click.stop
+                >
+                  <div class="button-box">  
+                    <button class="btn btn-sm btn-success" @click.stop="pickedUpReservation(reservation)">Picked Up</button>
+                    <button class="btn btn-sm btn-danger" @click.stop="deleteReservation(reservation.id)">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </li>
           </ul>
         </div>
       </div>
+      
       <div class="col-md-4">
         <div class="card bg-secondary text-white p-3">
           <h5>Picked Up</h5>
-          <ul class="list-unstyled">
+          <ul class="text-start">
             <li v-for="reservation in pickedup" :key="reservation.id">{{ reservation.firstname }} ({{ reservation.showedUpTime }})</li>
           </ul>
         </div>
@@ -45,6 +68,7 @@ import { getInventory } from '@/services/foodService'
 import { getReservationList } from '@/services/reservationService'
 
 
+
 const router = useRouter();
 //TODO: it should be from back api (login info?)
 const foodbankId = 1;
@@ -52,6 +76,9 @@ const foodbankId = 1;
 const available = ref([{name:null, quant:null}]);
 const reserved = ref([]);
 const pickedup = ref([]);
+const activeReservationId = ref(null);
+const selectedReservation = ref(null);
+
 
 onMounted(() => {
   getInventory(foodbankId)
@@ -88,4 +115,35 @@ function addDonation(){
   router.push('/donation');
 }
 
+function openReservation(reservation) {
+  if (activeReservationId.value === reservation.id) {
+    activeReservationId.value = null;
+    selectedReservation.value = null;
+    return;
+  }
+  
+  activeReservationId.value = reservation.id;
+  selectedReservation.value = reservation;
+}
+
+function pickedUpReservation(reservation) {
+  console.log('Modify clicked:', reservation)
+  activeReservationId.value = null
+}
+
+function deleteReservation(id) {
+  console.log('Delete clicked for ID:', id)
+  activeReservationId.value = null
+}
+
 </script>
+
+
+<style>
+  .button-box {
+    display: flex; 
+    justify-content: center; 
+    gap: 1rem; 
+  }
+
+</style>

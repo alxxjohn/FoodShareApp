@@ -69,3 +69,31 @@ export async function getReservationList(foodbankId){
 
   return mockData.find(item => item.id === foodbankId);
 }
+
+
+//API version
+// export function reserveToPickedUp(reservationId){
+//   //TODO: sending api to back
+//   // {
+//   //   "reserve_time": "2025-04-08T20:02:19.300Z", 
+//   //   "picked_up": true,
+//   //   "showed_up": true,
+//   //   "showed_up_time": "2025-04-08T20:02:19.300Z",
+//   //   "reservations_array": [
+//   //     {
+//   //       "item_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+//   //       "item_qty": 0,
+//   //       "item_name": "string",
+//   //       "current_status": "string"
+//   //     }
+//   //   ],
+//   //   "current_status": "string"
+//   // }
+
+//     const request = {
+
+//     }
+
+// }
+
+//TODO: export function modifyReservationForUser
