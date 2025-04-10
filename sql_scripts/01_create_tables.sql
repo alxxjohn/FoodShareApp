@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS business (
 CREATE TABLE IF NOT EXISTS inventory
 (
   foodbank_id UUID NOT NULL,
-  item_id UUID PRIMARY KEY NOT NULL 
+  item_id UUID PRIMARY KEY NOT NULL,
   item_name TEXT NOT NULL,
   item_qty INTEGER NOT NULL,
   date_added TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS reservations
   picked_up_time TIMESTAMPTZ,
   reservations_array JSONB[] NOT NULL,
   current_status TEXT
-)
+);
 
 CREATE TABLE IF NOT EXISTS donations (
     donation_id UUID PRIMARY KEY NOT NULL,
