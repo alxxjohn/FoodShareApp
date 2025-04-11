@@ -3,7 +3,9 @@ import main from '@/views/MainView.vue'
 import login from '@/views/LoginView.vue'
 import signUp from '@/views/SignUpView.vue'
 import homePage from '@/views/HomePage.vue'
+import termsAndConditions from '@/views/TermsAndConditions.vue'
 import foodMap from '@/views/FoodMapView.vue'
+import userhome from '@/views/UserHome.vue'
 import reservationList from '@/views/ReservationListView.vue'
 import donation from '@/views/DonationView.vue'
 // import Dashboard from '@/views/Dashboard.vue'
@@ -15,6 +17,8 @@ const routes = [
   { path: '/main', component: main },
   { path: '/login', component: login },
   { path: '/signup', component: signUp },
+  { path: '/termsandconditions', component: termsAndConditions },
+  { path: '/userhome', name: userhome, component: userhome }
   { path: '/foodmap', component: foodMap },
   { path: '/reservation-list', component: reservationList },
   { path: '/donation', component: donation }
