@@ -2,7 +2,7 @@ import apiClient from "./apiClient";
 
 export default {
   login(credentials) {
-    return apiClient.post("/login", credentials);
+    return apiClient.post("/auth/login", credentials);
   },
   register(userData) {
     return apiClient.post("/register/user", userData);

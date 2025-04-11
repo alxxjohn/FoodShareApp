@@ -20,8 +20,7 @@
 
 
  <script>
- //import authService from '@/services/authService';
- import axios from 'axios';
+ import authService from '@/services/authService';
 
  export default {
    name: 'LoginView',
@@ -45,18 +44,13 @@
     };
 
 
-    //authService.login(data)
-    axios.post('http://localhost:8000/api/auth/login', data, {
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/x-www-form-urlencoded'
-  }})
+    authService.login(data)
     .then((response) => {
           //console.log(response);
           const token = response.data.access_token;
           localStorage.setItem('access_token', token);
-          const str = JSON.stringify(token);
-          console.log("Data = " + str);
+
+          // console.log("Data = " + JSON.stringify(token));
           this.message = 'Login successful!';
           this.messageClass = 'success';
 

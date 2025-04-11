@@ -67,13 +67,13 @@
       <div class="radio-container">
         <p>Select an account type</p>
         <label class="radio-label">
-          <input type="radio" v-model="accountTypeRadio" value="personal"> Personal
+          <input class="form-check-input" type="radio" v-model="accountTypeRadio" value="personal" @change="is_business = false"> Personal
         </label>
         <label class="radio-label">
-          <input type="radio" v-model="accountTypeRadio" value="business"> Business
+          <input class="form-check-input" type="radio" v-model="accountTypeRadio" value="business" @change="is_business = true"> Business
         </label>
         <label class="radio-label">
-          <input type="radio" v-model="accountTypeRadio" value="foodbank"> Food Bank
+          <input class="form-check-input" type="radio" v-model="accountTypeRadio" value="foodbank" @change="is_business = true"> Food Bank
         </label>
       </div>
     </div>
@@ -89,10 +89,7 @@
 
 <script>
 import authService from '@/services/authService';
-//import MockAdapter from 'axios-mock-adapter';
 import { states } from '@/utils/const.js';
-//import axios from 'axios';
-//import apiClient from '@/services/apiClient';
 
 
  export default {
@@ -114,8 +111,9 @@ import { states } from '@/utils/const.js';
       city: '',
       zip: '',
       phone: '',
-      submitted: false
-
+      submitted: false,
+      is_business:false,
+      is_admin:false
     };
     
     
@@ -135,18 +133,16 @@ import { states } from '@/utils/const.js';
       state: this.selectedState,
       zipCode: this.zip,
       phone: this.phone,
-      is_business: false,
-      is_admin: false
+      is_business: this.is_business,
+      is_admin: this.is_admin
     };
-    const str = JSON.stringify(data);
-    console.log("Data = " + str);
+    console.log("RequestBody = " + JSON.stringify(data));
     
     authService.register(data)
     .then((response) => {
           console.log(response)
-          this.message = 'Registration successful!';
-          this.messageClass = 'success';
-          this.name = ''; // Clear the input field
+          this.$router.push('/login');
+
         })
         .catch((error ) => {
           console.log(error.response);
@@ -156,12 +152,6 @@ import { states } from '@/utils/const.js';
     }
   }
 };
-
-
-//const mock = new MockAdapter(apiClient);
-
-//mock.onPost('/api/register/user').reply(200, {message: 'This is a mock test: Registration successful'});
-
 
  </script>
 
