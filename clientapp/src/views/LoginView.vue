@@ -43,14 +43,16 @@
       password: this.login_info.password
     };
 
+    // console.log("RequestBody: " + JSON.stringify(data));
 
     authService.login(data)
     .then((response) => {
           //console.log(response);
           const token = response.data.access_token;
           localStorage.setItem('access_token', token);
+          authService.setToken(token);
 
-          // console.log("Data = " + JSON.stringify(token));
+          // console.log("Token = " + JSON.stringify(token));
           this.message = 'Login successful!';
           this.messageClass = 'success';
 
