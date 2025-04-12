@@ -1,11 +1,11 @@
 <template>
   <form @submit.prevent="submitForm" name="login-form">
     <div class="form-floating mb-3">
-    <input type="text" class="form-control" id="username" placeholder="Username" v-model="login_info.username">
+    <input type="text" class="form-control" id="username" placeholder="Username" v-model="username">
     <label for="username">Username</label>
     </div>
     <div class="form-floating">
-      <input type="password" class="form-control" id="password" placeholder="Password" v-model="login_info.password">
+      <input type="password" class="form-control" id="password" placeholder="Password" v-model="password">
       <label for="password">Password</label>
     </div>
     <div class="d-flex gap-2">
@@ -26,50 +26,40 @@
    name: 'LoginView',
    data(){
      return{
-         login_info:{
-             grant_type: "",
-             username: "",
-             password: "",
-             client_id: "",
-             client_secret: ""
-         }
+      grant_type: "",
+      username: "",
+      password: "",
+      client_id: "",
+      client_secret: ""
      }
    },
 
  methods: {
   submitForm() {
     const data = {
-      username: this.login_info.username,
-      password: this.login_info.password
+      username: this.username,
+      password: this.password
     };
 
     // console.log("RequestBody: " + JSON.stringify(data));
 
+    //Call login service method
     authService.login(data)
     .then((response) => {
-          //console.log(response);
-          const token = response.data.access_token;
-          localStorage.setItem('access_token', token);
-          authService.setToken(token);
+          
+      // console.log("response.data: " + JSON.stringify(response.data));
+         
+      const token = response.data.access_token;
+      localStorage.setItem('access_token', token);
+      authService.setToken(token);
+          
 
-          // console.log("Token = " + JSON.stringify(token));
-          this.message = 'Login successful!';
-          this.messageClass = 'success';
-
-          this.$router.push('/userhome');
-        })
-        .catch((error ) => {
-          console.log(error.response);
-          this.message = 'Error registering name';
-          this.messageClass = 'error';
-        });
-
-        
-        
-        
-
-        
-
+      //redirect to foodmap view
+      this.$router.push('/foodmap');
+    })
+    .catch((error ) => {
+      console.log(error.response);
+    });
 
   }
 

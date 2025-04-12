@@ -14,8 +14,11 @@ export default {
   setToken(token){
     apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   },
-  register(userData) {
+  userRegister(userData) {
     return apiClient.post("/register/user", userData);
+  },
+  businessRegister(userData) {
+    return apiClient.post("/register/business", userData);
   },
   logout() {
     return apiClient.post("/logout");

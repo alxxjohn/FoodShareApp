@@ -18,10 +18,11 @@
       <label>Address:</label>
       <span>{{ selectedMarker.street }}, {{ selectedMarker.city }}, {{ selectedMarker.state }} {{ selectedMarker.zip }}</span>
     </div>
-    <div>
+<!-- PHONE VALUE ISN't in BUSINESS TABLE -->
+    <!-- <div>
       <label>Phone:</label>
       <span>{{ selectedMarker.phone }}</span>
-    </div>
+    </div> -->
   </div>
 
   <div id="food-and-quant" v-if="selectedMarker" class="row g-3 d-flex">
@@ -95,35 +96,41 @@ let maxDropdowns = 1;
 
 //TOOD: since the user doesn't add their address when register, it can be some random address to start
 //TODO: add address search bar to move around the map 
-const userLoc = ref({lat: 37.7730, lng: -122.4183});
+const userLoc = ref({lat: 28.596425775510205, lng: -81.4507097448979});
 
 onMounted(() => {
   getFoodbankLists()
     .then(data => {
-      foodLocations.value = data.map((location) => ({
-        lat: location.address.lat,
-        lng: location.address.lng,
-        id: location.id,
-        icon: getMarkerIcon(location.availability)
-      }));
+      console.log("data: " + JSON.stringify(data));
+      // foodLocations.value = data.map((location) => ({
+      //   lat: location.lat,
+      //   lng: location.lng,
+      //   id: location.business_id,
+      //   // icon: getMarkerIcon(location.availability)
+      // }));
 
-      locationInfo.value = data.map((info) => ({
-        id: info.id,
-        name: info.name,
-        street: info.street,
-        city: info.city,
-        state: info.state,
-        zip: info.zip,
-        phone: info.phone,
-        availability: info.availability,
-      }));
+      // locationInfo.value = data.map((info) => ({
+      //   id: info.id,
+      //   name: info.company_name,
+      //   street: info.address,
+      //   city: info.city,
+      //   state: info.state,
+      //   zip: info.zipcode,
+        // phone: info.phone, //maybe remove
+      //   // availability: info.availability,
+      // }));
     })
+    //when it's error, it doesn't come to catch block? :(
     .catch(error => {
       console.error("Failed to fetch locations", error);
     });
 });
 
 
+/*
+ business_id              |   company_name    |        address        |  city   | state | zipcode |        lat         |        lng
+  | is_foodbank |              assoc_user
+*/
 
 
 // Handle the marker click event
@@ -143,13 +150,13 @@ async function handleMarkerClick (id) {
 }
 
 //Change the marker color based on each location's availability
-function getMarkerIcon(availability){
-  if (availability === true) {
-    return "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; 
-  } else {
-    return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; 
-  }
-}
+// function getMarkerIcon(availability){
+//   if (availability === true) {
+//     return "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; 
+//   } else {
+//     return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; 
+//   }
+// }
 
 //return true (disable) if required values aren't given
 function disabledButton(){  
