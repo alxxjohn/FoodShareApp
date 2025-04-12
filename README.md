@@ -165,6 +165,10 @@ api /8000
 ## Contributors
 
 - Alex John
+  -Backend lead, Github owner
 - Dillon Kilgallon
+  -Frontend 
 - Ine Park
+  -Frontend lead
 - Kyle Cortez
+  -Product manager, database
