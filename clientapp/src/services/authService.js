@@ -20,6 +20,9 @@ export default {
   businessRegister(userData) {
     return apiClient.post("/register/business", userData);
   },
+  getCurrentLoggedInUser(){
+    return apiClient.get("/auth/user")
+  },
   logout() {
     return apiClient.post("/logout");
   }

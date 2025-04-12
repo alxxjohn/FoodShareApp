@@ -52,7 +52,9 @@
       const token = response.data.access_token;
       localStorage.setItem('access_token', token);
       authService.setToken(token);
-          
+      
+      //TO test access token
+      // this.getCurrentUserInfo();
 
       //redirect to foodmap view
       this.$router.push('/foodmap');
@@ -61,8 +63,17 @@
       console.log(error.response);
     });
 
-  }
+  },
 
+  getCurrentUserInfo(){
+    authService.getCurrentLoggedInUser()
+      .then((response) => {
+        console.log("current user: " + JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  },
 
  }
  };
