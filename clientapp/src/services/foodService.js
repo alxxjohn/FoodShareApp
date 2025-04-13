@@ -139,23 +139,22 @@ export async function getInventory(foodbankId){
 
 
 // API VERSION
-// export function addDonationService(request){
-//   //  console.log("request: "+JSON.stringify(request, null, 2)); 
-
-//   return apiClient.post(`/donations`, {request})
-//     .then(response => {
-//       return { success: true, data: response.data};
-//     })
-//     .catch(error =>{
-//       return error;
-//     });
-// }
-
-export async function addDonationService(request){
-  console.log("request: "+JSON.stringify(request, null, 2));
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ success: true, message: "Reservation successful!" });
-    }, 500); // Simulate network delay
-  });
+export function addDonationService(request){
+  //  console.log("request: "+JSON.stringify(request, null, 2)); 
+  return apiClient.post("/donations/", request)
+    .then(response => {
+      return { success: true, data: response.data};
+    })
+    .catch(error =>{
+      return { success: false, error: error.response?.data || error.message };
+});
 }
+
+// export async function addDonationService(request){
+//   console.log("request: "+JSON.stringify(request, null, 2));
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve({ success: true, message: "Reservation successful!" });
+//     }, 500); // Simulate network delay
+//   });
+// }

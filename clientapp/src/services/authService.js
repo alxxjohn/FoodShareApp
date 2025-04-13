@@ -14,6 +14,12 @@ export default {
   setToken(token){
     apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   },
+  loadTokenFromStorage() {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      this.setToken(token);
+    }
+  },
   userRegister(userData) {
     return apiClient.post("/register/user", userData);
   },
