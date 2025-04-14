@@ -7,17 +7,17 @@ from pydantic import BaseModel
 from foodshareapp.db.utils import db
 
 
-@dataclass
 class FoodbankModel(BaseModel):
-    foodbank_id: UUID
+    business_id: UUID
     company_name: str
-    email: str
-    phone: str
     address: str
     city: str
     state: str
-    zip: str
-    date_added: datetime
+    zipcode: str
+    lat: str
+    lng: str
+    is_foodbank: bool
+    assoc_user: UUID
 
 
 @dataclass
@@ -36,8 +36,8 @@ class DonationModel(BaseModel):
 
 
 async def get_all_foodbanks() -> list[FoodbankModel]:
-    """Returns a list of all users who are foodbanks (is_business = True)"""
-    query = "SELECT * FROM users WHERE is_business = TRUE"
+    """Returns a list of all users who are foodbanks (is_foodbank = True)"""
+    query = "SELECT * FROM business WHERE is_foodbank = TRUE"
     rows = await db.fetch_all(query=query)
     return [FoodbankModel(**dict(row)) for row in rows]
 
