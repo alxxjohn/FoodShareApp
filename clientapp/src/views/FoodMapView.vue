@@ -30,21 +30,23 @@
         <label v-if="index === 0" class="form-label">Available Foods:</label>
         <select class="form-select" v-model="selectedFoodList[index].food">
           <option v-for="food in selectedMarkerInv.availableFoods" :key="food.id" :value="food">
-            {{ food.desc }}
+            {{ food.name }}
+
           </option>
         </select>
       </div>
       
       <div class="col-md-2">
+        <div class="invalid-msg" v-if="invalidQuant(index)">
+          Max quantity is {{selectedFoodList[index].food.quant}}!
+        </div>
         <input type="text" 
           class="form-control" 
           v-model="selectedFoodList[index].quant" 
-          :placeholder="selectedFoodList[index].food ? `Max quantity is ${selectedFoodList[index].food.quant}` : 'Quantity'" 
+          :placeholder="selectedFoodList[index].food ? `Max quantity: ${selectedFoodList[index].food.quant}` : 'Quantity'" 
           :class="{ 'is-invalid': invalidQuant(index) }" 
         />
-        <div class="invalid-feedback" v-if="selectedFoodList[index].food">
-          Max quantity is {{selectedFoodList[index].food.quant}}!
-        </div>
+
       </div>
 
       <div class="col-md-1 d-flex">
@@ -61,7 +63,8 @@
       </div>
 
       <div class="col-md-2" id="reserve-button" v-if="index === 0">
-        <button type="button" class="btn btn-primary" @click="reserve" :disabled="disabledButton()">Reserve</button>
+        <button type="button" class="btn btn-primary" @click="reserve" :disabled="disabledButton() && invalidQuant">Reserve</button>
+
       </div>
 
     </div>
@@ -87,6 +90,7 @@ const selectedTime = ref(null);
 const selectedFoodList = ref([{food: null, quant:null}]); 
 
 let maxDropdowns = 1;
+
 
 
 //TOOD: since the user doesn't add their address when register, it can be some random address to start
@@ -158,9 +162,10 @@ function disabledButton(){
 
 //TODO: send an array of food items not a single item
 function reserve(){
-  const requestBody = createRequestBody();
+  const request = createRequestBody();
 
-  reserveFood(requestBody)
+  reserveFood(request)
+
     .then(result => {
       if (result.success) {
         console.log("Reservation successful:", result.data);
@@ -189,6 +194,8 @@ function removeDropdown(index){
   }
 }
 
+//TODO: valiadation should be more sophisticate?? :( 
+//returns true (invalid) if the given input is invalid
 function invalidQuant(index){
   const item = selectedFoodList.value[index];
   
@@ -196,24 +203,30 @@ function invalidQuant(index){
   if(!item.food)
     return false;
 
+  //given value is not a number
+  if(isNaN(Number(item.quant)))
+    return true;
+
   //if selected quantity(item.quant) is smaller or equal to max quantity (item.food.quant) for selected foods
-  return item.quant > item.food.quant;
+  return item.quant > item.food.quant && item.quant < 0;
+
 
   }
 
   function createRequestBody(){
     const request = {
-      food:[], 
-      time:selectedTime.value
+      reservations_array:[], 
+      reserve_time:selectedTime.value
+
     };
 
     for(let i = 0; i < selectedFoodList.value.length; i++ ){
       const addedFood = {
-        id:selectedFoodList.value[i].food.id, 
-        name:selectedFoodList.value[i].food.desc, 
-        quant:selectedFoodList.value[i].quant
+        item_id:selectedFoodList.value[i].food.id, 
+        item_qty:selectedFoodList.value[i].quant
       };
-      request.food.push(addedFood);
+      request.reservations_array.push(addedFood);
+
     }
 
     return request;
@@ -222,3 +235,11 @@ function invalidQuant(index){
 
 </script>
 
+<style>
+.invalid-msg {
+  color: red;
+  font-size: 0.875em;
+  margin-top: 5px;
+}
+
+</style>

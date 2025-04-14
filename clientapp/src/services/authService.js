@@ -5,7 +5,7 @@ export default {
     return apiClient.post("/login", credentials);
   },
   register(userData) {
-    return apiClient.post("/register", userData);
+    return apiClient.post("/register/user", userData);
   },
   logout() {
     return apiClient.post("/logout");
