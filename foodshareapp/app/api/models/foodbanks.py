@@ -1,16 +1,15 @@
 from pydantic import BaseModel
-from datetime import datetime
 from uuid import UUID
 
 
 class Foodbank(BaseModel):
-    foodbankID: UUID
-    companyName: str
-    email: str
-    phone: str
+    business_id: UUID
+    company_name: str
     address: str
     city: str
     state: str
-    zip: str
-    isBusiness: bool
-    date_added: datetime
+    zipcode: str
+    lat: str
+    lng: str
+    is_foodbank: bool
+    assoc_user: UUID
