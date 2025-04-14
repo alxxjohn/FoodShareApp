@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Optional, List
+from typing import Optional, List, Dict
 from uuid import UUID, uuid4
 import json
 from pydantic import BaseModel
@@ -75,6 +75,44 @@ async def get_reservation_by_id(reservation_uuid: UUID) -> Optional[Reservation]
     else:
         raw["reservations_array"] = []
     return Reservation(**raw)
+
+
+async def get_reservations_by_foodbank_id(foodbank_id: UUID) -> List[Reservation]:
+    rows = await _fetch_reservation_rows(foodbank_id)
+    return [_parse_reservation_row(row) for row in rows]
+
+
+async def _fetch_reservation_rows(foodbank_id: UUID):
+    stmt = """
+    SELECT r.*
+    FROM reservations r
+    JOIN LATERAL jsonb_array_elements(array_to_json(r.reservations_array)::jsonb) AS item(obj)
+        ON TRUE
+    JOIN inventory fbi ON fbi.item_id = (item.obj->>'item_id')::UUID
+    JOIN business b ON fbi.foodbank_id = b.business_id
+    WHERE fbi.foodbank_id = :foodshare_id
+    """
+    return await db.fetch_all(stmt, values={"foodshare_id": foodbank_id})
+
+
+def _parse_reservation_row(row: Dict) -> Reservation:
+    raw = dict(row)
+    raw.setdefault("showed_up", False)
+    raw["reservations_array"] = _parse_reservations_array(raw.get("reservations_array"))
+    return Reservation(**raw)
+
+
+def _parse_reservations_array(array_data) -> List[Dict]:
+    if not isinstance(array_data, list):
+        return []
+
+    parsed = []
+    for item in array_data:
+        if isinstance(item, str):
+            parsed.append(json.loads(item))
+        elif isinstance(item, dict):
+            parsed.append(item)
+    return parsed
 
 
 async def insert_reservation(

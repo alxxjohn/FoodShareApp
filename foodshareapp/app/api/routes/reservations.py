@@ -137,6 +137,25 @@ async def get_reservation(
     return reservation
 
 
+@router.get(
+    "/foodbank/{foodbank_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=list[db_reservations.Reservation],
+)
+async def get_reservations_by_foodbank_id(
+    foodbank_id: UUID, transaction: Transaction = Depends(db_transaction)
+) -> list[db_reservations.Reservation]:
+    """Gets all reservations for a given foodbank ID."""
+
+    reservations = await db_reservations.get_reservations_by_foodbank_id(foodbank_id)
+    if not reservations:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No reservations found for this foodbank",
+        )
+    return reservations
+
+
 @router.delete("/{reservation_uuid}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_reservation(
     reservation_uuid: UUID, transaction: Transaction = Depends(db_transaction)
