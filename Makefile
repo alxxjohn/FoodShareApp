@@ -71,6 +71,7 @@ fe-build:
 
 db-fill:
 	chmod +x db_loader/user_fill.sh
+	chmod +x db_loader/business_fill.sh
 	echo "🚀 Loading SQL into Postgres..."
 	docker exec foodshareapp-api-1 python3 /app/src/db_loader/load_sql.py
 	echo \"🧪 Verifying required tables exist...\"
