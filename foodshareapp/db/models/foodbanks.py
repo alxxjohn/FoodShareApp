@@ -23,8 +23,8 @@ class FoodbankModel(BaseModel):
 @dataclass
 class InventoryModel(BaseModel):
     item_name: str
-    quantity: int
-    expiration_date: Optional[datetime]
+    item_qty: int
+    # expiration_date: Optional[datetime]
 
 
 @dataclass
@@ -36,15 +36,15 @@ class DonationModel(BaseModel):
 
 
 async def get_all_foodbanks() -> list[FoodbankModel]:
-    """Returns a list of all users who are foodbanks (is_foodbank = True)"""
-    query = "SELECT * FROM business WHERE is_foodbank = TRUE"
+    """Returns a list of all businesses"""
+    query = "SELECT * FROM business"
     rows = await db.fetch_all(query=query)
     return [FoodbankModel(**dict(row)) for row in rows]
 
 
 async def get_foodbank_inventory(foodbank_id: UUID) -> list[InventoryModel]:
     query = """
-        SELECT item_name, quantity, expiration_date
+        SELECT item_name, item_qty
         FROM inventory
         WHERE foodbank_id = :foodbank_id
     """

@@ -100,38 +100,34 @@ const userLoc = ref({lat: 28.596425775510205, lng: -81.4507097448979});
 
 onMounted(() => {
   getFoodbankLists()
-    .then(data => {
-      //log the data
-      // console.log("data: " + JSON.stringify(data));
-      
-      foodLocations.value = data.map((location) => ({
-        lat: location.lat,
-        lng: location.lng,
-        id: location.business_id,
-        // icon: getMarkerIcon(location.availability)
-      }));
+    .then(res => {
+      if(res.success){
+        foodLocations.value = res.data.map((location) => ({
+          lat: Number(location.lat),
+          lng: Number(location.lng),
+          id: location.business_id,
+          // icon: getMarkerIcon(location.availability)
+        }));
 
-      locationInfo.value = data.map((info) => ({
-        id: info.business_id,
-        name: info.company_name,
-        street: info.address,
-        city: info.city,
-        state: info.state,
-        zip: info.zipcode,
-        // availability: info.availability,
-      }));
+        locationInfo.value = res.data.map((info) => ({
+          id: info.business_id,
+          name: info.company_name,
+          street: info.address,
+          city: info.city,
+          state: info.state,
+          zip: info.zipcode,
+          // availability: info.availability,
+        }));
+      }
+      else {
+        console.error("Failed to fetch locations");
+      }
     })
     //when it's error, it doesn't come to catch block? :(
     .catch(error => {
       console.error("Failed to fetch locations", error);
     });
 });
-
-
-/*
- business_id              |   company_name    |        address        |  city   | state | zipcode |        lat         |        lng
-  | is_foodbank |              assoc_user
-*/
 
 
 // Handle the marker click event

@@ -1,5 +1,5 @@
 <template>
-  <GoogleMap :api-key="API_KEY" style="width: 100%; height: 400px" :zoom="12" :center="center">
+  <GoogleMap :api-key="API_KEY" style="width: 100%; height: 400px" :zoom="14" :center="center">
     <Marker 
       v-for="(location, index) in markers" 
       :key="index" 
