@@ -42,7 +42,7 @@
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { getInventory } from '@/services/foodService'
-// import { getReservationList } from '@/services/reservationService'
+import { getReservationList } from '@/services/reservationService'
 import authService from '@/services/authService';
 
 
@@ -69,26 +69,26 @@ onMounted(() => {
             }
           }          
         })
-      // getReservationList(userInfo.data.uuid)  
-      //   .then(res => {
-      //     if(res.success){
-      //       res.reservationList.forEach((reservation) => {
-      //         if (reservation.status === 'reserved'){
-      //           reserved.value.push(reservation);
-      //         } else if (reservation.status === 'pickedup'){
-      //           pickedup.value.push(reservation);
-      //         }
-      //       })
-      //       reserved.value.sort((a, b) => a.reservationTime.localeCompare(b.reservationTime));
-      //       pickedup.value.sort((a, b) => a.showedUpTime.localeCompare(b.showedUpTime));
-      //     } else {
-      //       if (res.error?.status === 404) {
-      //         console.warn("Reservation not found for this user.");
-      //       } else {
-      //         console.error("Failed to fetch the reservation list: ", res.error);
-      //       }
-      //     }
-      //   })
+      getReservationList(userInfo.data.uuid)  
+        .then(res => {
+          if(res.success){
+            res.reservationList.forEach((reservation) => {
+              if (reservation.status === 'reserved'){
+                reserved.value.push(reservation);
+              } else if (reservation.status === 'pickedup'){
+                pickedup.value.push(reservation);
+              }
+            })
+            reserved.value.sort((a, b) => a.reservationTime.localeCompare(b.reservationTime));
+            pickedup.value.sort((a, b) => a.showedUpTime.localeCompare(b.showedUpTime));
+          } else {
+            if (res.error?.status === 404) {
+              console.warn("Reservation not found for this user.");
+            } else {
+              console.error("Failed to fetch the reservation list: ", res.error);
+            }
+          }
+        })
       })
   .catch(error => {
     console.log("unable to retrieve the current user", error);

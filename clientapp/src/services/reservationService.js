@@ -19,14 +19,12 @@ export function reserveFood (request) {
     });
 }
 
-// API version
 // Get all the reservation from the foodbank/business by their id
 export function getReservationList(foodbankId){
   //Log the foodbankId
   // console.log("getReservation, foodbankId:" + foodbankId);
   
-  //TODO: I need to change the api url (currently it doesn'e exist)
-  return apiClient.get(`/reservations/${foodbankId}`)
+  return apiClient.get(`/reservations/foodbank/${foodbankId}`)
   .then(response => {
     return { success: true, data: response.data };
   })
