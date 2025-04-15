@@ -101,24 +101,25 @@ const userLoc = ref({lat: 28.596425775510205, lng: -81.4507097448979});
 onMounted(() => {
   getFoodbankLists()
     .then(data => {
-      console.log("data: " + JSON.stringify(data));
-      // foodLocations.value = data.map((location) => ({
-      //   lat: location.lat,
-      //   lng: location.lng,
-      //   id: location.business_id,
-      //   // icon: getMarkerIcon(location.availability)
-      // }));
+      //log the data
+      // console.log("data: " + JSON.stringify(data));
+      
+      foodLocations.value = data.map((location) => ({
+        lat: location.lat,
+        lng: location.lng,
+        id: location.business_id,
+        // icon: getMarkerIcon(location.availability)
+      }));
 
-      // locationInfo.value = data.map((info) => ({
-      //   id: info.id,
-      //   name: info.company_name,
-      //   street: info.address,
-      //   city: info.city,
-      //   state: info.state,
-      //   zip: info.zipcode,
-        // phone: info.phone, //maybe remove
-      //   // availability: info.availability,
-      // }));
+      locationInfo.value = data.map((info) => ({
+        id: info.business_id,
+        name: info.company_name,
+        street: info.address,
+        city: info.city,
+        state: info.state,
+        zip: info.zipcode,
+        // availability: info.availability,
+      }));
     })
     //when it's error, it doesn't come to catch block? :(
     .catch(error => {
@@ -139,11 +140,12 @@ async function handleMarkerClick (id) {
   selectedFoodList.value = [{ food: null, quant: null }];
 
   selectedMarkerInv.value = await getInventory(id);
-  
+
   //set maxDropdown to be the number of available foods for each location
   maxDropdowns = selectedMarkerInv.value.availableFoods.length;
   
   selectedMarker.value = locationInfo.value.find(info => info.id === id); 
+
   
   //Log clicked marker Id
   // console.log("Clicked Marker ID:", id);
@@ -201,7 +203,6 @@ function removeDropdown(index){
   }
 }
 
-//TODO: valiadation should be more sophisticate?? :( 
 //returns true (invalid) if the given input is invalid
 function invalidQuant(index){
   const item = selectedFoodList.value[index];
@@ -210,12 +211,15 @@ function invalidQuant(index){
   if(!item.food)
     return false;
 
-  //given value is not a number
+  if(!item.quant)
+    return false;  
+
+  // given value is not a number
   if(isNaN(Number(item.quant)))
     return true;
 
   //if selected quantity(item.quant) is smaller or equal to max quantity (item.food.quant) for selected foods
-  return item.quant > item.food.quant && item.quant < 0;
+  return item.quant > item.food.quant || item.quant <= 0;
 
 
   }

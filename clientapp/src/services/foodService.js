@@ -2,87 +2,71 @@ import apiClient from "./apiClient";
 
 
 //  TODO: get user's location(long/lat) to center the map, from login info? or new api request?
-// export async function getFoodbankLists() {
-//   const mockData = [
-//     {
-//       id: 1,
-//       name: "Green Valley Food Bank",
-//       address: {
-//         lat: 37.7749,
-//         lng: -122.4194,
-//       },
-//       street: "123 Green Valley Rd",
-//       city: "San Francisco",
-//       state:"CA",
-//       zip:"94110",
-//       phone: "+1 (415) 555-1234",     
-//       availability: true, 
-//     },
-//     {
-//       id: 2,
-//       name: "Hope for All Food Bank",
-//       address: {
-//         lat: 37.7758,
-//         lng: -122.4180,
-//       },
-//       street: "456 Hope Ave",
-//       city: "Los Angeles",
-//       state:"CA",
-//       zip:"90001",
-//       phone: "+1 (213) 555-5678",
-//       availability: false,
-//     },
-//     {
-//       id: 3,
-//       name: "Sunshine Food Pantry",
-//       address: {
-//         lat: 40.7128,
-//         lng: -74.0060,
-//       },
-//       street: "789 Sunshine Blvd",
-//       city: "New York",
-//       state:"NY",
-//       zip:"10001",
-//       phone: "+1 (212) 555-8765",
-//       availability: true,
-//     },
-//     {
-//       id: 4,
-//       name: "Fresh Start Food Bank",
-//       address: {
-//         lat: 41.8781,
-//         lng: -87.6298,
-//       },
-//       street: "101 Fresh Start Ln",
-//       city: "Chicago",
-//       state:"IL",
-//       zip:"60601",
-//       phone: "+1 (312) 555-4321",
-//       availability: true,
-//     }
-//   ];
+export async function getFoodbankLists() {
+  const mockData = [
+    {
+      business_id: 1,
+      company_name: "Orlando Community Food Bank",
+      lat: 28.5969,
+      lng: -81.4511,
+      address: "100 Main St",
+      city: "Orlando",
+      state: "FL",
+      zipcode: "32801",
+    },
+    {
+      business_id: 2,
+      company_name: "Central Hope Pantry",
+      lat: 28.5973,
+      lng: -81.4498,
+      address: "200 Central Ave",
+      city: "Orlando",
+      state: "FL",
+      zipcode: "32803",
+    },
+    {
+      business_id: 3,
+      company_name: "Helping Hands Food Bank",
+      lat: 28.5952,
+      lng: -81.4519,
+      address: "300 Helping Hands Way",
+      city: "Orlando",
+      state: "FL",
+      zipcode: "32805",
+    },
+    {
+      business_id: 4,
+      company_name: "Sunrise Community Pantry",
+      lat: 28.5948,
+      lng: -81.4502,
+      address: "400 Sunrise Blvd",
+      city: "Orlando",
+      state: "FL",
+      zipcode: "32806",
+    }
+  ];
   
-//   return mockData;
+  return mockData;
 
-// }
+}
 
 
 // API version
-export const getFoodbankLists = () => {
-  return apiClient.get("/foodbanks")
-    .then(response => {
-      //log the response
-      console.log("getFoodbankLists.data: " + JSON.stringify(response.data));
+// export const getFoodbankLists = () => {
+//   return apiClient.get("/foodbanks/")
+//     .then(response => {
+//       //log the response
+//       console.log("getFoodbankLists.data: " + JSON.stringify(response.data));
       
-      return { success: true, data: response.data };
-    })
-    .catch(error => {
-      return error;
-    });
-};
+//       return { success: true, data: response.data };
+//     })
+//     .catch(error => {
+//       return error;
+//     });
+// };
 
-export async function getInventory(foodbankId){
-    const mockData = [
+export async function getInventory(foodbankId){  
+  const mockData = [
       {
         id: 1,
         availableFoods: [
