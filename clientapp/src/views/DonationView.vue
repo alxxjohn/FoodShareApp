@@ -87,15 +87,12 @@ function disabledButton(){
 function addDonation(){
   const request = createRequestBody(addedFoodList.value);
   addDonationService(request)
-    .then(result => {
-      if (result.success) {
-        console.log("Reservation successful:", result.data);
-      } else {
-        console.error("Reservation failed:", result.error);
+    .then(response => {
+      if (!response.success) {
+        console.error("Donation failed:", + JSON.stringify(response.error));
+      return;
       }
-    })
-    .catch(error => {
-      console.error("Unexpected error:", error);
+      console.log("Donation successful: " + JSON.stringify(response.data));
     });
 }
 

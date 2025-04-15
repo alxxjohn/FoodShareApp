@@ -1,7 +1,7 @@
 <template>
-    <h1>Hello {{ user_info.username }}</h1>
+    <h1>Hello</h1>
  </template>
-  
+<!--   
   <script>
  import axios from 'axios';
 
@@ -44,4 +44,4 @@ const str = JSON.stringify(token);
 
  }
 };
-  </script>
+  </script> -->

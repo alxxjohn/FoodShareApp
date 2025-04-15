@@ -18,7 +18,7 @@ const routes = [
   { path: '/login', component: login },
   { path: '/signup', component: signUp },
   { path: '/termsandconditions', component: termsAndConditions },
-  { path: '/userhome', name: userhome, component: userhome }
+  { path: '/userhome', name: userhome, component: userhome },
   { path: '/foodmap', component: foodMap },
   { path: '/reservation-list', component: reservationList },
   { path: '/donation', component: donation }

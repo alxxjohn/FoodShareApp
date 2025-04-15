@@ -18,10 +18,11 @@
       <label>Address:</label>
       <span>{{ selectedMarker.street }}, {{ selectedMarker.city }}, {{ selectedMarker.state }} {{ selectedMarker.zip }}</span>
     </div>
-    <div>
+<!-- PHONE VALUE ISN't in BUSINESS TABLE -->
+    <!-- <div>
       <label>Phone:</label>
       <span>{{ selectedMarker.phone }}</span>
-    </div>
+    </div> -->
   </div>
 
   <div id="food-and-quant" v-if="selectedMarker" class="row g-3 d-flex">
@@ -95,35 +96,42 @@ let maxDropdowns = 1;
 
 //TOOD: since the user doesn't add their address when register, it can be some random address to start
 //TODO: add address search bar to move around the map 
-const userLoc = ref({lat: 37.7730, lng: -122.4183});
+const userLoc = ref({lat: 28.596425775510205, lng: -81.4507097448979});
 
 onMounted(() => {
   getFoodbankLists()
     .then(data => {
+      //log the data
+      // console.log("data: " + JSON.stringify(data));
+      
       foodLocations.value = data.map((location) => ({
-        lat: location.address.lat,
-        lng: location.address.lng,
-        id: location.id,
-        icon: getMarkerIcon(location.availability)
+        lat: location.lat,
+        lng: location.lng,
+        id: location.business_id,
+        // icon: getMarkerIcon(location.availability)
       }));
 
       locationInfo.value = data.map((info) => ({
-        id: info.id,
-        name: info.name,
-        street: info.street,
+        id: info.business_id,
+        name: info.company_name,
+        street: info.address,
         city: info.city,
         state: info.state,
-        zip: info.zip,
-        phone: info.phone,
-        availability: info.availability,
+        zip: info.zipcode,
+        // availability: info.availability,
       }));
     })
+    //when it's error, it doesn't come to catch block? :(
     .catch(error => {
       console.error("Failed to fetch locations", error);
     });
 });
 
 
+/*
+ business_id              |   company_name    |        address        |  city   | state | zipcode |        lat         |        lng
+  | is_foodbank |              assoc_user
+*/
 
 
 // Handle the marker click event
@@ -132,24 +140,25 @@ async function handleMarkerClick (id) {
   selectedFoodList.value = [{ food: null, quant: null }];
 
   selectedMarkerInv.value = await getInventory(id);
-  
+
   //set maxDropdown to be the number of available foods for each location
   maxDropdowns = selectedMarkerInv.value.availableFoods.length;
   
   selectedMarker.value = locationInfo.value.find(info => info.id === id); 
+
   
   //Log clicked marker Id
   // console.log("Clicked Marker ID:", id);
 }
 
 //Change the marker color based on each location's availability
-function getMarkerIcon(availability){
-  if (availability === true) {
-    return "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; 
-  } else {
-    return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; 
-  }
-}
+// function getMarkerIcon(availability){
+//   if (availability === true) {
+//     return "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; 
+//   } else {
+//     return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; 
+//   }
+// }
 
 //return true (disable) if required values aren't given
 function disabledButton(){  
@@ -194,7 +203,6 @@ function removeDropdown(index){
   }
 }
 
-//TODO: valiadation should be more sophisticate?? :( 
 //returns true (invalid) if the given input is invalid
 function invalidQuant(index){
   const item = selectedFoodList.value[index];
@@ -203,12 +211,15 @@ function invalidQuant(index){
   if(!item.food)
     return false;
 
-  //given value is not a number
+  if(!item.quant)
+    return false;  
+
+  // given value is not a number
   if(isNaN(Number(item.quant)))
     return true;
 
   //if selected quantity(item.quant) is smaller or equal to max quantity (item.food.quant) for selected foods
-  return item.quant > item.food.quant && item.quant < 0;
+  return item.quant > item.food.quant || item.quant <= 0;
 
 
   }
