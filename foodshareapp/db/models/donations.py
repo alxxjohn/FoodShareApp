@@ -45,7 +45,7 @@ class DeleteDonation(BaseModel):
 async def get_foodbank_id_for_user(assoc_user: UUID) -> UUID:
     stmt = """
         SELECT business_id FROM business
-        WHERE assoc_user = :assoc_user AND is_foodbank = true
+        WHERE assoc_user = :assoc_user
     """
     record = await db.fetch_one(stmt, values={"assoc_user": assoc_user})
     if record is None:
