@@ -1,6 +1,4 @@
-from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel
 
@@ -24,6 +22,7 @@ class InventoryModel(BaseModel):
     item_id: UUID
     item_name: str
     item_qty: int
+
 
 class DonationModel(BaseModel):
     donor_id: UUID
