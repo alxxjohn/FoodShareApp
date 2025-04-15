@@ -20,14 +20,11 @@ class FoodbankModel(BaseModel):
     assoc_user: UUID
 
 
-@dataclass
 class InventoryModel(BaseModel):
+    item_id: UUID
     item_name: str
     item_qty: int
-    # expiration_date: Optional[datetime]
 
-
-@dataclass
 class DonationModel(BaseModel):
     donor_id: UUID
     item_name: str
@@ -44,7 +41,7 @@ async def get_all_foodbanks() -> list[FoodbankModel]:
 
 async def get_foodbank_inventory(foodbank_id: UUID) -> list[InventoryModel]:
     query = """
-        SELECT item_name, item_qty
+        SELECT item_id, item_name, item_qty
         FROM inventory
         WHERE foodbank_id = :foodbank_id
     """

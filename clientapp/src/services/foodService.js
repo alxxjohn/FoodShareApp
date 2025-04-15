@@ -56,7 +56,7 @@ export const getFoodbankLists = () => {
   return apiClient.get("/foodbanks/")
     .then(response => {
       //log the response
-      console.log("getFoodbankLists.data: " + JSON.stringify(response.data));
+      // console.log("getFoodbankLists.data: " + JSON.stringify(response.data));
       
       return { success: true, data: response.data };
     })
@@ -65,66 +65,24 @@ export const getFoodbankLists = () => {
     });
 };
 
-export async function getInventory(foodbankId){  
-  const mockData = [
-      {
-        id: 1,
-        availableFoods: [
-          { id: 1, name: "Canned Beans", quant:1 },
-          { id: 2, name: "Rice", quant:10 },
-          { id: 3, name: "Bread", quant:5 },
-          { id: 4, name: "Vegetables", quant:2 },
-          { id: 5, name: "Cereal", quant:1 }
-        ]
-      },
-      {
-        id: 2,
-        availableFoods: []
-      },
-      {
-        id: 3,
-        availableFoods: [
-          { id: 6, name: "Canned Vegetables", quant:3 },
-          { id: 7, name: "Rice", quant:2 },
-          { id: 8, name: "Cereal", quant:10 },
-          { id: 9, name: "Tomato Sauce", quant:12 },
-          { id: 10, name: "Juice", quant:8 }
-        ] 
-      },
-      {
-        id: 4,
-        availableFoods: [
-          { id: 11, name: "Chicken", quant:3 },
-          { id: 12, name: "Canned Corn", quant:12 },
-          { id: 13, name: "Pasta", quant:8 },
-          { id: 14, name: "Oatmeal", quant:9 },
-          { id: 15, name: "Eggs", quant:1 }
-        ]
-      }
-    
-    ];
-
-    return mockData.find(item => item.id === foodbankId);
+export function getInventory(foodbankId){
+  
+  return apiClient.get(`/foodbanks/${foodbankId}/inventory`)
+    .then(response => {
+      //log the response
+      // console.log("getInventory.data: " + JSON.stringify(response.data));
+      
+      return { success: true, data: response.data };
+    })
+    .catch(error => {
+      return { success: false, error: error.response?.data || error.message };
+    });
 }
 
-
-//IT should retreive only available inventory from the foodbank/business
-//API version
-// export function getInventory(foodbankId){
-//     return apiClient.get(`/foodbanks/${foodbankId}/inventory`)
-  //     .then(response => {
-  //       return { success: true, data: response.data };
-  //     })
-  //     .catch(error => {
-  //       return error;
-  //     });
-// }
-
-
-
-// API VERSION
 export function addDonationService(request){
+  //log the request
   //  console.log("request: "+JSON.stringify(request, null, 2)); 
+  
   return apiClient.post("/donations/", request)
     .then(response => {
       return { success: true, data: response.data};
@@ -133,12 +91,3 @@ export function addDonationService(request){
       return { success: false, error: error.response?.data || error.message };
 });
 }
-
-// export async function addDonationService(request){
-//   console.log("request: "+JSON.stringify(request, null, 2));
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       resolve({ success: true, message: "Reservation successful!" });
-//     }, 500); // Simulate network delay
-//   });
-// }
