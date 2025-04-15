@@ -34,6 +34,7 @@ class EmailResponse:
     uuid: UUID
     password: str
     username: str
+    is_business: bool
 
 
 async def get_user_pass(username: str) -> Optional[AuthResponse]:
@@ -99,7 +100,7 @@ async def get_token_data(uuid: str) -> Optional[EmailResponse]:
     Returns `None` if no such user exists.
     """
 
-    stmnt = "SELECT uuid,email,password,username FROM users WHERE uuid = :uuid"
+    stmnt = "SELECT uuid,email,password,username,is_business FROM users WHERE uuid = :uuid"
     db_user = await db.fetch_one(query=stmnt, values={"uuid": uuid})
 
     if db_user is None:
