@@ -41,8 +41,6 @@
       password: this.password
     };
 
-    // console.log("RequestBody: " + JSON.stringify(data));
-
     //Call login service method
     authService.login(data)
     .then((response) => {

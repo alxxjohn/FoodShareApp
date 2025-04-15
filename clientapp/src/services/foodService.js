@@ -61,7 +61,12 @@ export const getFoodbankLists = () => {
       return { success: true, data: response.data };
     })
     .catch(error => {
-      return { success: false, error: error.response?.data || error.message };
+      return { 
+        success: false, 
+        error: {
+          detail: error.response?.data?.detail,
+          status: error.response?.status,
+        }};
     });
 };
 
@@ -69,13 +74,17 @@ export function getInventory(foodbankId){
   
   return apiClient.get(`/foodbanks/${foodbankId}/inventory`)
     .then(response => {
-      //log the response
-      // console.log("getInventory.data: " + JSON.stringify(response.data));
-      
+      // log the response
+      // console.log("getInventory: " + JSON.stringify(response));
       return { success: true, data: response.data };
     })
     .catch(error => {
-      return { success: false, error: error.response?.data || error.message };
+      return { 
+        success: false, 
+        error: {
+          detail: error.response?.data?.detail,
+          status: error.response?.status,
+        }};
     });
 }
 
@@ -87,7 +96,12 @@ export function addDonationService(request){
     .then(response => {
       return { success: true, data: response.data};
     })
-    .catch(error =>{
-      return { success: false, error: error.response?.data || error.message };
-});
+    .catch(error => {
+      return { 
+        success: false, 
+        error: {
+          detail: error.response?.data?.detail,
+          status: error.response?.status,
+        }};
+    });
 }

@@ -135,9 +135,13 @@ async function handleMarkerClick (id) {
         maxDropdowns = selectedMarkerInv.value.length;
 
         selectedMarker.value = locationInfo.value.find(info => info.id === id); 
-      } else {
-        console.error("Failed to fetch inventory");
-      }
+      } else {          
+          if (res.error?.status === 404) {
+            console.warn("Inventory not found for this user.");
+          } else {
+            console.error("Failed to fetch the inventory: ", res.error);
+          }
+      }     
     })
     .catch(error => {
       console.error("Failed to fetch inventory", error);
