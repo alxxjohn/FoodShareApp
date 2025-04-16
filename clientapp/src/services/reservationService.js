@@ -1,6 +1,5 @@
 import apiClient from "./apiClient";
 
-//IF we use back API
 export function reserveFood (request) {
 //  Log the request
 //  console.log("reserveFood request: "+JSON.stringify(request, null, 2)); 
@@ -38,4 +37,37 @@ export function getReservationList(foodbankId){
         status: error.response?.status,
       }};
   });
+}
+
+export function updateReservation(reservationId){
+  const pickupRequest = {
+    current_status: "picked_up"
+  }
+  
+  return apiClient.patch(`/reservations/${reservationId}/`, pickupRequest)
+    .then(response => {
+      return { success: true, data: response.data };
+    })
+    .catch(error => {
+      return { 
+        success: false, 
+        error: {
+          detail: error.response?.data?.detail,
+          status: error.response?.status,
+        }};
+    });
+}
+export function deleteReservationService(reservationId){
+  return apiClient.delete(`/reservations/${reservationId}/`)
+    .then(response => {
+      return { success: true, data: response.data };
+    })
+    .catch(error => {
+      return { 
+        success: false, 
+        error: {
+          detail: error.response?.data?.detail,
+          status: error.response?.status,
+        }};
+    });
 }

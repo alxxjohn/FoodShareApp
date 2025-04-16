@@ -89,9 +89,10 @@ function addDonation(){
     .then(response => {
       if (!response.success) {
         console.error("Creating donation failed:", + JSON.stringify(response.error));
-      return;
+        return;
       }
-      console.log("Creating donation successful: " + JSON.stringify(response.data));
+        router.push('/reservation-list');
+      // console.log("Creating donation successful: " + JSON.stringify(response.data));
     });
 }
 
