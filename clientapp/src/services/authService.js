@@ -14,10 +14,17 @@ export default {
   setToken(token){
     apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   },
+  setIsBusiness(is_business){
+    apiClient.defaults.headers.common['is_business'] = `${is_business}`;
+  },
   loadTokenFromStorage() {
     const token = localStorage.getItem('access_token');
     if (token) {
       this.setToken(token);
+    }
+    const is_business = localStorage.getItem('is_business');
+    if (is_business){
+      this.setIsBusiness(is_business);
     }
   },
   userRegister(userData) {

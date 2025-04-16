@@ -181,7 +181,7 @@ async function loadReservations(userId) {
 </script>
 
 
-<style>
+<style scoped>
   .button-box {
     display: flex; 
     justify-content: center; 
