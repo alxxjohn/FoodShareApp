@@ -1,7 +1,7 @@
 INSERT INTO users (
     uuid, email, username, firstname, lastname, salt, password,
     tos_accepted, tos_accepted_date, last_login, bad_login_attempt, bad_login_count,
-    account_locked, account_verified, account_verified_at, address, city, state, zipCode, phone, is_business, is_admin
+    account_locked, account_verified, account_verified_at, address, city, state, zipcode, phone, is_business, is_admin
 )
 VALUES 
 

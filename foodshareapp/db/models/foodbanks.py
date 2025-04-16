@@ -1,6 +1,4 @@
-from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel
 
@@ -20,14 +18,12 @@ class FoodbankModel(BaseModel):
     assoc_user: UUID
 
 
-@dataclass
 class InventoryModel(BaseModel):
+    item_id: UUID
     item_name: str
-    quantity: int
-    expiration_date: Optional[datetime]
+    item_qty: int
 
 
-@dataclass
 class DonationModel(BaseModel):
     donor_id: UUID
     item_name: str
@@ -36,17 +32,19 @@ class DonationModel(BaseModel):
 
 
 async def get_all_foodbanks() -> list[FoodbankModel]:
-    """Returns a list of all users who are foodbanks (is_foodbank = True)"""
-    query = "SELECT * FROM business WHERE is_foodbank = TRUE"
+    """Returns a list of all businesses"""
+    query = "SELECT * FROM business"
     rows = await db.fetch_all(query=query)
     return [FoodbankModel(**dict(row)) for row in rows]
 
 
 async def get_foodbank_inventory(foodbank_id: UUID) -> list[InventoryModel]:
     query = """
-        SELECT item_name, quantity, expiration_date
+        SELECT item_id, item_name, item_qty
         FROM inventory
-        WHERE foodbank_id = :foodbank_id
+        WHERE foodbank_id = (
+            SELECT business_id FROM business WHERE assoc_user = :foodbank_id
+        )
     """
     rows = await db.fetch_all(query, values={"foodbank_id": foodbank_id})
     return [InventoryModel(**dict(row)) for row in rows]

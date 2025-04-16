@@ -8,21 +8,18 @@ import foodMap from '@/views/FoodMapView.vue'
 import userhome from '@/views/UserHome.vue'
 import reservationList from '@/views/ReservationListView.vue'
 import donation from '@/views/DonationView.vue'
-// import Dashboard from '@/views/Dashboard.vue'
-// import store from '@/store' // Assuming you manage authentication state in Vuex or Pinia
 
 const routes = [
   // { path: '/', redirect: '/main' }, // Redirect root to /main
   { path: '/', component:  homePage},
-  { path: '/main', component: main },
+  { path: '/main', component: main, meta: { requiresAuth: true } },
   { path: '/login', component: login },
   { path: '/signup', component: signUp },
   { path: '/termsandconditions', component: termsAndConditions },
-  { path: '/userhome', name: userhome, component: userhome }
-  { path: '/foodmap', component: foodMap },
-  { path: '/reservation-list', component: reservationList },
-  { path: '/donation', component: donation }
-  // { path: '/dashboard', component: Dashboard }
+  { path: '/userhome', name: userhome, component: userhome, meta: { requiresAuth: true } },
+  { path: '/foodmap', component: foodMap, meta: { requiresAuth: true } },
+  { path: '/reservation-list', component: reservationList, meta: { requiresAuth: true } },
+  { path: '/donation', component: donation, meta: { requiresAuth: true } }
 ]
 
 const router = createRouter({
@@ -30,15 +27,18 @@ const router = createRouter({
   routes
 })
 
-// // Navigation Guard for Authentication
-// router.beforeEach((to, from, next) => {
-//   const isAuthenticated = store.state.user.isLoggedIn // Replace with actual auth logic
+// Global navigation guard
+router.beforeEach((to, from, next) => {
+  const token = !!localStorage.getItem('access_token')
 
-//   if (to.path !== '/login' && !isAuthenticated) {
-//     next('/login') // Redirect to login if not authenticated
-//   } else {
-//     next() // Proceed as normal
-//   }
-// })
+  if (to.meta.requiresAuth && !token) {
+    next('/login')
+  } else if ((to.path === '/login' || to.path === '/signup') && token) {
+    next('/main')
+  } else {
+    next()
+  }
+})
+
 
 export default router
