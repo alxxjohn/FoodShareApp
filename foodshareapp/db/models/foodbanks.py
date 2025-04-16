@@ -42,9 +42,9 @@ async def get_foodbank_inventory(foodbank_id: UUID) -> list[InventoryModel]:
     query = """
         SELECT item_id, item_name, item_qty
         FROM inventory
-	    WHERE foodbank_id = (
-		    SELECT business_id FROM business WHERE assoc_user = :foodbank_id
-        ) 
+        WHERE foodbank_id = (
+            SELECT business_id FROM business WHERE assoc_user = :foodbank_id
+        )
     """
     rows = await db.fetch_all(query, values={"foodbank_id": foodbank_id})
     return [InventoryModel(**dict(row)) for row in rows]
