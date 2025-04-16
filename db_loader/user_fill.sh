@@ -3,7 +3,7 @@
 set -e
 
 # Set API base URL
-API_URL="http://localhost:8000/api/register"
+API_URL="http://localhost:8000/api/register/user"
 
 # First user data
 USER1=$(cat <<EOF

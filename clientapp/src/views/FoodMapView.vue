@@ -18,10 +18,6 @@
       <label>Address:</label>
       <span>{{ selectedMarker.street }}, {{ selectedMarker.city }}, {{ selectedMarker.state }} {{ selectedMarker.zip }}</span>
     </div>
-    <div>
-      <label>Phone:</label>
-      <span>{{ selectedMarker.phone }}</span>
-    </div>
   </div>
 
   <div id="food-and-quant" v-if="selectedMarker" class="row g-3 d-flex">
@@ -29,21 +25,20 @@
       <div class="col-md-3">
         <label v-if="index === 0" class="form-label">Available Foods:</label>
         <select class="form-select" v-model="selectedFoodList[index].food">
-          <option v-for="food in selectedMarkerInv.availableFoods" :key="food.id" :value="food">
-            {{ food.name }}
-
+          <option v-for="food in selectedMarkerInv" :key="food.item_id" :value="food">
+            {{ food.item_name }}
           </option>
         </select>
       </div>
       
       <div class="col-md-2">
         <div class="invalid-msg" v-if="invalidQuant(index)">
-          Max quantity is {{selectedFoodList[index].food.quant}}!
+          Max quantity is {{selectedFoodList[index].food.item_qty}}!
         </div>
         <input type="text" 
           class="form-control" 
           v-model="selectedFoodList[index].quant" 
-          :placeholder="selectedFoodList[index].food ? `Max quantity: ${selectedFoodList[index].food.quant}` : 'Quantity'" 
+          :placeholder="selectedFoodList[index].food ? `Max quantity: ${selectedFoodList[index].food.item_qty}` : 'Quantity'" 
           :class="{ 'is-invalid': invalidQuant(index) }" 
         />
 
@@ -95,28 +90,30 @@ let maxDropdowns = 1;
 
 //TOOD: since the user doesn't add their address when register, it can be some random address to start
 //TODO: add address search bar to move around the map 
-const userLoc = ref({lat: 37.7730, lng: -122.4183});
+const userLoc = ref({lat: 28.596425775510205, lng: -81.4507097448979});
 
 onMounted(() => {
   getFoodbankLists()
-    .then(data => {
-      foodLocations.value = data.map((location) => ({
-        lat: location.address.lat,
-        lng: location.address.lng,
-        id: location.id,
-        icon: getMarkerIcon(location.availability)
-      }));
+    .then(res => {
+      if(res.success){
+        foodLocations.value = res.data.map((location) => ({
+          lat: Number(location.lat),
+          lng: Number(location.lng),
+          id: location.business_id,
+        }));
 
-      locationInfo.value = data.map((info) => ({
-        id: info.id,
-        name: info.name,
-        street: info.street,
-        city: info.city,
-        state: info.state,
-        zip: info.zip,
-        phone: info.phone,
-        availability: info.availability,
-      }));
+        locationInfo.value = res.data.map((info) => ({
+          id: info.business_id,
+          name: info.company_name,
+          street: info.address,
+          city: info.city,
+          state: info.state,
+          zip: info.zipcode,
+        }));
+      }
+      else {
+        console.error("Failed to fetch locations");
+      }
     })
     .catch(error => {
       console.error("Failed to fetch locations", error);
@@ -124,32 +121,41 @@ onMounted(() => {
 });
 
 
-
-
 // Handle the marker click event
 async function handleMarkerClick (id) {
   //reset the selectedFoodList
   selectedFoodList.value = [{ food: null, quant: null }];
 
-  selectedMarkerInv.value = await getInventory(id);
-  
-  //set maxDropdown to be the number of available foods for each location
-  maxDropdowns = selectedMarkerInv.value.availableFoods.length;
-  
-  selectedMarker.value = locationInfo.value.find(info => info.id === id); 
-  
-  //Log clicked marker Id
-  // console.log("Clicked Marker ID:", id);
+  getInventory(id)
+    .then(res => {
+      if(res.success){
+        selectedMarkerInv.value = res.data;
+        
+        //set maxDropdown to be the number of available foods for each location
+        maxDropdowns = selectedMarkerInv.value.length;
+
+        selectedMarker.value = locationInfo.value.find(info => info.id === id); 
+      } else {          
+          if (res.error?.status === 404) {
+            console.warn("Inventory not found for this user.");
+          } else {
+            console.error("Failed to fetch the inventory: ", res.error);
+          }
+      }     
+    })
+    .catch(error => {
+      console.error("Failed to fetch inventory", error);
+    })
 }
 
 //Change the marker color based on each location's availability
-function getMarkerIcon(availability){
-  if (availability === true) {
-    return "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; 
-  } else {
-    return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; 
-  }
-}
+// function getMarkerIcon(availability){
+//   if (availability === true) {
+//     return "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; 
+//   } else {
+//     return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; 
+//   }
+// }
 
 //return true (disable) if required values aren't given
 function disabledButton(){  
@@ -160,7 +166,6 @@ function disabledButton(){
   );
 }
 
-//TODO: send an array of food items not a single item
 function reserve(){
   const request = createRequestBody();
 
@@ -194,7 +199,6 @@ function removeDropdown(index){
   }
 }
 
-//TODO: valiadation should be more sophisticate?? :( 
 //returns true (invalid) if the given input is invalid
 function invalidQuant(index){
   const item = selectedFoodList.value[index];
@@ -203,27 +207,36 @@ function invalidQuant(index){
   if(!item.food)
     return false;
 
-  //given value is not a number
+  if(!item.quant)
+    return false;  
+
+  // given value is not a number
   if(isNaN(Number(item.quant)))
     return true;
 
-  //if selected quantity(item.quant) is smaller or equal to max quantity (item.food.quant) for selected foods
-  return item.quant > item.food.quant && item.quant < 0;
+  //if selected quantity(item.quant) is smaller or equal to max quantity (item.food.item_qty) for selected foods
+  return item.quant > item.food.item_qty || item.quant <= 0;
 
 
   }
 
   function createRequestBody(){
+    const today = new Date().toISOString().split("T")[0];
+    //Create a timestamp to fit the reserve_time's dtype in db
+    const fullTimestamp = new Date(`${today}T${selectedTime.value}:00Z`);
+    
     const request = {
       reservations_array:[], 
-      reserve_time:selectedTime.value
+      reserve_time:fullTimestamp.toISOString()
 
     };
 
+    console.log("selectedFoodList", JSON.stringify(selectedFoodList.value));
+
     for(let i = 0; i < selectedFoodList.value.length; i++ ){
       const addedFood = {
-        item_id:selectedFoodList.value[i].food.id, 
-        item_qty:selectedFoodList.value[i].quant
+        item_id:selectedFoodList.value[i].food.item_id, 
+        item_qty:Number(selectedFoodList.value[i].quant)
       };
       request.reservations_array.push(addedFood);
 

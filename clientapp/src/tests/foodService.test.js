@@ -12,32 +12,26 @@ describe("getFoodbankLists", () => {
 
   const mockResponse = [
     {
-      id: 1,
-      name: "Green Valley Food Bank",
-      address: {
-        lat: 37.7749,
-        lng: -122.4194,
-      },
-      street: "123 Green Valley Rd",
+      business_id: 1,
+      company_name: "Green Valley Food Bank",
+      lat: 37.7749,
+      lng: -122.4194,
+      address: "123 Green Valley Rd",
       city: "San Francisco",
       state:"CA",
-      zip:"94110",
-      phone: "+1 (415) 555-1234",     
-      availability: true,
+      zipcode:"94110",
+      // phone: "+1 (415) 555-1234",     
     },
     {
       id: 2,
       name: "Hope for All Food Bank",
-      address: {
-        lat: 37.7758,
-        lng: -122.4180,
-      },
+      lat: 37.7758,
+      lng: -122.4180,
       street: "456 Hope Ave",
       city: "Los Angeles",
       state:"CA",
       zip:"90001",
-      phone: "+1 (213) 555-5678",
-      availability: false,
+      // phone: "+1 (213) 555-5678",
     }
   ];
 

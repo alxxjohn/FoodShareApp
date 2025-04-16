@@ -132,4 +132,4 @@ def test_get_foodbank_donations(test_foodbanks_database):
 
     assert donation is not None
     assert donation[4] == 100
-    assert donation[5] == 500.0
+    assert donation[5] == 500
