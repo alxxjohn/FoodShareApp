@@ -41,8 +41,6 @@
       password: this.password
     };
 
-    // console.log("RequestBody: " + JSON.stringify(data));
-
     //Call login service method
     authService.login(data)
     .then((response) => {
@@ -53,9 +51,8 @@
       localStorage.setItem('access_token', token);
       authService.setToken(token);
       
-      //TO test access token
-      // this.getCurrentUserInfo();
-
+      this.getCurrentUserInfo();
+      
       //redirect to foodmap view
       this.$router.push('/foodmap');
     })

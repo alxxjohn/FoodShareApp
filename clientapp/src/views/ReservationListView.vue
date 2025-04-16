@@ -43,43 +43,56 @@ import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { getInventory } from '@/services/foodService'
 import { getReservationList } from '@/services/reservationService'
+import authService from '@/services/authService';
 
 
 const router = useRouter();
-//TODO: it should be from back api (login info?)
-const foodbankId = 1;
-
 const available = ref([{name:null, quant:null}]);
 const reserved = ref([]);
 const pickedup = ref([]);
 
 onMounted(() => {
-  getInventory(foodbankId)
-    .then(data => {
-      available.value = data.availableFoods.map((inven) => ({
-        name: inven.name,
-        quant: inven.quant
-      }));
-    })
-    .catch(error => {
-      console.error("Failed to fetch the inventory", error);
-    })
-  getReservationList(foodbankId)
-    .then(data => {
-      data.reservationList.forEach((reservation) => {
-        if (reservation.status === 'reserved'){
-          reserved.value.push(reservation);
-        } else if (reservation.status === 'pickedup'){
-          pickedup.value.push(reservation);
-        }
+  authService.getCurrentLoggedInUser()
+    .then(userInfo => {
+      getInventory(userInfo.data.uuid)
+        .then(res => {
+          if(res.success){
+            available.value = res.availableFoods.map((inven) => ({
+            name: inven.name,
+            quant: inven.quant
+            }));
+          } else {          
+            if (res.error?.status === 404) {
+              console.warn("Inventory not found for this user.");
+            } else {
+              console.error("Failed to fetch the inventory: ", res.error);
+            }
+          }          
+        })
+      getReservationList(userInfo.data.uuid)  
+        .then(res => {
+          if(res.success){
+            res.reservationList.forEach((reservation) => {
+              if (reservation.status === 'reserved'){
+                reserved.value.push(reservation);
+              } else if (reservation.status === 'pickedup'){
+                pickedup.value.push(reservation);
+              }
+            })
+            reserved.value.sort((a, b) => a.reservationTime.localeCompare(b.reservationTime));
+            pickedup.value.sort((a, b) => a.showedUpTime.localeCompare(b.showedUpTime));
+          } else {
+            if (res.error?.status === 404) {
+              console.warn("Reservation not found for this user.");
+            } else {
+              console.error("Failed to fetch the reservation list: ", res.error);
+            }
+          }
+        })
       })
-      reserved.value.sort((a, b) => a.reservationTime.localeCompare(b.reservationTime));
-      pickedup.value.sort((a, b) => a.showedUpTime.localeCompare(b.showedUpTime));
-
-    })
-    .catch(error => {
-      console.error("Failed to fetch the reservation list", error);
-    })
+  .catch(error => {
+    console.log("unable to retrieve the current user", error);
+  })
 });
 
 
