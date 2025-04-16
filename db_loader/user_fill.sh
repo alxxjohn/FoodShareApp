@@ -17,7 +17,7 @@ USER1=$(cat <<EOF
   "address": "1020 N. Main St.",
   "city": "Orlando",
   "state": "FL",
-  "zipCode": "32663",
+  "zipcode": "32663",
   "phone": "31098767663",
   "is_business": true,
   "is_admin": true
@@ -37,7 +37,7 @@ USER2=$(cat <<EOF
   "address": "5340",
   "city": "Orlando",
   "state": "FL",
-  "zipCode": "32663",
+  "zipcode": "32663",
   "phone": "31098767663",
   "is_business": true,
   "is_admin": true

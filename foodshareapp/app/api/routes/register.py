@@ -49,7 +49,7 @@ async def register_user(
         address=create_user.address,
         city=create_user.city,
         state=create_user.state,
-        zipCode=create_user.zipCode,
+        zipcode=create_user.zipcode,
         phone=create_user.phone,
         is_business=create_user.is_business is True,
         is_admin=create_user.is_admin is True,
@@ -66,7 +66,7 @@ async def register_user(
         address=new_user.address is None,
         city=new_user.city is None,
         state=new_user.state is None,
-        zipCode=new_user.zipCode is None,
+        zipcode=new_user.zipcode is None,
         phone=new_user.phone is None,
         is_business=new_user.is_business is True,
         is_admin=new_user.is_admin is True,
@@ -86,7 +86,7 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
     password = hash_password(user_data.password, salt)
     uuid = uuid4()
     full_address = (
-        f"{user_data.address}, {user_data.city}, {user_data.state} {user_data.zipCode}"
+        f"{user_data.address}, {user_data.city}, {user_data.state} {user_data.zipcode}"
     )
     lat, lng = geocode_address(full_address)
 
@@ -101,7 +101,7 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
         address=user_data.address,
         city=user_data.city,
         state=user_data.state,
-        zipCode=user_data.zipCode,
+        zipcode=user_data.zipcode,
         phone=user_data.phone,
         is_business=user_data.is_business,
         is_admin=user_data.is_admin,
@@ -120,7 +120,7 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
             address=user_data.address,
             city=user_data.city,
             state=user_data.state,
-            zipCode=user_data.zipCode,
+            zipcode=user_data.zipcode,
             lat=str(lat) if lat else "",
             lng=str(lng) if lng else "",
             is_foodbank=user_data.is_foodbank,
@@ -139,7 +139,7 @@ async def register_business(user_data: CreateUserBusiness) -> CreateBusinessResp
         address=new_business.address,
         city=new_business.city,
         state=new_business.state,
-        zipCode=new_business.zipCode,
+        zipcode=new_business.zipcode,
         lat=new_business.lat,
         lng=new_business.lng,
         is_foodbank=new_business.is_foodbank,

@@ -147,7 +147,7 @@ import { states } from '@/utils/const.js';
       address: this.address,
       city: this.city,
       state: this.selectedState,
-      zipCode: this.zip,
+      zipcode: this.zip,
       phone: this.phone,
       is_business: this.is_business,
       is_admin: this.is_admin 

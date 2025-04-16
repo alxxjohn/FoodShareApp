@@ -80,7 +80,7 @@ import { reserveFood } from '@/services/reservationService'
 const foodLocations = ref([]);
 const locationInfo = ref([]);
 const selectedMarker = ref(null);
-const selectedMarkerInv = ref(null);
+const selectedMarkerInv = ref([]);
 const selectedTime = ref(null);
 const selectedFoodList = ref([{food: null, quant:null}]); 
 
@@ -128,20 +128,19 @@ async function handleMarkerClick (id) {
 
   getInventory(id)
     .then(res => {
+      selectedMarker.value = locationInfo.value.find(info => info.id === id); 
       if(res.success){
         selectedMarkerInv.value = res.data;
         
         //set maxDropdown to be the number of available foods for each location
         maxDropdowns = selectedMarkerInv.value.length;
-
-        selectedMarker.value = locationInfo.value.find(info => info.id === id); 
       } else {          
           if (res.error?.status === 404) {
             console.warn("Inventory not found for this user.");
           } else {
             console.error("Failed to fetch the inventory: ", res.error);
           }
-      }     
+      }
     })
     .catch(error => {
       console.error("Failed to fetch inventory", error);
@@ -248,7 +247,7 @@ function invalidQuant(index){
 
 </script>
 
-<style>
+<style scoped>
 .invalid-msg {
   color: red;
   font-size: 0.875em;
