@@ -46,7 +46,7 @@ def test_database():
             address TEXT NOT NULL,
             city TEXT NOT NULL,
             state TEXT NOT NULL,
-            zipCode TEXT NOT NULL,
+            zipcode TEXT NOT NULL,
             lat TEXT,
             lng TEXT,
             is_foodbank BOOLEAN NOT NULL DEFAULT 0,
@@ -119,7 +119,7 @@ def test_register_business_user_with_linked_business(test_database):
 
     cursor.execute(
         """
-        INSERT INTO businesses (BusinessId, companyName, address, city, state, zipCode, lat, lng, is_foodbank, assoc_user)
+        INSERT INTO businesses (BusinessId, companyName, address, city, state, zipcode, lat, lng, is_foodbank, assoc_user)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         new_business,

@@ -31,7 +31,7 @@ class User(UserBase):
     address: str
     city: str
     state: str
-    zipCode: str
+    zipcode: str
     phone: str
     is_business: bool = False
     is_admin: bool = False

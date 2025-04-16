@@ -90,7 +90,7 @@ async def _fetch_reservation_rows(foodbank_id: UUID):
         ON TRUE
     JOIN inventory fbi ON fbi.item_id = (item.obj->>'item_id')::UUID
     JOIN business b ON fbi.foodbank_id = b.business_id
-    WHERE fbi.foodbank_id = :foodshare_id
+    WHERE b.assoc_user = :foodshare_id
     """
     return await db.fetch_all(stmt, values={"foodshare_id": foodbank_id})
 

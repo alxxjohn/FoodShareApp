@@ -4,7 +4,7 @@ CREATE TABLE businesses (
     address TEXT NOT NULL,
     city TEXT NOT NULL,
     state TEXT NOT NULL,
-    zipCode TEXT NOT NULL,
+    zipcode TEXT NOT NULL,
     lat TEXT,
     lng TEXT,
     isFoodbank BOOLEAN NOT NULL DEFAULT 0,

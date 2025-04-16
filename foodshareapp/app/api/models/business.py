@@ -21,7 +21,7 @@ class UserBusiness(BaseModel):
     address: str
     city: str
     state: str
-    zipCode: str
+    zipcode: str
     lat: str
     lng: str
     phone: str
@@ -43,7 +43,7 @@ class NewBusiness(BaseModel):
     address: str
     city: str
     state: str
-    zipCode: str
+    zipcode: str
     lat: str
     lng: str
     isFoodbank: bool
@@ -60,7 +60,7 @@ class CreateBusinessResponse(BaseModel):
     address: str
     city: str
     state: str
-    zipCode: str
+    zipcode: str
     lat: str
     lng: str
     is_foodbank: bool
