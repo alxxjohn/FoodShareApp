@@ -51,10 +51,7 @@
       localStorage.setItem('access_token', token);
       authService.setToken(token);
       
-      this.getCurrentUserInfo();
-      
-      //redirect to foodmap view
-      this.$router.push('/foodmap');
+      this.redirectBasedOnUserType();
     })
     .catch((error ) => {
       console.log(error.response);
@@ -62,10 +59,14 @@
 
   },
 
-  getCurrentUserInfo(){
+  redirectBasedOnUserType(){
     authService.getCurrentLoggedInUser()
       .then((response) => {
-        console.log("current user: " + JSON.stringify(response.data));
+        if(response.data.is_business){
+          this.$router.push('/reservation-list');
+        } else {
+          this.$router.push('/foodmap');
+        }        
       })
       .catch((error) => {
         console.log(error.message);
