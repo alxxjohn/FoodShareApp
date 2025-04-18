@@ -26,7 +26,7 @@ class CreateBusiness:
     address: str
     city: str
     state: str
-    zipCode: str
+    zipcode: str
     lat: str
     lng: str
     phone: str
@@ -46,7 +46,7 @@ class BusinessModel:
     address: str
     city: str
     state: str
-    zipCode: str
+    zipcode: str
     lat: str
     lng: str
     is_foodbank: bool
@@ -61,7 +61,7 @@ class NewBusiness:
     address: str
     city: str
     state: str
-    zipCode: str
+    zipcode: str
     lat: str
     lng: str
     is_foodbank: bool
@@ -80,7 +80,7 @@ class CreateUserBusiness:
     address: str
     city: str
     state: str
-    zipCode: str
+    zipcode: str
     phone: str
     is_business: bool = True
     is_foodbank: bool = False
@@ -91,8 +91,8 @@ async def insert_business(NewBusiness: NewBusiness) -> UUID:
     """Creates a new business"""
 
     stmnt = (
-        "INSERT INTO business (business_id, company_name, address, city, state, zipCode, lat, lng, is_foodbank, assoc_user) "
-        "VALUES (:business_id, :company_name, :address, :city, :state, :zipCode, :lat, :lng, :is_foodbank, :assoc_user)"
+        "INSERT INTO business (business_id, company_name, address, city, state, zipcode, lat, lng, is_foodbank, assoc_user) "
+        "VALUES (:business_id, :company_name, :address, :city, :state, :zipcode, :lat, :lng, :is_foodbank, :assoc_user)"
     )
     return await db.execute(stmnt, values=asdict(NewBusiness))
 

@@ -19,7 +19,7 @@ describe("reserveFood", () => {
 
   it("should return success when API call is successful", async () => {
 
-    mock.onPost("/reservations/reserve", {request: mockRequest}).reply(200);
+    mock.onPost("/reservations/", {request: mockRequest}).reply(200);
 
     const result = await reserveFood(mockRequest);
 
@@ -27,7 +27,7 @@ describe("reserveFood", () => {
   });
 
   it("should return error when API call fails", async () => {
-    mock.onPost("/reservations/reserve", {request: mockRequest}).reply(500, { message: "Internal Server Error" });
+    mock.onPost("/reservations/", {request: mockRequest}).reply(500, { message: "Internal Server Error" });
 
     const result = await reserveFood(mockRequest);
 
@@ -36,7 +36,7 @@ describe("reserveFood", () => {
   });
 
   it("should handle error response without message properly", async () => {
-    mock.onPost("/reservations/reserve", {request: mockRequest}).reply(500);
+    mock.onPost("/reservations/", {request: mockRequest}).reply(500);
 
     const result = await reserveFood(mockRequest);
     

@@ -111,7 +111,7 @@ async def update_reservation(
         await db_reservations.delete_reservation(reservation_uuid)
         await transaction.commit()
         return JSONResponse(
-            status_code=status.HTTP_204_NO_CONTENT,
+            status_code=status.HTTP_200_OK,
             content={"detail": "Reservation picked up and removed."},
         )
 

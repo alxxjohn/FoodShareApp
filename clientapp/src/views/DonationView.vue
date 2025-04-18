@@ -76,7 +76,6 @@ function removeList(index){
   }
 }
 
-//TODO: modify to adapt more sophisticate validation
 function disabledButton(){
   return !(
     addedFoodList.value[0].item_name != null &&
@@ -89,10 +88,11 @@ function addDonation(){
   addDonationService(request)
     .then(response => {
       if (!response.success) {
-        console.error("Donation failed:", + JSON.stringify(response.error));
-      return;
+        console.error("Creating donation failed:", + JSON.stringify(response.error));
+        return;
       }
-      console.log("Donation successful: " + JSON.stringify(response.data));
+        router.push('/reservation-list');
+      // console.log("Creating donation successful: " + JSON.stringify(response.data));
     });
 }
 
