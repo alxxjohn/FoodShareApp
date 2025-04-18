@@ -49,7 +49,7 @@
     authService.login(data)
     .then((response) => {
           
-      // console.log("response.data: " + JSON.stringify(response.data));
+      console.log("response.data: " + JSON.stringify(response.data));
          
       const token = response.data.access_token;
       localStorage.setItem('access_token', token);
